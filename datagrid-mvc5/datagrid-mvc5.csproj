@@ -128,7 +128,6 @@
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
     <Compile Include="Controllers\OrderDetailsController.cs" />
-    <Compile Include="Controllers\Orders1Controller.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ShippersController.cs" />
@@ -176,13 +175,9 @@
     <Content Include="Scripts\vue.js" />
     <Content Include="Views\OrderEdit.html" />
     <Content Include="Views\Index2.html" />
-    <Content Include="Views\Orders1\Create.cshtml" />
-    <Content Include="Views\Orders1\Delete.cshtml" />
-    <Content Include="Views\Orders1\Details.cshtml" />
-    <Content Include="Views\Orders1\Edit.cshtml" />
-    <Content Include="Views\Orders1\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Index.html" />
+    <Content Include="Views\Orders\Edit.cshtml" />
     <None Include="Views\Orders\Index.cshtml" />
     <Content Include="js\code.js" />
     <Content Include="Scripts\dx.all.js" />
@@ -202,7 +197,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Properties\" />
     <Folder Include="Scripts\NewFolder1\" />
-    <Folder Include="Views\Orders\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

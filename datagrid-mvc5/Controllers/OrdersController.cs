@@ -26,7 +26,11 @@ namespace datagrid_mvc5.Controllers
         {
             return View();
         }
-
+        public ActionResult Edit(int id=0)
+        {
+            ViewBag.Id = id;
+            return View();
+        }
 
         Northwind _db = new Northwind();
 
@@ -168,7 +172,7 @@ namespace datagrid_mvc5.Controllers
             query = MadeParam("ShipCountry", country, parameters, query);
             query = MadeParam("ShipRegion", region, parameters, query);
 
-            return ActionResult(query, parameters);
+            return GetActionResult(query, parameters);
         }
 
 
@@ -179,10 +183,10 @@ namespace datagrid_mvc5.Controllers
             string query = "Select distinct ShipCountry from orders where  {ShipRegion}  1=1";
             query = MadeParam("ShipRegion", region, parameters, query);
 
-            return ActionResult(query, parameters);
+            return GetActionResult(query, parameters);
         }
 
-        private ActionResult ActionResult(string query, List<SqlParameter> parameters = null)
+        private ActionResult GetActionResult(string query, List<SqlParameter> parameters = null)
         {
             if (parameters == null) parameters = new List<SqlParameter>();
             var resList = _db.Database.SqlQuery<string>(query, parameters.ToArray()).ToList();
@@ -196,7 +200,7 @@ namespace datagrid_mvc5.Controllers
         public ActionResult AvaiableRegions()
         {
             string query = "Select distinct ShipRegion from orders";
-            return ActionResult(query);
+            return GetActionResult(query);
         }
 
 

@@ -3,20 +3,19 @@
 
 <html>
 <head>
-    <title>eeee</title>
-    <script src="../../../Scripts/iqery.min.js"></script>
-    <script src="../../../Scripts/dx.all.js"></script>
-    <script src="../../../Scripts/dx.aspnet.data.js"></script>
-    <script src="../../../js/code2.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../Content/dx.common.css" />
-    <link rel="stylesheet" type="text/css" href="../../../Content/grey.css" />
+    <title>Data grid example</title>
+    <script src="~/Scripts/iqery.min.js"></script>
+    <script src="~/Scripts/dx.all.js"></script>
+    <script src="~/Scripts/dx.aspnet.data.js"></script>
+    <script src="~/js/code2.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/grey.css" />
 </head>
 <script>
     var dataGrid;
    
     var FilterElementsArray = new Array();
     function init() {
-        //dataGrid = $('#grid').dxDataGrid('instance');
         setDataSource();
         console.time("x");
 
@@ -37,7 +36,6 @@
         var dataGridInstance = $("#grid").dxDataGrid("instance");
         oldGridFilter = dataGridInstance.getCombinedFilter();
 
-      //  oldGridFilterStr=  processFilter(dataGridInstance, oldGridFilter);
         const table = document.createElement('table');
         filtElem.appendChild(table);
         //create fields
@@ -56,7 +54,7 @@
             checkBox.setAttribute('type', 'checkbox');
 
             //input
-            input = document.createElement("input")
+            input = document.createElement("input");
             field = new FilterField(column, input, checkBox);
 
             //FilterElementsArray.push({ DataField: column.dataField, DataType: column.dataType, Input: input, Check: checkBox });
@@ -183,6 +181,13 @@
         return filter;
     }
 
+    function Edit() {
+        var dataGridInstance = $("#grid").dxDataGrid("instance");
+        var selected = dataGridInstance.getSelectedRowKeys();
+        var path = document.location.host + '/orders/Edit?id='+selected[0];
+        window.open(path);
+
+    }
 </script>
 <body >
     <span>Header</span>
@@ -196,7 +201,7 @@
     <button onclick='FilterStatus("Germany")'>Germany</button>
 
     <button onclick="FilterClear()">FilterClear</button>
-    <button onclick="find()">найти</button>
+   <button onclick="Edit()">редактировать</button>
     <br />
     <div id="grid"></div>
 
