@@ -1,0 +1,144 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>eeee</title>
+    <script src="../../../Scripts/iqery.min.js"></script>
+    <script src="../../../Scripts/dx.all.js"></script>
+    <script src="../../../Scripts/dx.aspnet.data.js"></script>
+    <script src="../../../js/code.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../Content/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../Content/grey.css" />
+</head>
+<script>
+    var dataGrid;
+    var filterA = new Array();
+    var filterB = new Array();
+    var filterC = new Array();
+    function init() {
+
+        dataGrid = $('#grid').dxDataGrid('instance');
+        $("#selectStatus").dxSelectBox({//комбо бокс выбора страны
+            dataSource: statuses,
+            value: statuses[0],
+            onValueChanged: function (data) {
+                if (data.value == "All") {
+                    filterB.length = 0;
+                    ApplayFilterChanges();
+                }
+                else {
+                    filterB[0] = ["ShipCountry", "=", data.value]
+                    ApplayFilterChanges();
+                }
+            }
+        });
+
+
+        return;
+        var dataSource = DevExpress.data.AspNet.createStore({
+            key: "OrderID",
+            loadUrl: "Orders/Get",
+            insertUrl: "Orders/Post",
+            updateUrl: "Orders/Put",
+            deleteUrl: "Orders/Delete"
+        });
+        dataSource.load();
+        n.dataSource = dataSource;
+        //var dataGridDataSource = dataGrid.getDataSource();
+        // dataGridDataSource.load();
+    }
+
+    function Filter1() {
+        filterA[0] = [["OrderID", ">", "400"], "and", ["OrderID", '<', "10250"]];
+        ApplayFilterChanges();
+    }
+
+    function Filter2() {
+
+        filterA[0] = [["OrderID", ">", "10250"], "and", ["OrderID", '<', "10500"]];
+        ApplayFilterChanges();
+    }
+    function Filter3() {
+        filterA[0] = [["OrderID", ">", "10500"], "and", ["OrderID", '<', "11000"]];
+        ApplayFilterChanges();
+    }
+
+    function ApplayFilterChanges() {
+        var filter = ConcatFilterArr(filterA, filterB);
+        filter = ConcatFilterArr(filter, filterC);
+        dataGrid.filter(filter);
+        dataGrid.refresh();
+    }
+    function ConcatFilterArr(filterArr1, filterArr2) {
+        if (filterArr1.length > 0 && filterArr2.length > 0) {
+            var res = new Array();
+            res[0] = filterArr1;
+            res[1] = "and";
+            res[2] = filterArr2;
+            return res;
+        }
+        else {
+            if (filterArr1.length > 0) {
+                return filterArr1
+            }
+            else {
+                return filterArr2
+            }
+        }
+    }
+
+
+    function FilterClear() {
+        filterA.length = 0;
+        filterB.length = 0;
+        filterC.length = 0;
+        dataGrid.clearFilter();
+
+    }
+    function find() {
+        filterC.length = 0;
+        var check = document.getElementById("IdFilterCheck").checked;
+        if (!check) return;
+
+        var inpVal = document.getElementById("inpIdFilter").value;
+        inpVal = inpVal.replace(/\s/g, '').replace(/,+/g, ',');
+        var arr = inpVal.split(',');
+        if (arr.length == 1 && arr[0] == '') { } else {
+            for (f = 0, i = 0; i < arr.length; i++ , f++) {
+                filterC[f] = ["OrderID", "=", arr[i]];
+                if (arr.length - 1 > i) {
+                    f++;
+                    filterC[f] = 'or'
+                }
+            }
+        }
+        ApplayFilterChanges();
+    }
+
+
+
+/**/</script>
+<body onload="init()">
+    <span>Header</span>
+    <div class="right-side" style="color:aqua">
+        <div id="selectStatus"></div>
+    </div>
+    <div class="right-side" style="color:aqua">
+        <input type="checkbox" id="IdFilterCheck"></input>   <input id="inpIdFilter"></input>
+    </div>
+    <div class="right-side" style="color:green">
+        <div id="buttonContainer"></div>
+    </div><br />
+    <button onclick="selRow()">see</button>
+    <button onclick="Filter1()">OrderID", '<', "10250</button>
+    <button onclick="Filter2()">OrderID", '<', "10500</button>
+    <button onclick="Filter4()">4</button>
+
+    <button onclick="FilterClear()">FilterClear</button>
+    <button onclick="find()">найти</button>
+    <div id="grid"></div>
+    <span>Futer</span>
+</body>
+
+</html>
