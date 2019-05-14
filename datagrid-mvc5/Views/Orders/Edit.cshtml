@@ -1,0 +1,248 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>редактирование id=@ViewBag.Id</title>
+    <script src="~/Scripts/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/vueError.css"/>
+</head>
+<body>
+
+<h1>Vue try</h1>
+<div id="app">
+    
+    <table>
+        <tr>
+            @*<td>
+                    <h1>авто генерация формы</h1>
+                    <table style="background-color: blue">
+                        <tr v-for="(item,i) in order">
+                            <td> {{i}}</td>
+                            <td>
+                                <input type="text" v-model="order[i]"/>
+                                <p style="color: red" type="text" v-if="errors[i]!=''">{{errors[i]}}</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                </td>*@
+            <td>
+                <h1>частичная Ручная генерация формы++</h1>
+                <table>
+
+                    <tr>
+                        <td>Freight</td>
+                        <td class="tooltip">
+                            <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" />
+                            <span v-if="!errors.Freight==''" class="tooltiptext">{{errors.Freight}}</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>ShipCountry</td>
+                        <td>
+                            <select v-model="order.ShipCountry">
+                                <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ShipCity</td>
+                        <td>
+                            <select v-model="order.ShipCity">
+                                <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ShipAddress</td>
+                        <td class="tooltip">
+                            <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" />
+                            <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>OrderDate</td>
+                        <td>
+                            <input type="datetime-local" v-model="order.OrderDate" />
+                            <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
+                        </td>
+
+                    </tr>
+                   
+                        @*<error-cell field-name="Адрес" v-bind:data-field="order.ShipAddress" v-bind:field-error="errors.ShipAddress" ></error-cell>*@
+                    
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    //Vue.component('error-cell',
+    //    {
+    //        props: {
+    //            FieldName: String,
+    //            DataField: String,
+    //            FieldError: String
+    //        },
+    //        data: function () {
+
+    //            return {
+    //                count: 0
+    //            }
+    //        },
+    //        template: '<tr> <td>{{FieldName}}</td><td >' +
+    //            '<input type="text" v-model="DataField"  v-bind:class="{error:!FieldError==\'\' }"  />' +
+    //            '<p style="color: red" type="text">{{FieldError}}</p>' +
+    //            '</td></tr>'
+    //    });
+    new Vue({
+        el: "#app",
+
+        data: {
+            id: @ViewBag.Id,
+            selected: '',
+            order: {
+                OrderID: 0,
+                CustomerID: "",
+                EmployeeID: '',
+                OrderDate: { type: Date, default: "1996-07-10T00:00:00" },
+                RequiredDate: "1996-07-24T00:00:00",
+                ShippedDate: "1996-07-16T00:00:00",
+                ShipVia: 0,
+                Freight: 0,
+                ShipName: "",
+                ShipAddress: "",
+                ShipCity: "",
+                ShipRegion: "",
+                ShipPostalCode: "",
+                ShipCountry: ""
+            },
+            errors: {
+                OrderID: null,
+                CustomerID: null,
+                EmployeeID: null,
+                OrderDate: null,
+                RequiredDate: null,
+                ShippedDate: null,
+                ShipVia: null,
+                Freight: null,
+                ShipName: null,
+                ShipAddress: null,
+                ShipCity: null,
+                ShipRegion: null,
+                ShipPostalCode: null,
+                ShipCountry: null
+            },
+            AvaialbeCitys: [],
+            AvaialbeRegions: [],
+            AvaialbeCountrys: []
+        },
+        methods: {
+            fetchOrder() {
+                try {
+                    fetch("../Orders/GetById?key=" + this.id, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(json => this.order = json);
+                } catch (ex) {
+                    alert(ex);
+                }
+            },
+            fetchCityList() {
+                try {
+                    var region = this.order.ShipRegion;
+                    if (region == null || region === "") {
+                        region = 'null';
+                    }
+                    var country = this.order.ShipCountry;
+                    if (country == null || country === "") {
+                        country = '';
+                    }
+                    var path = "../Orders/AvaiableCityList?region=" + '' + "&country=" + country;
+                    fetch(path, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(json => {
+                            this.AvaialbeCitys = json;
+                            if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
+                                this.order.ShipCity = null;
+                            }
+                        });
+                } catch (ex) {
+                    alert(ex);
+                }
+            },
+            fetchRegions() {
+                try {
+                    var path = "../Orders/AvaiableRegions";
+                    fetch(path, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(json => {
+                                this.AvaialbeRegions = json;
+                                //  this.order.ShipCountry = null;
+                            }
+                        );
+                } catch (ex) {
+                    alert(ex);
+                }
+            },
+            fetchCountrys() {
+                try {
+                    var region = this.order.ShipRegion;
+                    if (region == null || region === "") {
+                        region = 'null';
+                    }
+
+                    var path = "../Orders/AvaiableCountrys?region=" + '';
+                    fetch(path, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(json => {
+                            this.AvaialbeCountrys = json;
+                            if (!this.AvaialbeCountrys.includes(this.order.ShipCountry)) {
+                                this.order.ShipCountry = null;
+                            }
+                        });
+                } catch (ex) {
+                    alert(ex);
+                }
+            },
+            Validate() {
+                try {
+                    if (this.order.OrderID === 0) return;
+                    var myJSON = JSON.stringify(this.order);
+                    fetch("../Orders/Validate?key=" + this.id + "&values=" + myJSON, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(json => this.errors = json);
+                } catch (ex) {
+                    alert(ex);
+                }
+            }
+        },
+        watch: {
+            order: {
+                handler: function(newV, old) {
+                    // if (this.order.ShipCountry !== newV.ShipCountry)
+                    // {
+                    this.fetchCityList();
+                    //  }
+                    this.Validate();
+                },
+                deep: true
+            },
+            errors: function(newV, old) {
+                console.log("err=" + newV);
+            }
+
+        },
+        mounted: function() {
+
+            this.fetchOrder();
+            this.fetchCountrys();
+        }
+    });
+</script>
+</body>
+</html>

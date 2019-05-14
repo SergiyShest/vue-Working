@@ -184,8 +184,8 @@
     function Edit() {
         var dataGridInstance = $("#grid").dxDataGrid("instance");
         var selected = dataGridInstance.getSelectedRowKeys();
-        var path = document.location.host + '/orders/Edit?id='+selected[0];
-        window.open(path);
+        var path = document.location.host + '/Orders/Edit?id='+selected[0];
+        window.open(path,"Редактирование");
 
     }
 </script>
