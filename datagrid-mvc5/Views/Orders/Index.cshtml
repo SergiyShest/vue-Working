@@ -8,179 +8,36 @@
     <script src="~/Scripts/dx.all.js"></script>
     <script src="~/Scripts/dx.aspnet.data.js"></script>
     <script src="~/js/code2.js"></script>
+    <script src="~/js/filter.js"></script>
+    <script src="~/js/data.js"></script>
+
     <link rel="stylesheet" type="text/css" href="~/Content/dx.common.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/grey.css" />
 </head>
 <script>
-    var dataGrid;
-   
-    var FilterElementsArray = new Array();
-    function init() {
-        setDataSource();
-        console.time("x");
-
-    }
-
     function FilterStatus(status) {
+        var dataGrid = $('#grid').dxDataGrid('instance');
         var filter = ["ShipCountry", "=", status];
         dataGrid.filter(filter);
         dataGrid.refresh();
         console.time("x");
     }
+    var filterInit = false;
 
+    function HideFilter() {
+        var modal = document.getElementById('filterPopup');
+        modal.style.display = "none";
+    }
 
-   
-    function CreateFilter() {
-        var filtElem = document.getElementById("filter");
-        filtElem.childNodes.length = 0;
-        var dataGridInstance = $("#grid").dxDataGrid("instance");
-        oldGridFilter = dataGridInstance.getCombinedFilter();
-
-        const table = document.createElement('table');
-        filtElem.appendChild(table);
-        //create fields
-        for (var i = 0; i < dataGridInstance.columnCount(); i++) {
-
-            row = document.createElement('tr');
-            table.appendChild(row);
-
-            var column = dataGridInstance.columnOption(i);//get column Discription
-
-            //label
-            textnode = document.createTextNode(column.caption);
-
-            //checkbox
-            checkBox = document.createElement("input");
-            checkBox.setAttribute('type', 'checkbox');
-
-            //input
-            input = document.createElement("input");
-            field = new FilterField(column, input, checkBox);
-
-            //FilterElementsArray.push({ DataField: column.dataField, DataType: column.dataType, Input: input, Check: checkBox });
-            FilterElementsArray.push(field);
-            createTableСell(row, textnode);
-            createTableСell(row, checkBox);
-            createTableСell(row, input);
-            
+    function ShowFilter() {
+        if (filterInit == false) {
+            filterInit = true;
+            CreateFilter("filter", colunmDescription);
         }
-        row = document.createElement('tr');
-
-        table.appendChild(row);
-        findButton = document.createElement("button");
-        findButton.setAttribute('onclick', 'FilterFind()');
-        findButton.textContent = 'найти';
-        createTableСell(row);// create 2 empty cell
-        createTableСell(row);
-        createTableСell(row, findButton);//put button in 3 cell
-
-        oldGridFilter = dataGridInstance.getCombinedFilter();
-        for (i = 0; i < oldGridFilter.length; i++)
-        {
-            f1 = oldGridFilter[i];
-            if (typeof f1 == 'string') {
-            
-            }
-
-        }
+        var modal = document.getElementById('filterPopup');
+        modal.style.display = "block";
 
     }
-
-    function FilterFind() {
-        collectiveFilter = new Array();
-
-        for (i = 0; i < FilterElementsArray.length; i++) {
-            
-            FilterElementsArray[i].ApplayFilter(collectiveFilter);
-
-           
-        }
-        if (collectiveFilter.length > 0) {
-            resultFilter = new Array();
-            for (i = 0; i < collectiveFilter.length; i++)
-            {
-                resultFilter.push(collectiveFilter[i]);
-                if (collectiveFilter.length > i + 1)
-                {
-                    resultFilter.push('and');
-                }
-
-            }
-            dataGrid.filter(resultFilter);
-      }
-        dataGrid.refresh();
-        console.time("x");
-
-    }
-
-    function createTableСell(row, el) {
-        td = document.createElement("td");
-        if (el != null) { td.appendChild(el); }
-        row.appendChild(td);
-        return td;
-    }
-
-
-    //соединение массивов фильтров
-    function ApplayFilterChanges() {
-        var filter = ConcatFilterArr(filterA, filterB);
-        filter = ConcatFilterArr(filter, filterC);
-        dataGrid.filter(filter);
-        dataGrid.refresh();
-        console.time("x");
-    }
-    function ConcatFilterArr(filterArr1, filterArr2) {
-        if (filterArr1.length > 0 && filterArr2.length > 0) {
-            var res = new Array();
-            res[0] = filterArr1;
-            res[1] = "and";
-            res[2] = filterArr2;
-            return res;
-        }
-        else {
-            if (filterArr1.length > 0) {
-                return filterArr1
-            }
-            else {
-                return filterArr2
-            }
-        }
-    }
-
-
-    function FilterClear() {
-        filterA.length = 0;
-        filterB.length = 0;
-        filterC.length = 0;
-        dataGrid.clearFilterStatus();
-
-    }
-    function find() {
-        filterC.length = 0;
-        var check = document.getElementById("IdFilterCheck").checked;
-        if (!check) return;
-
-        var inpVal = document.getElementById("inpIdFilter").value;
-        filterCommaSplittedCodition('OrderID', inpVal);
-        ApplayFilterChanges();
-    }
-
-    function filterCommaSplittedCodition(dataField, inpVal) {
-        inpVal = inpVal.replace(/\s/g, '').replace(/,+/g, ',');//remove repeated commas and spaces
-        var arr = inpVal.split(',');
-        filter = new Array();
-        if (arr.length == 1 && arr[0] == '') { } else {
-            for (f = 0, i = 0; i < arr.length; i++ , f++) {
-                filter[f] = [dataField, "=", arr[i]];
-                if (arr.length - 1 > i) {
-                    f++;
-                    filter[f] = 'or'
-                }
-            }
-        }
-        return filter;
-    }
-
     function Edit() {
         var dataGridInstance = $("#grid").dxDataGrid("instance");
         var selected = dataGridInstance.getSelectedRowKeys();
@@ -190,11 +47,17 @@
     }
 </script>
 <body >
-    <span>Header</span>
-    <div id="filter" style="background-color:lightblue">dsds</div>>
+<div class="modal" id="filterPopup"><!--Здесь будет фильтр-->
+        <div class="modal-content">
+            <div class="modal-header">
+                header <span id="closeButton" align="right" class="modal-close" onclick="HideFilter()">X</span>
+            </div>
+            <div id="filter" style="background-color:lightblue"></div>
+        </div>
+    </div>
     <br />
-    <button onclick="CreateFilter()">CreateFilter</button>
-    <button onclick='FilterStatus("All")'>All</button>
+    <button onclick="ShowFilter()">CreateFilter</button>
+ 
     <button onclick='FilterStatus("Switzerland")'>Switzerland</button>
     <button onclick='FilterStatus("Belgium")'>Belgium</button>
     <button onclick='FilterStatus("Brazil")'>Brazil</button>
