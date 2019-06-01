@@ -196,7 +196,7 @@
   margin-bottom: 20px;
 }
 .dx-datagrid .dx-row-alt {
-    background-color: #d9b8b8;
+    background-color: #eee;
 }
 .dx-rtl .dx-datagrid .dx-datagrid-rowsview .dx-data-row td.dx-pointer-events-none,
 .dx-rtl .dx-datagrid .dx-datagrid-rowsview .dx-freespace-row td.dx-pointer-events-none,

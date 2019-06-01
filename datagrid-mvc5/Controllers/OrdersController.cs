@@ -26,7 +26,7 @@ namespace datagrid_mvc5.Controllers
         {
             return View();
         }
-        public ActionResult Edit(int id=0)
+        public ActionResult Edit(int id = 0)
         {
             ViewBag.Id = id;
             return View();
@@ -142,26 +142,44 @@ namespace datagrid_mvc5.Controllers
         public ActionResult Validate(int key, string values)
         {
             var order = _db.Orders.Find(key);
-    
-                JsonConvert.PopulateObject(values, order);
-                var errors = _db.GetValidationErrors();
-                StringBuilder errorsD = new StringBuilder("{");
-                foreach (DbEntityValidationResult validationError in errors)
-                {
-                    foreach (DbValidationError err in validationError.ValidationErrors)
-                    {
-                        errorsD.AppendFormat(@"""{0}"":""{1}"",", err.PropertyName,
-                            err.ErrorMessage.Replace("\"", "'"));
-                    }
-                }
 
-                if (errorsD.Length > 1)
+            JsonConvert.PopulateObject(values, order);
+            var errors = _db.GetValidationErrors();
+            StringBuilder errorsD = new StringBuilder("{");
+            foreach (DbEntityValidationResult validationError in errors)
+            {
+                foreach (DbValidationError err in validationError.ValidationErrors)
                 {
-                    errorsD.Remove(errorsD.Length - 1, 1);//remove last comma
+                    errorsD.AppendFormat(@"""{0}"":""{1}"",", err.PropertyName,
+                        err.ErrorMessage.Replace("\"", "'"));
                 }
-                errorsD.Append("}");
+            }
+
+            if (errorsD.Length > 1)
+            {
+                errorsD.Remove(errorsD.Length - 1, 1);//remove last comma
+            }
+            errorsD.Append("}");
             return Content(errorsD.ToString(), "application/json");
         }
+
+
+        [HttpGet]
+        public ActionResult AvaialbeProducts()
+        {
+            var product = from o in _db.Products
+                select new 
+                {
+                   Id= o.ProductID,
+                   Name= o.ProductName,
+                };
+            string errStr = JsonConvert.SerializeObject(product);
+
+            return Content(errStr, "application/json");
+        }
+
+
+        #region Получение списка селектом
 
 
         [HttpGet]
@@ -186,6 +204,21 @@ namespace datagrid_mvc5.Controllers
             return GetActionResult(query, parameters);
         }
 
+        [HttpGet]
+        public ActionResult AvaiableRegions()
+        {
+            string query = "Select distinct ShipRegion from orders";
+            return GetActionResult(query);
+        }
+
+        #endregion
+        #region query
+        /// <summary>
+        /// получение коллекции запросом
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         private ActionResult GetActionResult(string query, List<SqlParameter> parameters = null)
         {
             if (parameters == null) parameters = new List<SqlParameter>();
@@ -194,16 +227,6 @@ namespace datagrid_mvc5.Controllers
             string json = JsonConvert.SerializeObject(resList);
             return Content(json, "application/json");
         }
-
-
-        [HttpGet]
-        public ActionResult AvaiableRegions()
-        {
-            string query = "Select distinct ShipRegion from orders";
-            return GetActionResult(query);
-        }
-
-
 
         private static string MadeParam(string name, string paramValue, List<SqlParameter> parameters, string query)
         {
@@ -224,6 +247,7 @@ namespace datagrid_mvc5.Controllers
             query = query.Replace("{" + name + "}", prarString);
             return query;
         }
+        #endregion
     }
 
     public class VuError

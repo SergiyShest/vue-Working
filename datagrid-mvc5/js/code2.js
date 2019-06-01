@@ -5,7 +5,6 @@ function setDataSource() {
         loadUrl: "../Orders/Get"
  
     });
-
     var grid = $("#grid").dxDataGrid("instance");
     grid.option("dataSource", dataSource);
 }

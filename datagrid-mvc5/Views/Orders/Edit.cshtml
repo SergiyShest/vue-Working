@@ -5,83 +5,89 @@
     <meta charset="utf-8" />
     <title>редактирование id=@ViewBag.Id</title>
     <script src="~/Scripts/vue.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/Content/vueError.css"/>
+    <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
 </head>
 <body>
 
-<h1>Vue try</h1>
-<div id="app">
-    
-    <table>
-        <tr>
-            @*<td>
-                    <h1>авто генерация формы</h1>
-                    <table style="background-color: blue">
-                        <tr v-for="(item,i) in order">
-                            <td> {{i}}</td>
+    <h1>ddddd</h1>
+    <div id="app">
+
+        <table>
+            <tr>
+                @*<td>
+                        <h1>авто генерация формы</h1>
+                        <table style="background-color: blue">
+                            <tr v-for="(item,i) in order">
+                                <td> {{i}}</td>
+                                <td>
+                                    <input type="text" v-model="order[i]"/>
+                                    <p style="color: red" type="text" v-if="errors[i]!=''">{{errors[i]}}</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>*@
+                <td>
+                    <h1></h1>
+                    <table>
+                        <tr>
+                            <td>Freight</td>
+                            <td class="tooltip">
+                                <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" />
+                                <span v-if="!errors.Freight==''" class="tooltiptext">{{errors.Freight}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ShipCountry</td>
                             <td>
-                                <input type="text" v-model="order[i]"/>
-                                <p style="color: red" type="text" v-if="errors[i]!=''">{{errors[i]}}</p>
+                                <select v-model="order.ShipCountry">
+                                    <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ShipCity</td>
+                            <td class="tooltip" >
+                                <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}">
+                                    <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                               </select>
+                                <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ShipAddress</td>
+                            <td class="tooltip">
+                                <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" />
+                                <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>OrderDate</td>
+                            <td>
+                                <input type="datetime-local" v-model="order.OrderDate" />
+                                <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>продукты {{productId}}</td>
+                            <td>
+                                <select v-model="productId">
+                                    <option v-for="product in AvaialbeProducts"
+                                            :v-key="product.Id"
+                                            v-bind:value="product.Id">
+                                        ( {{product.Id}})-{{product.Name}}
+                                    </option>
+                                </select>
                             </td>
                         </tr>
                     </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-                </td>*@
-            <td>
-                <h1>частичная Ручная генерация формы++</h1>
-                <table>
-
-                    <tr>
-                        <td>Freight</td>
-                        <td class="tooltip">
-                            <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" />
-                            <span v-if="!errors.Freight==''" class="tooltiptext">{{errors.Freight}}</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>ShipCountry</td>
-                        <td>
-                            <select v-model="order.ShipCountry">
-                                <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>ShipCity</td>
-                        <td>
-                            <select v-model="order.ShipCity">
-                                <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>ShipAddress</td>
-                        <td class="tooltip">
-                            <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" />
-                            <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>OrderDate</td>
-                        <td>
-                            <input type="datetime-local" v-model="order.OrderDate" />
-                            <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
-                        </td>
-
-                    </tr>
-                   
-                        @*<error-cell field-name="Адрес" v-bind:data-field="order.ShipAddress" v-bind:field-error="errors.ShipAddress" ></error-cell>*@
-                    
-
-                </table>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<script>
+    <script>
     //Vue.component('error-cell',
     //    {
     //        props: {
@@ -138,9 +144,19 @@
                 ShipPostalCode: null,
                 ShipCountry: null
             },
+
             AvaialbeCitys: [],
             AvaialbeRegions: [],
-            AvaialbeCountrys: []
+            AvaialbeCountrys: [],
+
+            productId: 10,
+            selectedProduct:null,
+            AvaialbeProducts: []
+        },
+        computed: {
+            selectedProductId() {
+                return this.selectedProduct ? this.selectedProduct['Id'] : null;
+            }
         },
         methods: {
             fetchOrder() {
@@ -153,7 +169,7 @@
                 }
             },
             fetchCityList() {
-                try {
+             //   try {
                     var region = this.order.ShipRegion;
                     if (region == null || region === "") {
                         region = 'null';
@@ -162,33 +178,31 @@
                     if (country == null || country === "") {
                         country = '';
                     }
-                    var path = "../Orders/AvaiableCityList?region=" + '' + "&country=" + country;
-                    fetch(path, { mode: 'cors' })
-                        .then(response => response.json())
-                        .then(json => {
-                            this.AvaialbeCitys = json;
-                            if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
-                                this.order.ShipCity = null;
-                            }
-                        });
-                } catch (ex) {
-                    alert(ex);
-                }
+                var path = "../Orders/AvaiableCityList?region=" + '' + "&country=" + country;
+             this.fetchJson(path,json => {
+                                 this.AvaialbeCitys = json;
+                                 if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
+                                     this.order.ShipCity = null;
+                                 }
+                             });
+                //    fetch(path, { mode: 'cors' })
+                //        .then(response => response.json())
+                //        .then(json => {
+                //            this.AvaialbeCitys = json;
+                //            if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
+                //                this.order.ShipCity = null;
+                //            }
+                //        });
+                //} catch (ex) {
+                //    alert(ex);
+                //}
             },
             fetchRegions() {
-                try {
-                    var path = "../Orders/AvaiableRegions";
-                    fetch(path, { mode: 'cors' })
-                        .then(response => response.json())
-                        .then(json => {
-                                this.AvaialbeRegions = json;
-                                //  this.order.ShipCountry = null;
-                            }
-                        );
-                } catch (ex) {
-                    alert(ex);
-                }
+
+                var path = "../Orders/AvaiableRegions";
+                this.fetchJson(path,x=> this.AvaiableRegions=x);
             },
+
             fetchCountrys() {
                 try {
                     var region = this.order.ShipRegion;
@@ -209,6 +223,23 @@
                     alert(ex);
                 }
             },
+            fetchAvaialbeProducts() {
+
+                var path = "../Orders/AvaialbeProducts";
+                this.fetchJson(path, jsonResalt => {this.AvaialbeProducts = jsonResalt;});
+
+            },
+            fetchJson(path,collback) {
+                try {
+                    fetch(path, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(function (json) { collback(json); }
+                        );
+                } catch (ex) {
+                    alert(ex);
+                }
+            },
+
             Validate() {
                 try {
                     if (this.order.OrderID === 0) return;
@@ -241,8 +272,9 @@
 
             this.fetchOrder();
             this.fetchCountrys();
+            this.fetchAvaialbeProducts();
         }
     });
-</script>
+    </script>
 </body>
 </html>

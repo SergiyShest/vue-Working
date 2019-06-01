@@ -37,6 +37,7 @@ namespace datagrid_mvc5.Models {
         [StringLength(60)]
         public string ShipAddress { get; set; }
 
+        [Required(ErrorMessage = "Поле ShipCity обязательно для заполнения")]
         [StringLength(15)]
         public string ShipCity { get; set; }
 
