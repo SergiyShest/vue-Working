@@ -4,17 +4,26 @@
 <html>
 <head>
     <title>Data grid example</title>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.2/jszip.min.js"></script>-->
+    <script src="Scripts/zip.js"></script>
     <script src="~/Scripts/iqery.min.js"></script>
     <script src="~/Scripts/dx.all.js"></script>
     <script src="~/Scripts/dx.aspnet.data.js"></script>
+    <script src="~/js/data.js"></script>
     <script src="~/js/code2.js"></script>
     <script src="~/js/filter.js"></script>
-    <script src="~/js/data.js"></script>
+
 
     <link rel="stylesheet" type="text/css" href="~/Content/dx.common.css" />
-    <link rel="stylesheet" type="text/css" href="~/Content/grey.css" />
+    @*<link rel="stylesheet" type="text/css" href="~/Content/grey.css" />
+        <link rel="stylesheet" type="text/css" href="~/Content/dx.light.css" />*@
+    <link rel="stylesheet" type="text/css" href="~/Content/dx.light.compact.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/modal.CSS" />
 </head>
 <script>
+
+   
+
     function FilterStatus(status) {
         var dataGrid = $('#grid').dxDataGrid('instance');
         var filter = ["ShipCountry", "=", status];
@@ -41,8 +50,8 @@
     function Edit() {
         var dataGridInstance = $("#grid").dxDataGrid("instance");
         var selected = dataGridInstance.getSelectedRowKeys();
-        var path = document.location.host + '/Orders/Edit?id='+selected[0];
-        window.open(path,"Редактирование");
+        var path = "http://"+document.location.host + '/Orders/Edit?id='+selected[0];
+        window.open(path);
 
     }
 </script>

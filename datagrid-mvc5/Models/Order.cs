@@ -27,7 +27,7 @@ namespace datagrid_mvc5.Models {
 
         public int? ShipVia { get; set; }
         [Required(ErrorMessage = "Поле Freight обязательно для заполнения")]
-        [CustomCheck("Для  города {0} не меньше {2} было {1} ")]
+        [CustomCheck("К городу  {0} особое уважение поэтому не меньше {2} Вы ввели {1} ")]
         public decimal? Freight { get; set; }
 
         [StringLength(40)]
@@ -64,7 +64,9 @@ namespace datagrid_mvc5.Models {
         [JsonIgnore]
         public virtual Shipper Shipper { get; set; }
     }
-
+    /// <summary>
+    /// Custom Attribute Example
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public  class CustomCheckAttribute : ValidationAttribute
     {
@@ -76,19 +78,12 @@ namespace datagrid_mvc5.Models {
         {
             ValidationResult result = ValidationResult.Success;
             string[] memberNames = new string[] { validationContext.MemberName };
-
             decimal val = Convert.ToDecimal(value);
-
             Order account = (Order)validationContext.ObjectInstance;
-
-            if (account.ShipCity == "Paris" && val<1000)
-
+            if (account.ShipCity == "Rio de Janeiro" && val<100)
             {
-               result = new ValidationResult(string.Format(this.ErrorMessage,account.ShipCity , val,1000), memberNames);
+               result = new ValidationResult(string.Format(this.ErrorMessage,account.ShipCity , val,100), memberNames);
             }
-           
-
-
             return result;
         }
     }

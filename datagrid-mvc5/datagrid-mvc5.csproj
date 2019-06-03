@@ -125,6 +125,8 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Content Include="Content\icons\filter.png" />
+    <Content Include="Content\modal.CSS" />
     <Content Include="Content\vueError.css" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -148,22 +150,11 @@
     <Compile Include="Models\Supplier.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\dx.carmine.css" />
     <Content Include="Content\dx.common.css" />
     <Content Include="Content\grey.css" />
-    <Content Include="Content\dx.ios7.default.css" />
     <Content Include="Content\dx.light.compact.css" />
     <Content Include="Content\dx.light.css" />
-    <Content Include="Content\dx.material.blue.dark.css" />
-    <Content Include="Content\dx.material.blue.light.css" />
-    <Content Include="Content\dx.material.lime.light.css" />
-    <Content Include="Content\dx.material.orange.light.css" />
-    <Content Include="Content\dx.material.purple.light.css" />
-    <Content Include="Content\dx.material.teal.light.css" />
-    <Content Include="Content\dx.softblue.css" />
-    <Content Include="Content\dx.spa.css" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Contact.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="js\code2.js" />
     <Content Include="js\data.js" />
@@ -176,10 +167,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\vue.js" />
-    <Content Include="Views\OrderEdit.html" />
-    <Content Include="Views\Index2.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Index.html" />
+    <Content Include="Scripts\zip.js" />
     <Content Include="Views\Orders\Edit.cshtml" />
     <None Include="Views\Orders\Index.cshtml" />
     <Content Include="js\code.js" />
@@ -194,12 +183,10 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\ViewOrders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Properties\" />
-    <Folder Include="Scripts\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

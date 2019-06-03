@@ -129,7 +129,36 @@ $(function () {
                 mode: "multiple",
                 allowSelectAll: true
             },
-            columns:colunmDescription, 
+       columns: [
+           {
+               dataField: "OrderID",
+               formItem: {
+                   visible: true
+               },
+               caption: "ID",
+               headerCellTemplate: $('<i style="color: red">ID</i>'),
+               filter: true
+           },
+           {
+               caption: "Cust\nomer",
+               //calculateDisplayValue: "CustomerName",
+               dataField: "CustomerID",
+               lookup: {
+                   dataSource: customers,
+                   valueExpr: "Id",
+                   displayExpr: "Name"
+               }
+           },
+           {
+               caption: "Employee",
+               calculateDisplayValue: "EmployeeName",
+               dataField: "EmployeeID"
+               //lookup: {
+               //    dataSource:employeers,
+               //    valueExpr: "ID",
+               //    displayExpr: "Name"
+               //}
+           }]
         });
 
   

@@ -64,10 +64,10 @@
   font: 14px/1 DXIcons;
 }
 .dx-datagrid .dx-header-filter:before {
-  content: "\f050";
+  content: url(Icons/filter.png);
 }
 .dx-datagrid .dx-header-filter-empty {
-  color: rgba(149, 149, 149, 0.5);
+  color: rgba(000, 255, 255, 252);
 }
 .dx-datagrid.dx-filter-menu .dx-menu-item-content .dx-icon {
   width: 14px;
@@ -6516,9 +6516,10 @@
   padding: 7px;
   padding-right: 35px;
 }
-.dx-datagrid .dx-row > td {
-  padding: 7px;
-}
+    .dx-datagrid .dx-row > td {
+        padding: 7px;
+        border: 1px solid #ACACAC;
+    }
 .dx-datagrid .dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-edit-with-icons .dx-link {
   width: 18px;
   height: 18px;
@@ -6730,8 +6731,9 @@
   background-color: transparent;
 }
 .dx-datagrid-headers {
-  color: #959595;
-  font-weight: normal;
+  color: #Navy;
+  background-color: lightgray;
+  font-weight: bold;
   -ms-touch-action: pinch-zoom;
       touch-action: pinch-zoom;
   border-bottom: 1px solid #ddd;

@@ -24,6 +24,20 @@ namespace datagrid_mvc5.Controllers
 
         public ActionResult Index()
         {
+            var usedCustomers = from o in _db.Orders
+                                select new
+                                {
+                                    Id = o.CustomerID,
+                                    Name = o.Customer.ContactName,
+                                };
+            var usedCust = usedCustomers.Distinct().ToList();
+            var sb = new StringBuilder();
+            foreach (var cust in usedCust)
+            {
+                sb.Append("{Id=\"" + cust.Id + "\",Name=\"" + cust.Name + "\"},");
+            }
+
+            ViewBag.customers = sb.ToString();
             return View();
         }
         public ActionResult Edit(int id = 0)
@@ -37,14 +51,15 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult Get(DataSourceLoadOptions loadOptions)
         {
+
+
             loadOptions.PrimaryKey = new[] { "OrderID" };
-            //System.Diagnostics.Debug.WriteLine(_db.Orders.Count());
             var ordersQuery = from o in _db.Orders
                               select new
                               {
                                   o.OrderID,
                                   o.CustomerID,
-                                  CustomerName = o.Customer.ContactName,
+                                  //                                  CustomerName = o.Customer.ContactName,
                                   o.EmployeeID,
                                   EmployeeName = o.Employee.FirstName + " " + o.Employee.LastName,
                                   o.OrderDate,
@@ -65,13 +80,9 @@ namespace datagrid_mvc5.Controllers
             return Content(JsonConvert.SerializeObject(loadResult), "application/json");
         }
 
-
-
-
         [HttpGet]
         public ActionResult GetShipCountry(DataSourceLoadOptions loadOptions)
         {
-            // loadOptions.PrimaryKey = new[] { "OrderID" };
             var ordersQuery = from o in _db.Orders
                               select new
                               {
@@ -81,19 +92,16 @@ namespace datagrid_mvc5.Controllers
             return Content(json, "application/json");
         }
 
-
         [HttpPut]
         public ActionResult Put(int key, string values)
         {
             var order = _db.Orders.Find(key);
             JsonConvert.PopulateObject(values, order);
-
             if (!TryValidateModel(order))
             {
                 Response.StatusCode = 400;
                 return Content(ModelState.GetFullErrorMessage(), "text/plain");
             }
-
             _db.SaveChanges();
             return new EmptyResult();
         }
@@ -103,13 +111,11 @@ namespace datagrid_mvc5.Controllers
         {
             var order = new Order();
             JsonConvert.PopulateObject(values, order);
-
             if (!TryValidateModel(order))
             {
                 Response.StatusCode = 400;
                 return Content(ModelState.GetFullErrorMessage(), "text/plain");
             }
-
             _db.Orders.Add(order);
             _db.SaveChanges();
 
@@ -122,28 +128,23 @@ namespace datagrid_mvc5.Controllers
             var order = _db.Orders.Find(key);
             _db.Orders.Remove(order);
             _db.SaveChanges();
-
             return new EmptyResult();
         }
-
-
 
         [HttpGet]
         public ActionResult GetById(int key)
         {
             var order = _db.Orders.Find(key);
             string errStr = JsonConvert.SerializeObject(order);
-
             return Content(errStr, "application/json");
         }
 
-
         [HttpGet]
-        public ActionResult Validate(int key, string values)
+        public ActionResult Validate(int id, string json)
         {
-            var order = _db.Orders.Find(key);
+            var order = _db.Orders.Find(id);
 
-            JsonConvert.PopulateObject(values, order);
+            JsonConvert.PopulateObject(json, order);
             var errors = _db.GetValidationErrors();
             StringBuilder errorsD = new StringBuilder("{");
             foreach (DbEntityValidationResult validationError in errors)
@@ -163,18 +164,29 @@ namespace datagrid_mvc5.Controllers
             return Content(errorsD.ToString(), "application/json");
         }
 
+        [HttpGet]
+        public ActionResult AvaialbeEmploers()
+        {
+            var product = from o in _db.Employees
+                          select new
+                          {
+                              Id = o.EmployeeID,
+                              Name = o.FirstName + " " + o.LastName
+                          };
+            string errStr = JsonConvert.SerializeObject(product);
+            return Content(errStr, "application/json");
+        }
 
         [HttpGet]
-        public ActionResult AvaialbeProducts()
+        public ActionResult AvaialbeCustomers()
         {
-            var product = from o in _db.Products
-                select new 
-                {
-                   Id= o.ProductID,
-                   Name= o.ProductName,
-                };
+            var product = from o in _db.Customers
+                          select new
+                          {
+                              Id = o.CustomerID,
+                              Name = o.ContactName,
+                          };
             string errStr = JsonConvert.SerializeObject(product);
-
             return Content(errStr, "application/json");
         }
 
@@ -250,11 +262,4 @@ namespace datagrid_mvc5.Controllers
         #endregion
     }
 
-    public class VuError
-    {
-        public long ObjectId { get; set; }
-        public string PropName { get; set; }
-
-        public string ErrorMessage { get; set; }
-    }
 }
