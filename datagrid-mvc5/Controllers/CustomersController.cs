@@ -9,6 +9,7 @@ using System.Web.Mvc;
 namespace datagrid_mvc5.Controllers {
 
     public class CustomersController : Controller {
+
         Northwind _db = new Northwind();
 
         public ActionResult Get(DataSourceLoadOptions loadOptions) {
