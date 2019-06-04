@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace datagrid_mvc5.Models {
     using Newtonsoft.Json;
     using System;
@@ -37,8 +39,7 @@ namespace datagrid_mvc5.Models {
         [StringLength(60)]
         public string ShipAddress { get; set; }
 
-        [Required(ErrorMessage = "Поле ShipCity обязательно для заполнения")]
-        [StringLength(15)]
+        [CheckCityAttribute("Поле ShipCity обязательно для заполнения")]
         public string ShipCity { get; set; }
 
         [StringLength(15)]
@@ -87,5 +88,31 @@ namespace datagrid_mvc5.Models {
             return result;
         }
     }
-
+  
+    /// <summary>
+    /// Custom Attribute Example
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public  class CheckCityAttribute : ValidationAttribute
+    {
+        public CheckCityAttribute(string message)
+        {
+            this.ErrorMessage = message;
+        }
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            ValidationResult result = ValidationResult.Success;
+            string[] memberNames = new string[] { validationContext.MemberName };
+            string val = value?.ToString();
+            Northwind _db = new Northwind();
+            Order order = (Order)validationContext.ObjectInstance;
+         bool exsist  =  _db.Orders.FirstOrDefault(o => o.ShipCity == val && o.ShipCountry == order.ShipCountry)!=null;
+           
+            if (!exsist)
+            {
+               result = new ValidationResult(string.Format(this.ErrorMessage,order.ShipCity , val), memberNames);
+            }
+            return result;
+        }
+    }
 }

@@ -127,7 +127,7 @@
                 ShipPostalCode: "",
                 ShipCountry: ""
             },
-oldOrder: {
+            oldOrder: {
                 OrderID: 0,
                 CustomerID: 0,
                 EmployeeID: 0,
@@ -163,7 +163,6 @@ oldOrder: {
             AvaialbeCitys: [],
             AvaialbeRegions: [],
             AvaialbeCountrys: []
-
         },
         methods: {
             fetchOrder() {
@@ -178,11 +177,11 @@ oldOrder: {
                         country = '';
                     }
                 var path = "../Orders/AvaiableCityList?country=" + country;
-             this.fetchJson(path,json => {
-                                 this.AvaialbeCitys = json;
-                                 if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
-                                     this.order.ShipCity = "";
-                                 }
+                this.fetchJson(path, json => {
+                                  this.AvaialbeCitys = json;
+                                 //if (!this.AvaialbeCitys.includes(this.order.ShipCity)) {
+                                 //    this.order.ShipCity = "";
+                                 //}
                              });
             },
 
