@@ -112,17 +112,13 @@ $(function () {
             keyExpr: "OrderID",
             onContentReady:contentReady,
       onRowClick: onRowClick,
-       export: {//Экспорт
+       export: {
                 enabled: true
        },
             groupPanel: {
                 visible: true
             },
-       stateStoring: {//сохранение состояния
-                enabled: true,
-                type: "localStorage",
-                storageKey: "storage"
-            },
+            
             paging: {
                 pageSize: 30
             },
@@ -130,8 +126,9 @@ $(function () {
             onContextMenuPreparing: contextMenuPreparing,
             focusedRowEnabled: true,
             rowAlternationEnabled: true,
+            focusedRowKey: 3,
   
-             columnAutoWidth: false,
+             columnAutoWidth: true,
             filterRow: {
                 visible: true,
                 applyFilter: "auto"
