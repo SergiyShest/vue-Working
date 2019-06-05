@@ -92,44 +92,44 @@ namespace datagrid_mvc5.Controllers
             return Content(json, "application/json");
         }
 
-        [HttpPut]
-        public ActionResult Put(int key, string values)
-        {
-            var order = _db.Orders.Find(key);
-            JsonConvert.PopulateObject(values, order);
-            if (!TryValidateModel(order))
-            {
-                Response.StatusCode = 400;
-                return Content(ModelState.GetFullErrorMessage(), "text/plain");
-            }
-            _db.SaveChanges();
-            return new EmptyResult();
-        }
+        //[HttpPut]
+        //public ActionResult Put(int key, string values)
+        //{
+        //    var order = _db.Orders.Find(key);
+        //    JsonConvert.PopulateObject(values, order);
+        //    if (!TryValidateModel(order))
+        //    {
+        //        Response.StatusCode = 400;
+        //        return Content(ModelState.GetFullErrorMessage(), "text/plain");
+        //    }
+        //    _db.SaveChanges();
+        //    return new EmptyResult();
+        //}
 
-        [HttpPost]
-        public ActionResult Post(string values)
-        {
-            var order = new Order();
-            JsonConvert.PopulateObject(values, order);
-            if (!TryValidateModel(order))
-            {
-                Response.StatusCode = 400;
-                return Content(ModelState.GetFullErrorMessage(), "text/plain");
-            }
-            _db.Orders.Add(order);
-            _db.SaveChanges();
+        //[HttpPost]
+        //public ActionResult Post(string values)
+        //{
+        //    var order = new Order();
+        //    JsonConvert.PopulateObject(values, order);
+        //    if (!TryValidateModel(order))
+        //    {
+        //        Response.StatusCode = 400;
+        //        return Content(ModelState.GetFullErrorMessage(), "text/plain");
+        //    }
+        //    _db.Orders.Add(order);
+        //    _db.SaveChanges();
 
-            return new EmptyResult();
-        }
+        //    return new EmptyResult();
+        //}
 
-        [HttpDelete]
-        public ActionResult Delete(int key)
-        {
-            var order = _db.Orders.Find(key);
-            _db.Orders.Remove(order);
-            _db.SaveChanges();
-            return new EmptyResult();
-        }
+        //[HttpDelete]
+        //public ActionResult Delete(int key)
+        //{
+        //    var order = _db.Orders.Find(key);
+        //    _db.Orders.Remove(order);
+        //    _db.SaveChanges();
+        //    return new EmptyResult();
+        //}
 
         [HttpGet]
         public ActionResult GetById(int key)
@@ -164,14 +164,14 @@ namespace datagrid_mvc5.Controllers
             return Content(errorsD.ToString(), "application/json");
         }
 
-        [HttpGet]
+       [HttpGet]
         public ActionResult AvaialbeEmploers()
         {
             var product = from o in _db.Employees
                           select new
                           {
                               Id = o.EmployeeID,
-                              Name = o.FirstName + " " + o.LastName
+                              Name = o.Employee1.FirstName
                           };
             string errStr = JsonConvert.SerializeObject(product);
             return Content(errStr, "application/json");
