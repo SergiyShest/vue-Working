@@ -1,6 +1,7 @@
 
 const customers = [{ Id: "ALFKI", Name: "Maria Anders" }, { Id: "ANATR", Name: "Ana Trujillo" }, { Id: "ANTON", Name: "Antonio Moreno" }, { Id: "AROUT", Name: "Thomas Hardy" }, { Id: "BERGS", Name: "Christina Berglund" }, { Id: "BLAUS", Name: "Hanna Moos" }, { Id: "BLONP", Name: "Frédérique Citeaux" }, { Id: "BOLID", Name: "Martín Sommer" }, { Id: "BONAP", Name: "Laurence Lebihan" }, { Id: "BOTTM", Name: "Elizabeth Lincoln" }, { Id: "BSBEV", Name: "Victoria Ashworth" }, { Id: "CACTU", Name: "Patricio Simpson" }, { Id: "CENTC", Name: "Francisco Chang" }, { Id: "CHOPS", Name: "Yang Wang" }, { Id: "COMMI", Name: "Pedro Afonso" }, { Id: "CONSH", Name: "Elizabeth Brown" }, { Id: "DRACD", Name: "Sven Ottlieb" }, { Id: "DUMON", Name: "Janine Labrune" }, { Id: "EASTC", Name: "Ann Devon" }, { Id: "ERNSH", Name: "Roland Mendel" }, { Id: "FAMIA", Name: "Aria Cruz" }, { Id: "FOLIG", Name: "Martine Rancé" }, { Id: "FOLKO", Name: "Maria Larsson" }, { Id: "FRANK", Name: "Peter Franken" }, { Id: "FRANR", Name: "Carine Schmitt" }, { Id: "FRANS", Name: "Paolo Accorti" }, { Id: "FURIB", Name: "Lino Rodriguez" }, { Id: "GALED", Name: "Eduardo Saavedra" }, { Id: "GODOS", Name: "José Pedro Freyre" }, { Id: "GOURL", Name: "André Fonseca" }, { Id: "GREAL", Name: "Howard Snyder" }, { Id: "GROSR", Name: "Manuel Pereira" }, { Id: "HANAR", Name: "Mario Pontes" }, { Id: "HILAA", Name: "Carlos Hernández" }, { Id: "HUNGC", Name: "Yoshi Latimer" }, { Id: "HUNGO", Name: "Patricia McKenna" }, { Id: "ISLAT", Name: "Helen Bennett" }, { Id: "KOENE", Name: "Philip Cramer" }, { Id: "LACOR", Name: "Daniel Tonini" }, { Id: "LAMAI", Name: "Annette Roulet" }, { Id: "LAUGB", Name: "Yoshi Tannamuri" }, { Id: "LAZYK", Name: "John Steel" }, { Id: "LEHMS", Name: "Renate Messner" }, { Id: "LETSS", Name: "Jaime Yorres" }, { Id: "LILAS", Name: "Carlos González" }, { Id: "LINOD", Name: "Felipe Izquierdo" }, { Id: "LONEP", Name: "Fran Wilson" }, { Id: "MAGAA", Name: "Giovanni Rovelli" }, { Id: "MAISD", Name: "Catherine Dewey" }, { Id: "MEREP", Name: "Jean Fresnière" }, { Id: "MORGK", Name: "Alexander Feuer" }, { Id: "NORTS", Name: "Simon Crowther" }, { Id: "OCEAN", Name: "Yvonne Moncada" }, { Id: "OLDWO", Name: "Rene Phillips" }, { Id: "OTTIK", Name: "Henriette Pfalzheim" }, { Id: "PERIC", Name: "Guillermo Fernández" }, { Id: "PICCO", Name: "Georg Pipps" }, { Id: "PRINI", Name: "Isabel de Castro" }, { Id: "QUEDE", Name: "Bernardo Batista" }, { Id: "QUEEN", Name: "Lúcia Carvalho" }, { Id: "QUICK", Name: "Horst Kloss" }, { Id: "RANCH", Name: "Sergio Gutiérrez" }, { Id: "RATTC", Name: "Paula Wilson" }, { Id: "REGGC", Name: "Maurizio Moroni" }, { Id: "RICAR", Name: "Janete Limeira" }, { Id: "RICSU", Name: "Michael Holz" }, { Id: "ROMEY", Name: "Alejandra Camino" }, { Id: "SANTG", Name: "Jonas Bergulfsen" }, { Id: "SAVEA", Name: "Jose Pavarotti" }, { Id: "SEVES", Name: "Hari Kumar" }, { Id: "SIMOB", Name: "Jytte Petersen" }, { Id: "SPECD", Name: "Dominique Perrier" }, { Id: "SPLIR", Name: "Art Braunschweiger" }, { Id: "SUPRD", Name: "Pascale Cartrain" }, { Id: "THEBI", Name: "Liz Nixon" }, { Id: "THECR", Name: "Liu Wong" }, { Id: "TOMSP", Name: "Karin Josephs" }, { Id: "TORTU", Name: "Miguel Angel Paolino" }, { Id: "TRADH", Name: "Anabela Domingues" }, { Id: "TRAIH", Name: "Helvetius Nagy" }, { Id: "VAFFE", Name: "Palle Ibsen" }, { Id: "VICTE", Name: "Mary Saveley" }, { Id: "VINET", Name: "Paul Henriot" }, { Id: "WANDK", Name: "Rita Müller" }, { Id: "WARTH", Name: "Pirkko Koskitalo" }, { Id: "WELLI", Name: "Paula Parente" }, { Id: "WHITC", Name: "Karl Jablonski" }, { Id: "WILMK", Name: "Matti Karttunen" }, { Id: "WOLZA", Name: "Zbyszek Piestrzeniewicz" }];
 
+// описание колонок
 var colunmDescription = [
     {
         dataField: "OrderID",
@@ -8,11 +9,11 @@ var colunmDescription = [
             visible: true
         },
         caption: "ID",
-        headerCellTemplate: $('<i style="color: red">ID</i>'),
+        
         filter: true
     },
     {
-        caption: "Cust\r\nomer",
+        headerCellTemplate: $('<i style="color: red">Customer</i>'),
         //calculateDisplayValue: "CustomerName",
         dataField: "CustomerID",
         lookup: {
