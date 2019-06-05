@@ -9,6 +9,10 @@ function setDataSource() {
     grid.option("dataSource", dataSource);
 }
 
+function onRowClick(e) {
+    
+}
+
 //
 function copyToClipboard(str) {
     const el = document.createElement('textarea');
@@ -107,14 +111,18 @@ $(function () {
             remoteOperations: { paging: true, filtering: true, sorting: true, grouping: true, summary: true, groupPaging: true },
             keyExpr: "OrderID",
             onContentReady:contentReady,
-     // onRowClick: onRowClick,
-       export: {
+      onRowClick: onRowClick,
+       export: {//Экспорт
                 enabled: true
        },
             groupPanel: {
                 visible: true
             },
-            
+       stateStoring: {//сохранение состояния
+                enabled: true,
+                type: "localStorage",
+                storageKey: "storage"
+            },
             paging: {
                 pageSize: 30
             },
@@ -122,9 +130,8 @@ $(function () {
             onContextMenuPreparing: contextMenuPreparing,
             focusedRowEnabled: true,
             rowAlternationEnabled: true,
-            focusedRowKey: 3,
   
-             columnAutoWidth: true,
+             columnAutoWidth: false,
             filterRow: {
                 visible: true,
                 applyFilter: "auto"

@@ -9,6 +9,10 @@ function setDataSource() {
     grid.option("dataSource", dataSource);
 }
 
+function onRowClick(e) {
+    
+}
+
 //
 function copyToClipboard(str) {
     const el = document.createElement('textarea');
@@ -107,6 +111,13 @@ $(function () {
             remoteOperations: { paging: true, filtering: true, sorting: true, grouping: true, summary: true, groupPaging: true },
             keyExpr: "OrderID",
             onContentReady:contentReady,
+      onRowClick: onRowClick,
+       export: {
+                enabled: true
+       },
+            groupPanel: {
+                visible: true
+            },
             
             paging: {
                 pageSize: 30
