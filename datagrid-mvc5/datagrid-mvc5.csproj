@@ -135,6 +135,7 @@
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ShippersController.cs" />
     <Compile Include="DataSourceLoadOptions.cs" />
+    <Compile Include="DunamicObject.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

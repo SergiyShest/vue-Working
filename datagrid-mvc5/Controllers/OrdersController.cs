@@ -3,11 +3,14 @@ using DevExtreme.AspNet.Data;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -143,28 +146,57 @@ namespace datagrid_mvc5.Controllers
         public ActionResult Validate(int id, string json)
         {
             var order = _db.Orders.Find(id);
-
             JsonConvert.PopulateObject(json, order);
-            var errors = _db.GetValidationErrors();
-            StringBuilder errorsD = new StringBuilder("{");
-            foreach (DbEntityValidationResult validationError in errors)
-            {
-                foreach (DbValidationError err in validationError.ValidationErrors)
-                {
-                    errorsD.AppendFormat(@"""{0}"":""{1}"",", err.PropertyName,
-                        err.ErrorMessage.Replace("\"", "'"));
-                }
-            }
-
-            if (errorsD.Length > 1)
-            {
-                errorsD.Remove(errorsD.Length - 1, 1);//remove last comma
-            }
-            errorsD.Append("}");
+            var errorsD = GetErrorsJsArrey();
             return Content(errorsD.ToString(), "application/json");
         }
 
-       [HttpGet]
+        [HttpGet]
+        public ActionResult Save(int id, string json)
+        {
+            String res= null;
+            List<DbEntityValidationResult> errors=new List<DbEntityValidationResult>();
+            var order = _db.Orders.Find(id);
+            JsonConvert.PopulateObject(json, order);
+          var changed=  _db.ChangeTracker.HasChanges();
+            try
+            {
+                _db.SaveChanges();
+                changed = false;
+            }
+            catch (DbEntityValidationException ex)
+            {
+               errors.AddRange( ex.EntityValidationErrors);
+
+            }
+            res  = GetErrorsJsArrey( errors,changed).ToString();
+           // res = string.Format("{{isChanged:{0},errors:{1}",changed, err);
+            return Content(res, "application/json");
+        }
+
+        private String  GetErrorsJsArrey()
+        {
+            var changed=  _db.ChangeTracker.HasChanges();
+            var errors = _db.GetValidationErrors();
+            return GetErrorsJsArrey(errors,changed);
+        }
+
+        private string   GetErrorsJsArrey(IEnumerable<DbEntityValidationResult> errors,bool changed)
+        {
+            dynamic dynamic = new ExpandoObject();
+            dynamic.IsChanged = changed;//Создание свойства IsChanged
+            var errProperty = new Dictionary<string, object>();//Создание массива с будущими свойсвтвами ошибки
+            dynamic.Errors = new DynObject(errProperty);//Создание объекта у которого свойства задаются в массиве
+            foreach (DbEntityValidationResult validationError in errors)//Заполнение массива ошибками
+            {
+                foreach (DbValidationError err in validationError.ValidationErrors)
+                {
+                    errProperty.Add(err.PropertyName,err.ErrorMessage.Replace("\"", "'"));
+                }
+            }
+            var json = JsonConvert.SerializeObject(dynamic); return json;
+        }
+        [HttpGet]
         public ActionResult AvaialbeEmploers()
         {
             var product = from o in _db.Employees
@@ -260,6 +292,12 @@ namespace datagrid_mvc5.Controllers
             return query;
         }
         #endregion
+    }
+
+    public  class NamedEntity
+    {
+        public int Id { get; set; }
+        public  string Name { get; set; }
     }
 
 }
