@@ -41,3 +41,10 @@
     border-color: red;
     border-style: double;
 }
+.input {
+
+    width: 200px ;
+}
+.alignRight {
+    float: right
+}
