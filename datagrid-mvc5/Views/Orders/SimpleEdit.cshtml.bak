@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="app">
-        <table >
+        <table border="1">
 
             <tr>
                 <td>Freight</td>
@@ -42,7 +42,7 @@
         new Vue({
             el: "#app",
             data: {
-                id: @ViewBag.Id,
+                 id=
                 order: {
                     OrderID: 0,
                     CustomerID: "",
@@ -58,29 +58,29 @@
                     ShipRegion: null,
                     ShipPostalCode: "",
                     ShipCountry: ""
-                },
             },
-            methods: {
-                //читаем объект
-                fetchOrder() {
-                    var path = "../Orders/GetById?key=" + this.id;
-                    console.log(path);
-                    this.fetchJson(path, json => this.order = json);
-                },
-                //обертка над стандартной функцией fetch
-                fetchJson(path, collback) {
-                    try {
-                        fetch(path, { mode: 'cors' })
-                            .then(response => response.json())
-                            .then(function(json) { collback(json); }
-                            );
-                    } catch (ex) {
-                        alert(ex);
+              
+                methods: {
+                    //читаем объект
+                    fetchOrder() {
+                        var path = "../Orders/GetById?key=" + this.id;
+                        this.fetchJson(path, json => this.order = json);
+                    },
+                    //обертка над стандартной функцией fetch
+                    fetchJson(path, collback) {
+                        try {
+                            (path, { mode: 'cors' })
+                                .then(response => response.json())
+                                .then(function (json) { collback(json); }
+                                );
+                        } catch (ex) {
+                            alert(ex);
+                        }
                     }
+                },
+                mounted: function () {
+                    this.fetchOrder();
                 }
-            },
-            mounted: function() {
-                this.fetchOrder();
             }
         });
     </script>
