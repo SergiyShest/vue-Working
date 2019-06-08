@@ -1,0 +1,47 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>редактирование </title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+                        <h1>Aвто генерация формы</h1>
+                        <table >
+                            <tr v-for="(item,i) in order"> @*создание ряда по каждому свойству объекта ордер*@
+                                <td> {{i}}</td>
+                                <td>
+                                    <input type="text" v-model="order[i]"/>
+                                </td>
+                            </tr>
+                        </table>
+    </div>
+
+    <script>
+
+    new Vue({
+        el: "#app",
+        data: {
+            order: {
+                OrderID: 10501,
+                CustomerID: "BLAUS",
+                EmployeeID: 9,
+                OrderDate: "1997-04-09T00:00:00",
+                RequiredDate: "1997-05-07T00:00:00",
+                ShippedDate: "1997-04-16T00:00:00",
+                ShipVia: 3,
+                Freight: 8.85,
+                ShipName: "Blauer See Delikatessen",
+                ShipAddress: "Forsterstr. 57",
+                ShipCity: "Mannheim",
+                ShipRegion: null,
+                ShipPostalCode: "68306",
+                ShipCountry: "Germany"
+            }
+        }
+    });
+    </script>
+</body>
+</html>

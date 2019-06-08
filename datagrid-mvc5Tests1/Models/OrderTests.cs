@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Web.Mvc;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace datagrid_mvc5.Models.Tests
 {
@@ -23,6 +25,20 @@ namespace datagrid_mvc5.Models.Tests
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             AppDomain.CurrentDomain.SetData("DataDirectory", path);
 
+        }
+
+
+        [TestCase( Description = "Существующий идентификатор")]
+        public void OrderControllerGetByIdTest()
+        {
+            var bdContext = new Northwind();
+            var id = bdContext.Orders.First().OrderID;//получил первый существующий идентификатор
+           
+            var orderController = new OrdersController();
+            var json = orderController.GetById(id) as ContentResult;
+
+            var res = JsonConvert.DeserializeObject(json.Content,typeof(Order)) as Order;
+            Assert.AreEqual(id, res.OrderID);
         }
 
 
@@ -57,9 +73,9 @@ namespace datagrid_mvc5.Models.Tests
             }
         }
 
-       // [TestCase("mos")]
+        // [TestCase("mos")]
         [TestCase("Moskow")]
-       // [TestCase("Old noterdam de Pary in CustomCheckAttribute")]
+        // [TestCase("Old noterdam de Pary in CustomCheckAttribute")]
         public void ControllerTest(string city)
         {
             Northwind nrv = new Northwind();
@@ -74,12 +90,12 @@ namespace datagrid_mvc5.Models.Tests
         }
 
 
-        [TestCase("","")]
-        [TestCase("France","null")]
+        [TestCase("", "")]
+        [TestCase("France", "null")]
         [TestCase("Brazil", "RJ")]
         [TestCase("", "RJ")]
-       // [TestCase("Old noterdam de Pary in CustomCheckAttribute")]
-        public void CityListTest(string country,string region)
+        // [TestCase("Old noterdam de Pary in CustomCheckAttribute")]
+        public void CityListTest(string country, string region)
         {
             OrdersController controller = new OrdersController();
             var res = controller.AvaiableCityList(region, country);

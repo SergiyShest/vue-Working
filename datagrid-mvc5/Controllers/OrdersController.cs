@@ -49,13 +49,18 @@ namespace datagrid_mvc5.Controllers
             return View();
         }
 
+        public ActionResult SimpleEdit(int id = 0)
+        {
+            ViewBag.Id = id;
+            return View();
+        }
+
+
         Northwind _db = new Northwind();
 
         [HttpGet]
         public ActionResult Get(DataSourceLoadOptions loadOptions)
         {
-
-
             loadOptions.PrimaryKey = new[] { "OrderID" };
             var ordersQuery = from o in _db.Orders
                               select new
@@ -95,51 +100,12 @@ namespace datagrid_mvc5.Controllers
             return Content(json, "application/json");
         }
 
-        //[HttpPut]
-        //public ActionResult Put(int key, string values)
-        //{
-        //    var order = _db.Orders.Find(key);
-        //    JsonConvert.PopulateObject(values, order);
-        //    if (!TryValidateModel(order))
-        //    {
-        //        Response.StatusCode = 400;
-        //        return Content(ModelState.GetFullErrorMessage(), "text/plain");
-        //    }
-        //    _db.SaveChanges();
-        //    return new EmptyResult();
-        //}
-
-        //[HttpPost]
-        //public ActionResult Post(string values)
-        //{
-        //    var order = new Order();
-        //    JsonConvert.PopulateObject(values, order);
-        //    if (!TryValidateModel(order))
-        //    {
-        //        Response.StatusCode = 400;
-        //        return Content(ModelState.GetFullErrorMessage(), "text/plain");
-        //    }
-        //    _db.Orders.Add(order);
-        //    _db.SaveChanges();
-
-        //    return new EmptyResult();
-        //}
-
-        //[HttpDelete]
-        //public ActionResult Delete(int key)
-        //{
-        //    var order = _db.Orders.Find(key);
-        //    _db.Orders.Remove(order);
-        //    _db.SaveChanges();
-        //    return new EmptyResult();
-        //}
-
         [HttpGet]
         public ActionResult GetById(int key)
         {
-            var order = _db.Orders.Find(key);
-            string errStr = JsonConvert.SerializeObject(order);
-            return Content(errStr, "application/json");
+            var order = _db.Orders.Find(key);//Получили объект
+            string orderStr = JsonConvert.SerializeObject(order);//Сериализовали его
+            return Content(orderStr, "application/json");//отправили 
         }
 
         [HttpGet]
