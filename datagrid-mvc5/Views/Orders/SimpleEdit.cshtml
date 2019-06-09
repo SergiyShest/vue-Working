@@ -44,7 +44,7 @@
             <tr>
                 <td> </td>
                 <td>
-                    <button v-on:click="Save()" :disabled="IsChanged===false" class="alignRight">Save</button>
+                    <button v-on:click="Save()" :disabled="IsChanged===false || hasError " class="alignRight">Save</button>
                 </td>
             </tr>
         </table>
@@ -93,6 +93,18 @@ errors: {
             IsChanged: false,
             AvaialbeCitys: [],
             AvaialbeCountrys: []
+            },
+            computed :
+            {
+                hasError: function () {
+                    console.log('jj');
+                    for (var err in  this.errors) {
+                        console.log('--' + err);
+                        var error = this.errors[err];
+                        if (error !== '' || null) return true;
+                    }
+                    return false;
+                }
             },
             methods: {
                 //читаем объект

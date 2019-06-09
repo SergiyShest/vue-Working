@@ -108,6 +108,7 @@ namespace datagrid_mvc5.Controllers
         public ActionResult GetById(int id)
         {
             var order = _db.Orders.Find(id);//Получили объект
+            if (order == null)order = new Order();
             string orderStr = JsonConvert.SerializeObject(order);//Сериализовали его
             return Content(orderStr, "application/json");//отправили 
         }
@@ -116,6 +117,7 @@ namespace datagrid_mvc5.Controllers
         public ActionResult Validate(int id, string json)
         {
             var order = _db.Orders.Find(id);
+            if (order == null) order = new Order();
             JsonConvert.PopulateObject(json, order);
             var errorsD = GetErrorsAndChanged();
             return Content(errorsD.ToString(), "application/json");
@@ -140,7 +142,6 @@ namespace datagrid_mvc5.Controllers
 
             }
             res  = GetErrorsAndChanged( errors,changed).ToString();
-           // res = string.Format("{{isChanged:{0},errors:{1}",changed, err);
             return Content(res, "application/json");
         }
 
