@@ -64,7 +64,7 @@
                     ShippedDate: "",
                     ShipVia: 0,
                     Freight: 0,
-                    ShipName: "0",
+                    ShipName: "",
                     ShipAddress: "",
                     ShipCity: "",
                     ShipRegion: null,
@@ -97,9 +97,7 @@ errors: {
             computed :
             {
                 hasError: function () {
-                    console.log('jj');
                     for (var err in  this.errors) {
-                        console.log('--' + err);
                         var error = this.errors[err];
                         if (error !== '' || null) return true;
                     }
