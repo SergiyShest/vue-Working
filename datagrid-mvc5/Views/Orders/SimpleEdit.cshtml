@@ -12,10 +12,12 @@
         <table>
             <tr>
                 <td>Cтоимость перевозки</td>
-                <td class="tooltip">
-                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input" />
+                <td>
+                    <div  v-bind:class="{tooltip:!errors.Freight==''}">
+                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" class="input" />
                     <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
-                </td>
+                </div>
+                    </td>
             </tr>
             <tr>
                 <td>Старана приписки корабля</td>
