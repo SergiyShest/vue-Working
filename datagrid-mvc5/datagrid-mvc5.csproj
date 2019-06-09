@@ -185,6 +185,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Orders\SimpleEdit.cshtml" />
+    <Content Include="Views\Orders\SimpleIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

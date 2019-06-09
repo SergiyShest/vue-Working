@@ -172,7 +172,7 @@
         },
         methods: {
             fetchOrder() {
-                var path = "../Orders/GetById?key=" + this.id;
+                var path = "../Orders/GetById?Id=" + this.id;
                     this.fetchJson(path,json => this.order = json);
             },
 

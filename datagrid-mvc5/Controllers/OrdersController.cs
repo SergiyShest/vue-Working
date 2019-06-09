@@ -24,7 +24,11 @@ namespace datagrid_mvc5.Controllers
     public class OrdersController : Controller
     {
 
-
+      public new ActionResult SimpleIndex()
+      {
+            ViewBag.Orders = _db.Orders;
+            return View();
+        }
         public ActionResult Index()
         {
             var usedCustomers = from o in _db.Orders
@@ -101,9 +105,9 @@ namespace datagrid_mvc5.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetById(int key)
+        public ActionResult GetById(int id)
         {
-            var order = _db.Orders.Find(key);//Получили объект
+            var order = _db.Orders.Find(id);//Получили объект
             string orderStr = JsonConvert.SerializeObject(order);//Сериализовали его
             return Content(orderStr, "application/json");//отправили 
         }
@@ -113,7 +117,7 @@ namespace datagrid_mvc5.Controllers
         {
             var order = _db.Orders.Find(id);
             JsonConvert.PopulateObject(json, order);
-            var errorsD = GetErrorsJsArrey();
+            var errorsD = GetErrorsAndChanged();
             return Content(errorsD.ToString(), "application/json");
         }
 
@@ -135,19 +139,19 @@ namespace datagrid_mvc5.Controllers
                errors.AddRange( ex.EntityValidationErrors);
 
             }
-            res  = GetErrorsJsArrey( errors,changed).ToString();
+            res  = GetErrorsAndChanged( errors,changed).ToString();
            // res = string.Format("{{isChanged:{0},errors:{1}",changed, err);
             return Content(res, "application/json");
         }
 
-        private String  GetErrorsJsArrey()
+        private String  GetErrorsAndChanged()
         {
             var changed=  _db.ChangeTracker.HasChanges();
             var errors = _db.GetValidationErrors();
-            return GetErrorsJsArrey(errors,changed);
+            return GetErrorsAndChanged(errors,changed);
         }
 
-        private string   GetErrorsJsArrey(IEnumerable<DbEntityValidationResult> errors,bool changed)
+        private static string   GetErrorsAndChanged(IEnumerable<DbEntityValidationResult> errors,bool changed)
         {
             dynamic dynamic = new ExpandoObject();
             dynamic.IsChanged = changed;//Создание свойства IsChanged
@@ -155,24 +159,25 @@ namespace datagrid_mvc5.Controllers
             dynamic.Errors = new DynObject(errProperty);//Создание объекта у которого свойства задаются в массиве
             foreach (DbEntityValidationResult validationError in errors)//Заполнение массива ошибками
             {
-                foreach (DbValidationError err in validationError.ValidationErrors)
+                foreach (DbValidationError err in validationError.ValidationErrors)//Заполнение массива ошибками
                 {
-                    errProperty.Add(err.PropertyName,err.ErrorMessage.Replace("\"", "'"));
+                    errProperty.Add(err.PropertyName,err.ErrorMessage);
                 }
             }
             var json = JsonConvert.SerializeObject(dynamic); return json;
         }
+
         [HttpGet]
         public ActionResult AvaialbeEmploers()
         {
-            var product = from o in _db.Employees
+            var emploer = from o in _db.Employees
                           select new
                           {
                               Id = o.EmployeeID,
                               Name = o.Employee1.FirstName
                           };
-            string errStr = JsonConvert.SerializeObject(product);
-            return Content(errStr, "application/json");
+            string jsonStr = JsonConvert.SerializeObject(emploer);
+            return Content(jsonStr, "application/json");
         }
 
         [HttpGet]
@@ -184,52 +189,94 @@ namespace datagrid_mvc5.Controllers
                               Id = o.CustomerID,
                               Name = o.ContactName,
                           };
-            string errStr = JsonConvert.SerializeObject(product);
-            return Content(errStr, "application/json");
+            string jsonStr = JsonConvert.SerializeObject(product);
+            return Content(jsonStr, "application/json");
         }
 
+
+        #region Получение списков Linq
+        /// <summary>
+        /// Список доступных городов c учетом региона и страны
+        /// если регион или страна не заданы , то все города 
+        /// </summary>
+        /// <param name="country"></param>
+        /// <param name="region"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult AvaiableCityList( string country,string region=null)
+        {
+            var avaiableCity =  _db.Orders.Where(c => ((c.ShipRegion == region) || region == null)&& (c.ShipCountry == country) || country == null).Select(a => a.ShipCity).Distinct();
+            
+            var jsonStr = JsonConvert.SerializeObject(avaiableCity);
+            return Content(jsonStr, "application/json");
+        }
+
+        /// <summary>
+        /// Список доступных стран c учетом региона
+        /// если регион не задан, то все страны
+        /// </summary>
+        /// <param name="region"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult AvaiableCountrys(string region=null)
+        {
+            var resList = _db.Orders.Where(c => (c.ShipRegion == region)||region==null).Select(c => c.ShipCountry).Distinct();
+            var json = JsonConvert.SerializeObject(resList);
+            return Content(json, "application/json");
+        }
+
+        [HttpGet]
+        public ActionResult AvaiableRegions()
+        {
+            var resList = _db.Orders.Select(c=>c.ShipRegion).Distinct();
+            var json = JsonConvert.SerializeObject(resList);
+            return Content(json, "application/json");
+        }
+
+        #endregion
 
         #region Получение списка селектом
 
 
         [HttpGet]
-        public ActionResult AvaiableCityList(string region, string country)
+        public ActionResult AvaiableCityListSql(string region, string country)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             string query = "Select distinct ShipCity from orders where {ShipCountry} {ShipRegion}  1=1";
             query = MadeParam("ShipCountry", country, parameters, query);
             query = MadeParam("ShipRegion", region, parameters, query);
 
-            return GetActionResult(query, parameters);
+            return GetActionResultSql(query, parameters);
         }
 
 
         [HttpGet]
-        public ActionResult AvaiableCountrys(string region)
+        public ActionResult AvaiableCountrySql(string region)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             string query = "Select distinct ShipCountry from orders where  {ShipRegion}  1=1";
             query = MadeParam("ShipRegion", region, parameters, query);
 
-            return GetActionResult(query, parameters);
+            return GetActionResultSql(query, parameters);
         }
 
         [HttpGet]
-        public ActionResult AvaiableRegions()
+        public ActionResult AvaiableRegionsSql()
         {
             string query = "Select distinct ShipRegion from orders";
-            return GetActionResult(query);
+            return GetActionResultSql(query);
         }
 
-        #endregion
-        #region query
+  
+       
+
         /// <summary>
         /// получение коллекции запросом
         /// </summary>
         /// <param name="query"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        private ActionResult GetActionResult(string query, List<SqlParameter> parameters = null)
+        private ActionResult GetActionResultSql(string query, List<SqlParameter> parameters = null)
         {
             if (parameters == null) parameters = new List<SqlParameter>();
             var resList = _db.Database.SqlQuery<string>(query, parameters.ToArray()).ToList();
