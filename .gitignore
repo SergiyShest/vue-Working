@@ -5,3 +5,4 @@
 /datagrid-mvc5/App_Data/*.mdf
 /datagrid-mvc5/App_Data/*.ldf
 /datagrid-mvc5/App_Data
+*.bak

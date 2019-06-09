@@ -106,7 +106,7 @@ namespace datagrid_mvc5.Models {
             string val = value?.ToString();
             Northwind _db = new Northwind();
             Order order = (Order)validationContext.ObjectInstance;
-         bool exsist  =  _db.Orders.FirstOrDefault(o => o.ShipCity == val && o.ShipCountry == order.ShipCountry)!=null;
+           bool exsist  =  _db.Orders.FirstOrDefault(o => o.ShipCity == val && o.ShipCountry == order.ShipCountry)!=null;
            
             if (!exsist)
             {

@@ -3,16 +3,18 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>редактирование </title>
+    <title>редактирование id=@ViewBag.Id</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
 </head>
 <body>
     <div id="app">
         <table>
             <tr>
                 <td>Cтоимость перевозки</td>
-                <td>
-                    <input type="number" v-model="order.Freight" />
+                <td class="tooltip">
+                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input" />
+                    <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
                 </td>
             </tr>
             <tr>
@@ -25,22 +27,28 @@
             </tr>
             <tr>
                 <td>Город корабля</td>
-                <td>
-                    <select v-model="order.ShipCity" >
+                <td class="tooltip">
+                    <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}" class="input">
                         <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
                     </select>
+                    <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
                 </td>
             </tr>
             <tr>
                 <td>Адрес корабля</td>
+                <td class="tooltip">
+                    <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
+                    <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
                 <td>
-                    <input type="text" v-model="order.ShipAddress" />
+                    <button v-on:click="Save()" :disabled="IsChanged===false" class="alignRight">Save</button>
                 </td>
             </tr>
         </table>
-
     </div>
-
     <script>
 
         new Vue({
@@ -66,6 +74,23 @@
             oldOrder: {
                 ShipCountry: ""
             },
+errors: {
+                OrderID: null,
+                CustomerID: null,
+                EmployeeID: null,
+                OrderDate: null,
+                RequiredDate: null,
+                ShippedDate: null,
+                ShipVia: null,
+                Freight: null,
+                ShipName: null,
+                ShipAddress: null,
+                ShipCity: null,
+                ShipRegion: null,
+                ShipPostalCode: null,
+                ShipCountry: null
+  },
+            IsChanged: false,
             AvaialbeCitys: [],
             AvaialbeCountrys: []
             },
@@ -89,6 +114,16 @@
                         this.fetchJson(path,jsonResult => {this.AvaialbeCountrys = jsonResult;});
                 },
                 //обертка над стандартной функцией fetch
+            Validate() {this.Action("Validate");},
+            Save() {this.Action("Save");},
+            Action(action) {
+                var myJSON = JSON.stringify(this.order);
+                var path = "../Orders/" + action + "?id=" + this.id + "&json=" + myJSON;
+                this.fetchJson(path, jsonResult => {
+                    this.errors = jsonResult.Errors;
+                    this.IsChanged = jsonResult.IsChanged;
+                });
+            },
                 fetchJson(path, collback) {
                     try {
                         fetch(path, { mode: 'cors' })
@@ -111,6 +146,7 @@
                             this.fetchCityList();//Перечитываю список городов с учетом выбранной страны
                         }
                        this.saveOldOrderValue();
+                   this.Validate();
                      },
                     deep: true
                 }

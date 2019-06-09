@@ -160,8 +160,7 @@ namespace datagrid_mvc5.Controllers
             foreach (DbEntityValidationResult validationError in errors)//Заполнение массива ошибками
             {
                 foreach (DbValidationError err in validationError.ValidationErrors)//Заполнение массива ошибками
-                {
-                    errProperty.Add(err.PropertyName,err.ErrorMessage);
+                { errProperty.Add(err.PropertyName,err.ErrorMessage);
                 }
             }
             var json = JsonConvert.SerializeObject(dynamic); return json;

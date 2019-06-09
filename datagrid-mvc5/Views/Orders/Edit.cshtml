@@ -10,23 +10,7 @@
 <body>
     <div id="app">
 
-        <table>
-            <tr>
-                @*<td>
-                        <h1>авто генерация формы</h1>
-                        <table style="background-color: blue">
-                            <tr v-for="(item,i) in order">
-                                <td> {{i}}</td>
-                                <td>
-                                    <input type="text" v-model="order[i]"/>
-                                    <p style="color: red" type="text" v-if="errors[i]!=''">{{errors[i]}}</p>
-                                </td>
-                            </tr>
-                        </table>
-
-                    </td>*@
-                <td>
-                    <h1></h1>
+      
                     <table border="1">
                         <tr>
                             <td>Customer</td>
@@ -86,9 +70,7 @@
                             </td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-        </table>
+
     </div>
 
     <script>
