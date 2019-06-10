@@ -13,11 +13,11 @@
             <tr>
                 <td>Cтоимость перевозки</td>
                 <td>
-                    <div  v-bind:class="{tooltip:!errors.Freight==''}">
-                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" class="input" />
-                    <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
-                </div>
-                    </td>
+                    <div v-bind:class="{tooltip:!errors.Freight==''}">
+                        <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" class="input" />
+                        <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td>Старана приписки корабля</td>
@@ -52,6 +52,7 @@
         </table>
     </div>
     <script>
+ var controller = new AbortController();
 
         new Vue({
             el: "#app",
@@ -76,7 +77,7 @@
             oldOrder: {
                 ShipCountry: ""
             },
-errors: {
+        errors: {
                 OrderID: null,
                 CustomerID: null,
                 EmployeeID: null,
@@ -91,7 +92,7 @@ errors: {
                 ShipRegion: null,
                 ShipPostalCode: null,
                 ShipCountry: null
-  },
+            },
             IsChanged: false,
             AvaialbeCitys: [],
             AvaialbeCountrys: []
@@ -125,20 +126,28 @@ errors: {
                         var path = "../Orders/AvaiableCountrys";
                         this.fetchJson(path,jsonResult => {this.AvaialbeCountrys = jsonResult;});
                 },
-                //обертка над стандартной функцией fetch
-            Validate() {this.Action("Validate");},
-            Save() {this.Action("Save");},
-            Action(action) {
+
+            Validate()
+            {
+              controller.abort();//прервать предыдущую валидацию 
+              controller=new AbortController();//создаю новый контроллер валидации
+              this.Action("Validate",controller.signal);//перадаю сигнал позволяющий "убить" фетч
+            },
+            Save() {
+                controller.abort();//прервать предыдущую валидацию 
+                this.Action("Save");
+            },
+              Action(action,signal) {
                 var myJSON = JSON.stringify(this.order);
                 var path = "../Orders/" + action + "?id=" + this.id + "&json=" + myJSON;
                 this.fetchJson(path, jsonResult => {
                     this.errors = jsonResult.Errors;
                     this.IsChanged = jsonResult.IsChanged;
-                });
+               },signal);
             },
-                fetchJson(path, collback) {
+                fetchJson(path, collback,signal) {
                     try {
-                        fetch(path, { mode: 'cors' })
+                        fetch(path, { mode: 'cors',signal:signal })
                             .then(response => response.json())
                             .then(function(json) { collback(json); }
                             );

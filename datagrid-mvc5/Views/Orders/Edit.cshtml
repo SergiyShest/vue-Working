@@ -9,89 +9,98 @@
 </head>
 <body>
     <div id="app">
+        <table border="1">
+            <tr>
+                <td>Customer</td>
+                <td class="tooltip">
+                    <select v-model="order.CustomerID" v-bind:class="{error:!errors.CustomerID==''}" class="input">
+                        <option v-for="customer in AvaialbeCustomers"
+                                :v-key="customer.Id"
+                                v-bind:value="customer.Id">
+                            {{customer.Name}}
+                        </option>
+                    </select>
+                    <span v-if="!errors.CustomerID==''" class="tooltiptext">{{errors.CustomerID}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Freight</td>
+                <td class="tooltip">
+                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input" />
+                    <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>ShipCountry</td>
+                <td>
+                    <select v-model="order.ShipCountry" class="input">
+                        <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>ShipCity</td>
+                <td class="tooltip">
+                    <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}" class="input">
+                        <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                    </select>
+                    <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>ShipAddress</td>
+                <td class="tooltip">
+                    <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
+                    <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
+                </td>
 
-      
-                    <table border="1">
-                        <tr>
-                            <td>Customer</td>
-                            <td class="tooltip">
-                                <select v-model="order.CustomerID" v-bind:class="{error:!errors.CustomerID==''}"  class="input">
-                                    <option v-for="customer in AvaialbeCustomers"
-                                            :v-key="customer.Id"
-                                            v-bind:value="customer.Id">
-                                        {{customer.Name}}
-                                    </option>
-                                </select>
-                                <span v-if="!errors.CustomerID==''" class="tooltiptext">{{errors.CustomerID}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Freight</td>
-                            <td class="tooltip">
-                                <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input"/>
-                                <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ShipCountry</td>
-                            <td>
-                                <select v-model="order.ShipCountry"  class="input">
-                                    <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ShipCity</td>
-                            <td class="tooltip">
-                                <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}"  class="input">
-                                    <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
-                                </select>
-                                <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ShipAddress</td>
-                            <td class="tooltip">
-                                <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }"  class="input"/>
-                                <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>OrderDate</td>
-                            <td>
-                                <input type="datetime-local" v-model="order.OrderDate"  :disabled="true"  class="input" />
-                                <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td >
-                                             <button v-on:click="Save()" :disabled="IsChanged===false || hasError " class="alignRight">Save</button>
- </td>
-                        </tr>
-                    </table>
+            </tr>
+
+            @*<tr>
+                    <td>XXX</td>
+                    <td>
+                        <error-cell FieldName="XXX" FieldError="Jopa" />
+                    </td>
+                </tr>*@
+            <tr>
+                <td>OrderDate</td>
+                <td>
+                    <input type="datetime-local" v-model="order.OrderDate" :disabled="true" class="input" />
+                    <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td>
+                    <button v-on:click="Save()" :disabled="IsChanged===false || hasError " class="alignRight">Save</button>
+                </td>
+            </tr>
+        </table>
 
     </div>
 
     <script>
-    //Vue.component('error-cell',
-    //    {
-    //        props: {
-    //            FieldName: String,
-    //            DataField: String,
-    //            FieldError: String
-    //        },
-    //        data: function () {
+        var controller = new AbortController();
 
-    //            return {
-    //                count: 0
-    //            }
-    //        },
-    //        template: '<tr> <td>{{FieldName}}</td><td >' +
-    //            '<input type="text" v-model="DataField"  v-bind:class="{error:!FieldError==\'\' }"  />' +
-    //            '<p style="color: red" type="text">{{FieldError}}</p>' +
-    //            '</td></tr>'
-    //    });
+    Vue.component('error-cell',
+        {
+            props: {
+                FieldName: String,
+                DataField: String,
+                FieldError: String
+            },
+            data: function () {
+
+                return {
+                    count: 0
+                }
+            },
+            template: '<div>' +
+                '<input type="text" v-model="DataField"  v-bind:class="{error:!FieldError==\'\' }"  />' +
+                '<p style="color: red" type="text">{{FieldError}}</p>' +
+                '</div>'
+        });
+
     new Vue({
         el: "#app",
 
@@ -140,86 +149,108 @@
             AvaialbeRegions: [],
             AvaialbeCountrys: []
         },
-            computed :
-            {
-                hasError: function () {
-                    for (var err in  this.errors) {
-                        var error = this.errors[err];
-                        if (error !== '' || null) return true;
-                    }
-                    return false;
+        computed :
+        {
+            hasError: function () {
+                for (var err in  this.errors) {
+                    var error = this.errors[err];
+                    if (error !== '' || null) return true;
                 }
-            },
+                return false;
+            }
+        },
         methods: {
             fetchOrder() {
                 var path = "../Orders/GetById?Id=" + this.id;
-                    this.fetchJson(path,json => this.order = json);
+                this.fetchJson(path,json => this.order = json);
             },
-
             fetchCityList() {
                 //Avaiable city depended on  country
-                    var country = this.order.ShipCountry;
-                    if (country == null || country === "") {
-                        country = '';
-                    }
+                var country = this.order.ShipCountry;
+                if (country == null || country === "") {
+                    country = '';
+                }
                 var path = "../Orders/AvaiableCityList?country=" + country;
                 this.fetchJson(path, json => {
-                                  this.AvaialbeCitys = json;
-                                
-                             });
+                    this.AvaialbeCitys = json;
+
+                });
             },
 
             fetchCountrys() {
 
-                    var path = "../Orders/AvaiableCountrys";
-                    this.fetchJson(path,jsonResult => {
-                            this.AvaialbeCountrys = jsonResult;
+                var path = "../Orders/AvaiableCountrys";
+                this.fetchJson(path,jsonResult => {
+                    this.AvaialbeCountrys = jsonResult;
 
-                        });
+                });
 
             },
 
             fetchAvaialbeCustomers() {
-
                 var path = "../Orders/AvaialbeCustomers";
-                this.fetchJson(path, jsonResult => {this.AvaialbeCustomers = jsonResult;});
+              
             },
 
-            Validate() {this.Action("Validate");},
-            Save() {this.Action("Save");},
-            Action(action) {
+            Validate()
+            {
+                //try {
+                 controller.abort();//прервать предыдущую валидацию 
+                controller=new AbortController();//создаю новый контроллер валидации
+                //  var myJSON = JSON.stringify(this.order);
+                //  var path = "../Orders/Validate?id=" + this.id + "&json=" + myJSON;
+                //    fetch(path, { mode: 'cors'  ,  signal: controller.signal})
+                //        .then(response => response.json())
+                //        .then(json=> {
+                //                this.errors = json.Errors;
+                //                this.IsChanged = json.IsChanged;
+                //            }
+                //        );
+                //} catch (ex) {
+                //    alert(ex);
+                //}
+
+              this.Action("Validate",controller.signal);//перадаю сигнал позволяющий "убить" фетч
+            },
+            Save() {
+                controller.abort();//прервать предыдущую валидацию 
+                this.Action("Save");
+            },
+            Action(action,signal) {
                 var myJSON = JSON.stringify(this.order);
                 var path = "../Orders/" + action + "?id=" + this.id + "&json=" + myJSON;
                 this.fetchJson(path, jsonResult => {
                     this.errors = jsonResult.Errors;
                     this.IsChanged = jsonResult.IsChanged;
-                });
+                },signal);
             },
-            fetchJson(path, collback) {
+            fetchJson(path, collback,signal) {
                 try {
-                    fetch(path, { mode: 'cors' })
+                    fetch(path, { mode: 'cors', signal:signal })
                         .then(response => response.json())
-                        .then(function (json){ collback(json); }
+                        .then(function(json) {
+                                collback(json);
+                      }
                         );
                 } catch (ex) {
                     alert(ex);
                 }
             },
             setValue:function(){
-              //  this.oldOrder.ShipCountry = this.order.ShipCountry;
-                this.oldOrder.ShipCity =  this.order.ShipCity;
+                this.oldOrder.ShipCountry = this.order.ShipCountry;
             }
         },
         watch: {
             order: {
                 handler: function (after, before) {
-               
+                    this.IsChanged = true;
                     if (this.oldOrder.ShipCountry !== after.ShipCountry) {
 
                         this.fetchCityList();
                     }
-                   this.setValue();
-                   this.Validate();
+                    this.setValue();
+                    this.Validate();
+
                 },
                 deep: true
             }

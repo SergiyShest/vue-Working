@@ -29,7 +29,7 @@ namespace datagrid_mvc5.Models {
 
         public int? ShipVia { get; set; }
         [Required(ErrorMessage = "Поле Freight обязательно для заполнения")]
-        [CustomCheck("К городу  {0} особое уважение поэтому не меньше {2} Вы ввели {1} ")]
+        [CustomCheck("К городу {0} особое уважение поэтому не меньше {2} Вы ввели {1}")]
         public decimal? Freight { get; set; }
 
         [StringLength(40)]

@@ -12,9 +12,11 @@
         <table>
             <tr>
                 <td>Cтоимость перевозки</td>
-                <td class="tooltip">
-                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input" />
-                    <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
+                <td>
+                    <div v-bind:class="{tooltip:!errors.Freight==''}">
+                        <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" class="input" />
+                        <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -37,7 +39,7 @@
             <tr>
                 <td>Адрес корабля</td>
                 <td class="tooltip">
-                    <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
+                    <input type="text" v-model.lazy="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
                     <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
                 </td>
             </tr>
@@ -64,7 +66,7 @@
                     ShippedDate: "",
                     ShipVia: 0,
                     Freight: 0,
-                    ShipName: "0",
+                    ShipName: "",
                     ShipAddress: "",
                     ShipCity: "",
                     ShipRegion: null,
@@ -74,7 +76,7 @@
             oldOrder: {
                 ShipCountry: ""
             },
-errors: {
+        errors: {
                 OrderID: null,
                 CustomerID: null,
                 EmployeeID: null,
@@ -89,7 +91,7 @@ errors: {
                 ShipRegion: null,
                 ShipPostalCode: null,
                 ShipCountry: null
-  },
+            },
             IsChanged: false,
             AvaialbeCitys: [],
             AvaialbeCountrys: []
