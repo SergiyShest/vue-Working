@@ -80,7 +80,8 @@
     </div>
 
     <script>
-        var controller = new AbortController();
+        var abortController = new AbortController();
+        var validationCounter = 0;
 
     Vue.component('error-cell',
         {
@@ -124,7 +125,6 @@
                 ShipCountry: ""
             },
             oldOrder: {
-
                 ShipCountry: ""
             },
             errors: {
@@ -164,6 +164,7 @@
                 var path = "../Orders/GetById?Id=" + this.id;
                 this.fetchJson(path,json => this.order = json);
             },
+
             fetchCityList() {
                 //Avaiable city depended on  country
                 var country = this.order.ShipCountry;
@@ -171,49 +172,37 @@
                     country = '';
                 }
                 var path = "../Orders/AvaiableCityList?country=" + country;
-                this.fetchJson(path, json => {
-                    this.AvaialbeCitys = json;
-
-                });
+                this.fetchJson(path, json => {this.AvaialbeCitys = json;});
             },
 
             fetchCountrys() {
-
                 var path = "../Orders/AvaiableCountrys";
-                this.fetchJson(path,jsonResult => {
-                    this.AvaialbeCountrys = jsonResult;
-
-                });
-
+                this.fetchJson(path,jsonResult => {this.AvaialbeCountrys = jsonResult;});
             },
 
             fetchAvaialbeCustomers() {
                 var path = "../Orders/AvaialbeCustomers";
-              
+                this.fetchJson(path,jsonResult => {this.AvaialbeCustomers = jsonResult;});
             },
 
-            Validate()
-            {
-                //try {
-                 controller.abort();//прервать предыдущую валидацию 
-                controller=new AbortController();//создаю новый контроллер валидации
-                //  var myJSON = JSON.stringify(this.order);
-                //  var path = "../Orders/Validate?id=" + this.id + "&json=" + myJSON;
-                //    fetch(path, { mode: 'cors'  ,  signal: controller.signal})
-                //        .then(response => response.json())
-                //        .then(json=> {
-                //                this.errors = json.Errors;
-                //                this.IsChanged = json.IsChanged;
-                //            }
-                //        );
-                //} catch (ex) {
-                //    alert(ex);
-                //}
-
-              this.Action("Validate",controller.signal);//перадаю сигнал позволяющий "убить" фетч
+            Validate() {
+                validationCounter++;//увеличиваю счетчик валидации, что бы предыдущая валидация не отработала
+               var counter = validationCounter;//создаю копию переменнной
+               var valFuction= this.ValidateX;//так как я не могу использовать this внутри setTimeout приходится создавать ссылку на функцию
+                setTimeout(function () {valFuction(counter);},500);//вызываю валидацию с задержкой ()
+            },
+            ValidateX(сounter) {
+                if (validationCounter !== сounter)//если счетчик валидаций изменился за время задержки валидации, то эту валидацию надо прервать
+                {
+                    return;
+                }
+                console.log("Validate");
+                    abortController.abort();//прервать предыдущую валидацию если она успела начаться
+                    abortController = new AbortController();//создаю новый контроллер валидации
+                    this.Action("Validate",abortController.signal);//перадаю сигнал позволяющий "убить" ПРЕДЫДУЩИЙ фетч
             },
             Save() {
-                controller.abort();//прервать предыдущую валидацию 
+                abortController.abort();//прервать предыдущую валидацию
                 this.Action("Save");
             },
             Action(action,signal) {
@@ -245,12 +234,10 @@
                 handler: function (after, before) {
                     this.IsChanged = true;
                     if (this.oldOrder.ShipCountry !== after.ShipCountry) {
-
                         this.fetchCityList();
                     }
                     this.setValue();
                     this.Validate();
-
                 },
                 deep: true
             }

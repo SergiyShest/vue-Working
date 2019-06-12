@@ -52,8 +52,8 @@
         </table>
     </div>
     <script>
- var controller = new AbortController();
-
+        var abortController = new AbortController();
+ var validationCounter = 0;
         new Vue({
             el: "#app",
             data: {
@@ -74,10 +74,10 @@
                     ShipPostalCode: "",
                     ShipCountry: ""
             },
-            oldOrder: {
+                oldOrder: {
                 ShipCountry: ""
             },
-        errors: {
+                errors: {
                 OrderID: null,
                 CustomerID: null,
                 EmployeeID: null,
@@ -93,9 +93,9 @@
                 ShipPostalCode: null,
                 ShipCountry: null
             },
-            IsChanged: false,
-            AvaialbeCitys: [],
-            AvaialbeCountrys: []
+                IsChanged: false,
+                AvaialbeCitys: [],
+                AvaialbeCountrys: []
             },
             computed :
             {
@@ -126,18 +126,27 @@
                         var path = "../Orders/AvaiableCountrys";
                         this.fetchJson(path,jsonResult => {this.AvaialbeCountrys = jsonResult;});
                 },
-
-            Validate()
-            {
-              controller.abort();//прервать предыдущую валидацию 
-              controller=new AbortController();//создаю новый контроллер валидации
-              this.Action("Validate",controller.signal);//перадаю сигнал позволяющий "убить" фетч
+           Validate() {
+                validationCounter++;//увеличиваю счетчик валидации, что бы предыдущая валидация не отработала
+               var counter = validationCounter;//создаю копию переменнной
+               var valFuction= this.ValidateX;//так как я не могу использовать this внутри setTimeout приходится создавать ссылку на функцию
+                setTimeout(function () {valFuction(counter);},500);//вызываю валидацию с задержкой ()
             },
-            Save() {
-                controller.abort();//прервать предыдущую валидацию 
+            ValidateX(сounter) {
+                if (validationCounter !== сounter)//если счетчик валидаций изменился за время задержки валидации, то эту валидацию надо прервать
+                {
+                    return;
+                }
+                console.log("Validate");
+                    abortController.abort();//прервать предыдущую валидацию если она успела начаться
+                    abortController = new AbortController();//создаю новый контроллер валидации
+                    this.Action("Validate",abortController.signal);//перадаю сигнал позволяющий "убить" ПРЕДЫДУЩИЙ фетч
+            },
+                Save() {
+                abortController.abort();//прервать предыдущую валидацию
                 this.Action("Save");
             },
-              Action(action,signal) {
+                Action(action,signal) {
                 var myJSON = JSON.stringify(this.order);
                 var path = "../Orders/" + action + "?id=" + this.id + "&json=" + myJSON;
                 this.fetchJson(path, jsonResult => {
@@ -166,8 +175,8 @@
                         {
                             this.fetchCityList();//Перечитываю список городов с учетом выбранной страны
                         }
-                       this.saveOldOrderValue();
-                   this.Validate();
+                     this.saveOldOrderValue();
+                     this.Validate();
                      },
                     deep: true
                 }
