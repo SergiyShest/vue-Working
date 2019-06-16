@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <title>редактирование id=@ViewBag.Id</title>
     <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/components/vueErrorAborder.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
 </head>
 <body>
@@ -12,22 +13,22 @@
         <table border="1">
             <tr>
                 <td>Customer</td>
-                <td class="tooltip">
-                    <select v-model="order.CustomerID" v-bind:class="{error:!errors.CustomerID==''}" class="input">
+                <td>
+                    <select v-model="order.CustomerID" class="input">
                         <option v-for="customer in AvaialbeCustomers"
                                 :v-key="customer.Id"
                                 v-bind:value="customer.Id">
                             {{customer.Name}}
                         </option>
                     </select>
-                    <span v-if="!errors.CustomerID==''" class="tooltiptext">{{errors.CustomerID}}</span>
                 </td>
             </tr>
             <tr>
                 <td>Freight</td>
-                <td class="tooltip">
-                    <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''} " class="input" />
-                    <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
+                <td>
+                    <error-aborder v-bind:error="errors.Freight">
+                        <input type="number" v-model="order.Freight" class="input" />
+                    </error-aborder>
                 </td>
             </tr>
             <tr>
@@ -40,33 +41,27 @@
             </tr>
             <tr>
                 <td>ShipCity</td>
-                <td class="tooltip">
-                    <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}" class="input">
-                        <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
-                    </select>
-                    <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
+                <td>
+                    <error-aborder v-bind:error="errors.ShipCity">
+                        <select v-model="order.ShipCity"  class="input">
+                            <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                        </select>
+                    </error-aborder>
                 </td>
             </tr>
-            <tr>
-                <td>ShipAddress</td>
-                <td class="tooltip">
-                    <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
-                    <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
-                </td>
-
-            </tr>
-
-            @*<tr>
-                    <td>XXX</td>
+          <tr>
+                    <td>Адрес корабля</td>
                     <td>
-                        <error-cell FieldName="XXX" FieldError="Jopa" />
+                        <error-aborder v-bind:error="errors.ShipAddress">
+                             <input type="text" v-model="order.ShipAddress" class="input"/>
+                        </error-aborder>
                     </td>
-                </tr>*@
+                </tr>
             <tr>
                 <td>OrderDate</td>
                 <td>
                     <input type="datetime-local" v-model="order.OrderDate" :disabled="true" class="input" />
-                    <p style="color: red" type="text" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
+                    <p class="tooltiptext" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
                 </td>
             </tr>
             <tr>
@@ -78,29 +73,12 @@
         </table>
 
     </div>
-
+      
     <script>
         var abortController = new AbortController();
         var validationCounter = 0;
 
-    Vue.component('error-cell',
-        {
-            props: {
-                FieldName: String,
-                DataField: String,
-                FieldError: String
-            },
-            data: function () {
 
-                return {
-                    count: 0
-                }
-            },
-            template: '<div>' +
-                '<input type="text" v-model="DataField"  v-bind:class="{error:!FieldError==\'\' }"  />' +
-                '<p style="color: red" type="text">{{FieldError}}</p>' +
-                '</div>'
-        });
 
     new Vue({
         el: "#app",
@@ -112,9 +90,9 @@
                 OrderID: 0,
                 CustomerID: 0,
                 EmployeeID: 0,
-                OrderDate: "1964-07-10T00:00:00",
-                RequiredDate: "1996-07-24T00:00:00",
-                ShippedDate: "1996-07-16T00:00:00",
+                OrderDate: "",
+                RequiredDate: "",
+                ShippedDate: "",
                 ShipVia: 0,
                 Freight: 0,
                 ShipName: "",
@@ -188,10 +166,10 @@
             Validate() {
                 validationCounter++;//увеличиваю счетчик валидации, что бы предыдущая валидация не отработала
                var counter = validationCounter;//создаю копию переменнной
-               var valFuction= this.ValidateX;//так как я не могу использовать this внутри setTimeout приходится создавать ссылку на функцию
-                setTimeout(function () {valFuction(counter);},500);//вызываю валидацию с задержкой ()
-            },
-            ValidateX(сounter) {
+               var action= this.Action;//так как я не могу использовать this локальной фнукции создавать ссылку на функцию
+                setTimeout(function () {dalayedValidate(counter);},500);//вызываю валидацию с задержкой ()
+            
+           function dalayedValidate(сounter) {
                 if (validationCounter !== сounter)//если счетчик валидаций изменился за время задержки валидации, то эту валидацию надо прервать
                 {
                     return;
@@ -199,7 +177,8 @@
                 console.log("Validate");
                     abortController.abort();//прервать предыдущую валидацию если она успела начаться
                     abortController = new AbortController();//создаю новый контроллер валидации
-                    this.Action("Validate",abortController.signal);//перадаю сигнал позволяющий "убить" ПРЕДЫДУЩИЙ фетч
+                    action("Validate",abortController.signal);//перадаю сигнал позволяющий "убить" ПРЕДЫДУЩИЙ фетч
+            }
             },
             Save() {
                 abortController.abort();//прервать предыдущую валидацию
