@@ -3,11 +3,6 @@
         props: {
             error: String
         },
-        data: function () {
-            return {
-                count: 0
-            }
-        },
         template:
             '<div class="tooltip" >' +
                 '<div v-bind:class="{error:!error==\'\' }" >' +

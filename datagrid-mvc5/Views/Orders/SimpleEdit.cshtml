@@ -6,6 +6,7 @@
     <title>редактирование id=@ViewBag.Id</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
+    <script src="~/Scripts/components/vueErrorAborder.js"></script>
 </head>
 <body>
     <div id="app">
@@ -13,10 +14,11 @@
             <tr>
                 <td>Cтоимость перевозки</td>
                 <td>
-                    <div v-bind:class="{tooltip:!errors.Freight==''}">
-                        <input type="number" v-model="order.Freight" v-bind:class="{error:!errors.Freight==''}" class="input" />
-                        <span v-if="errors.Freight!==''" class="tooltiptext">{{errors.Freight}}</span>
-                    </div>
+                   
+                    <error-aborder v-bind:error="errors.Freight">
+                        <input type="number" v-model="order.Freight" class="input" />
+                    </error-aborder>
+                      
                 </td>
             </tr>
             <tr>
@@ -29,18 +31,20 @@
             </tr>
             <tr>
                 <td>Город корабля</td>
-                <td class="tooltip">
-                    <select v-model="order.ShipCity" v-bind:class="{error:!errors.ShipCity==''}" class="input">
-                        <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
-                    </select>
-                    <span v-if="!errors.ShipCity==''" class="tooltiptext">{{errors.ShipCity}}</span>
+                <td >
+                    <error-aborder v-bind:error="errors.ShipCity">
+                        <select v-model="order.ShipCity" class="input">
+                            <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                        </select>
+                    </error-aborder>
                 </td>
             </tr>
             <tr>
                 <td>Адрес корабля</td>
-                <td class="tooltip">
-                    <input type="text" v-model="order.ShipAddress" v-bind:class="{error:!errors.ShipAddress=='' }" class="input" />
-                    <span v-if="!errors.ShipAddress==''" class="tooltiptext">{{errors.ShipAddress}}</span>
+                <td>
+                    <error-aborder v-bind:error="errors.ShipAddress">
+                        <input type="text" v-model="order.ShipAddress" class="input" />
+                    </error-aborder>
                 </td>
             </tr>
             <tr>
