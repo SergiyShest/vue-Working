@@ -179,6 +179,8 @@
     <Content Include="js\code2.js" />
     <Content Include="js\data.js" />
     <Content Include="js\filter.js" />
+    <Content Include="js\Vue\components\BaseMIxin.js" />
+    <Content Include="js\Vue\Main.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -188,7 +190,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Scripts\components\vueErrorAborder.js" />
+    <Content Include="js\Vue\components\vueErrorAborder.js" />
     <Content Include="Scripts\zip.js" />
     <Content Include="Views\Orders\Edit.cshtml" />
     <None Include="Views\Orders\Index.cshtml" />
