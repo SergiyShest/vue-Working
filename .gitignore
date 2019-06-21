@@ -4,5 +4,7 @@
 /datagrid-mvc5/App_Data/Northwind1_log.ldf
 /datagrid-mvc5/App_Data/*.ldf
 /datagrid-mvc5/Views/Orders/*.bak
-
+bin/
+obj/
+packages/
 *.bak

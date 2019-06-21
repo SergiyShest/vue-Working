@@ -35,8 +35,8 @@ namespace datagrid_mvc5.Models {
         [StringLength(40)]
         public string ShipName { get; set; }
 
-        [MinLength(10)]
-        [StringLength(60)]
+
+        [MinMaxLengthAttribute(10,60 ,FieldTitle = "Адрес корабля")]
         public string ShipAddress { get; set; }
 
         [CheckCityAttribute("Поле ShipCity обязательно для заполнения")]
@@ -115,4 +115,50 @@ namespace datagrid_mvc5.Models {
             return result;
         }
     }
+
+    public class MinMaxLengthAttribute : StringLengthAttribute
+    {
+        int? _stringLength = null;
+        public  string FieldTitle { get; set; }
+        public MinMaxLengthAttribute(int minimum, int maximum)
+            : base(maximum)
+        {
+            // SetErrorMessage();
+            MinimumLength = minimum;
+        }
+
+        void SetErrorMessage(string stringLength)
+        {
+      
+            ErrorMessage = $"Длина поля {FieldTitle} должна быть от {MinimumLength} до {MaximumLength} символов." +
+                           $" Текущая длина  {stringLength}  символов.";
+        }
+        //public override bool IsValid(object value)
+        //{
+        //    //string s = value as string;
+        //    //if (s != null)
+        //    //{
+        //    //   var  stringLength = s.Length.ToString();
+        //    //    SetErrorMessage( stringLength);
+        //    //}
+
+        //    return base.IsValid(value);
+        //}
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+
+            var name = FieldTitle ?? validationContext.MemberName;
+            string s = value as string;
+            if (s != null)
+            {
+
+                var stringLength = s.Length;
+                ErrorMessage = $"Длина поля {name} должна быть от {MinimumLength} до {MaximumLength} символов." +
+                               $" Текущая длина  {stringLength}  символов." ;
+            }
+
+            return base.IsValid(value, validationContext);
+        }
+    }
+
 }
