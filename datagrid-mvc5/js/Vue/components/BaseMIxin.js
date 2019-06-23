@@ -3,7 +3,8 @@
         return {
             abortController: new AbortController(),
             validationCounter: 0,
-            ActionPath: ""
+            ActionPath: "",
+            DelayTime:500 
         }
     },
     methods: {
@@ -24,7 +25,7 @@
             this.validationCounter++;//увеличиваю счетчик валидации, что бы предыдущая валидация не отработала
             var counter = this.validationCounter;//создаю копию переменнной
             var delayedValidateRef = this.delayedValidate;//так как я не могу использовать this локальной фнукции создавать ссылку на функцию
-            setTimeout(function () { delayedValidateRef(counter); }, 500);//вызываю валидацию с задержкой ()
+            setTimeout(function () { delayedValidateRef(counter); }, this.DelayTime );//вызываю валидацию с задержкой ()
 
 
         },
