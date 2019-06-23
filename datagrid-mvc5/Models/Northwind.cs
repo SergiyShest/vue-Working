@@ -4,8 +4,10 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Diagnostics;
+    using System.Collections.Generic;
+    using System.Collections;
 
-    public partial class Northwind : DbContext {
+    public partial class Northwind : DbContext,IOrdersRepositary {
         public Northwind(): base("name=Northwind") {
             Configuration.ProxyCreationEnabled = false;
             base.Database.Log = WriteToLog;
@@ -19,10 +21,19 @@ namespace datagrid_mvc5.Models {
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Order_Detail> Order_Details { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<Order> orders { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
+
+       public   IQueryable<IOrder> Orders { get { return orders; } }
+        public void Delete(int id)
+        {
+       
+            var order =  orders.Find(id);
+             orders.Remove(order);
+            SaveChanges();
+        }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             modelBuilder.Entity<Customer>()

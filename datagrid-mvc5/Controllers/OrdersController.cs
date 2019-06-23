@@ -107,7 +107,7 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult GetById(int id)
         {
-            var order = _db.Orders.Find(id);//Получили объект
+            var order = _db.orders.Find(id);//Получили объект
             if (order == null)order = new Order();
             string orderStr = JsonConvert.SerializeObject(order);//Сериализовали его
             return Content(orderStr, "application/json");//отправили 
@@ -116,7 +116,7 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult Validate(int id, string json)
         {
-            var order = _db.Orders.Find(id);
+            var order = _db.orders.Find(id);
             if (order == null) order = new Order();
             JsonConvert.PopulateObject(json, order);
             var errorsD = GetErrorsAndChanged();
@@ -128,7 +128,7 @@ namespace datagrid_mvc5.Controllers
         {
             String res= null;
             List<DbEntityValidationResult> errors=new List<DbEntityValidationResult>();
-            var order = _db.Orders.Find(id);
+            var order = _db.orders.Find(id);
             JsonConvert.PopulateObject(json, order);
           var changed=  _db.ChangeTracker.HasChanges();
             try

@@ -141,6 +141,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AutoFacConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Content Include="Content\icons\filter.png" />
@@ -161,6 +162,8 @@
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\IOrder.cs" />
+    <Compile Include="Models\IOrdersRepositary.cs" />
     <Compile Include="Models\Northwind.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\Order_Detail.cs" />

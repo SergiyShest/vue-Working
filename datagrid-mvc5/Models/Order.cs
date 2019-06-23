@@ -8,7 +8,7 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Order {
+    public partial class Order: IOrder {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Order() {
             Order_Details = new HashSet<Order_Detail>();
@@ -64,6 +64,13 @@ namespace datagrid_mvc5.Models {
 
         [JsonIgnore]
         public virtual Shipper Shipper { get; set; }
+
+        public  void Delete()
+        {
+         //   var orderRepos = Facrory.Get<IOrdersRepositary>();
+         //   var order = orderRepos.Delete(this.OrderID);
+        }
+
     }
     /// <summary>
     /// Custom Attribute Example
@@ -160,5 +167,8 @@ namespace datagrid_mvc5.Models {
             return base.IsValid(value, validationContext);
         }
     }
+
+
+
 
 }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "datagrid-mvc5", "datagrid-m
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "datagrid-mvc5Tests1", "..\datagrid-mvc5Tests1\datagrid-mvc5Tests1.csproj", "{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders", "..\Orders\Orders.csproj", "{34AFACD8-075F-4684-A4A5-B28361088580}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34AFACD8-075F-4684-A4A5-B28361088580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34AFACD8-075F-4684-A4A5-B28361088580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34AFACD8-075F-4684-A4A5-B28361088580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34AFACD8-075F-4684-A4A5-B28361088580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
