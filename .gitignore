@@ -8,3 +8,5 @@ bin/
 obj/
 packages/
 *.bak
+/datagrid-mvc5/node_modules/.bin
+/.vs/vue-mvc-Working/v16/.suo
