@@ -12,7 +12,18 @@ function setDataSource() {
 function onRowClick(e) {
     
 }
+window.addEventListener('resize', AutoSizeDataGrid);
 
+function AutoSizeDataGrid() {
+    var cont = document.getElementById('grid');
+    var dataGridRect = cont.getBoundingClientRect();
+    console.log(dataGridRect);
+    var height = document.documentElement.clientHeight - dataGridRect.top-20;
+    $("#grid").dxDataGrid("instance").option("height", height);
+    console.log(cont.offsetHeight);
+    //  document.querySelector('.width').innerText = document.documentElement.clientWidth;
+    //  document.querySelector('.height').innerText = document.documentElement.clientHeight;
+}
 //
 function copyToClipboard(str) {
     const el = document.createElement('textarea');
@@ -27,10 +38,13 @@ var isinit = false;
 //write time loading data
 function contentReady() {
     if (!isinit) {
-        isinit = true;  setDataSource();}
+        isinit = true;
+        AutoSizeDataGrid();
+        setDataSource();
+    }
     // dataGrid = $('#grid').dxDataGrid('instance');
-    //   console.log(" time loading data");
-    //   console.timeEnd("x");
+    // console.log(" time loading data");
+    // console.timeEnd("x");
 }
 
  //получение строки фильтров
@@ -107,7 +121,7 @@ $(function () {
 
 
    $("#grid").dxDataGrid({
-            height: 500,
+            //height: 500,
             remoteOperations: { paging: true, filtering: true, sorting: true, grouping: true, summary: true, groupPaging: true },
             keyExpr: "OrderID",
             onContentReady:contentReady,
@@ -141,7 +155,9 @@ $(function () {
             filterPanel: { visible: true },
             selection: {
                 mode: "multiple",
-                allowSelectAll: true
+                allowSelectAll: true,
+                //showCheckBoxesMode: "none"
+               // deferred: true
             },
        columns: [
            {
@@ -151,6 +167,7 @@ $(function () {
                },
                caption: "ID",
                headerCellTemplate: $('<i style="color: red">ID</i>'),
+               width:'80px',
                filter: true
            },
            {

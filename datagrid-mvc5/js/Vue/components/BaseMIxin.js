@@ -9,8 +9,8 @@
     },
     methods: {
         fetchJson(path, collback, signal) {
-            try {
-                fetch(path, { mode: 'cors', signal: signal })
+            try {//
+                fetch(path, { mode: 'cors',method: 'get',  signal: signal })
                     .then(response => response.json())
                     .then(function (json) {
                         collback(json);
