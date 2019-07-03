@@ -17,6 +17,7 @@
     @*<link rel="stylesheet" type="text/css" href="~/Content/grey.css" />*@
     <link rel="stylesheet" type="text/css" href="~/Content/dx.light.css" />
     <link rel="stylesheet" type="text/css" href="~/Content/modal.CSS" />
+    <link rel="stylesheet" type="text/css" href="~/Scripts/draggable-resizable-dialog.css" />
 </head>
 <script>
 
@@ -72,11 +73,33 @@
 
     <button onclick="FilterClear()">FilterClear</button>
     <button onclick="Edit()">редактировать</button>
+    <button id="show-dialog" onclick="_showDialog();">Show Dialog</button></p>
+    <p id="dialog-status">Dialog hidden...</p>
+    <p class="">To move, start dragging from the title bar of the dialog box.</p>
+    <p class="">To resize, start dragging from any edge or any corner of the dialog box.</p>
     <br />
 
-   
+
     <div id="grid">
+    </div>
+
+
+    <div class="dialog" style="width:480px; height:240px;">
+        <div class="titlebar">Pfujkjdfjr af Заголовок диалогового окна</div>
+        <button>Close</button>
+        <div class="content">
+            <p>тело диалогового окна </p>
         </div>
+        <div class="buttonpane">
+            <div class="buttonset">
+                <button>OK</button>
+                <button>Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="~/Scripts/draggable-resizable-dialog.js"></script>
+
 
 </body>
 

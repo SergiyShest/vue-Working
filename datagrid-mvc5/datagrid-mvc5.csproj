@@ -158,6 +158,7 @@
     <Compile Include="tracker.cs" />
     <Content Include="Content\icons\filter.png" />
     <Content Include="Content\modal.CSS" />
+    <Content Include="Content\v-select.css" />
     <Content Include="Content\vueError.css" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\EmployeesController.cs" />
@@ -194,6 +195,8 @@
     <Content Include="js\filter.js" />
     <Content Include="js\Vue\components\BaseMIxin.js" />
     <Content Include="js\Vue\Main.js" />
+    <Content Include="Scripts\draggable-resizable-dialog.css" />
+    <Content Include="Scripts\draggable-resizable-dialog.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -203,6 +206,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\vue-select.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="js\Vue\components\vueErrorAborder.js" />

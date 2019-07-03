@@ -6,7 +6,8 @@
     <title>редактирование id=@ViewBag.Id</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
-    <script src="~/Scripts/components/vueErrorAborder.js"></script>
+    <script src="~/js/Vue/components/vueErrorAborder.js"></script>
+    <script src="~/Scripts/vue-select.js"></script>
 </head>
 <body>
     <div id="app">
@@ -14,11 +15,9 @@
             <tr>
                 <td>Cтоимость перевозки</td>
                 <td>
-                   
                     <error-aborder v-bind:error="errors.Freight">
                         <input type="number" v-model="order.Freight" class="input" />
                     </error-aborder>
-                      
                 </td>
             </tr>
             <tr>

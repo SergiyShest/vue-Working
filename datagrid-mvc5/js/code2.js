@@ -17,7 +17,6 @@ window.addEventListener('resize', AutoSizeDataGrid);
 function AutoSizeDataGrid() {
     var cont = document.getElementById('grid');
     var dataGridRect = cont.getBoundingClientRect();
-    console.log(dataGridRect);
     var height = document.documentElement.clientHeight - dataGridRect.top-20;
     $("#grid").dxDataGrid("instance").option("height", height);
     console.log(cont.offsetHeight);
