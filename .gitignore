@@ -1,10 +1,17 @@
 /datagrid-mvc5/bin
 /datagrid-mvc5/obj
+/datagrid-mvc5Tests1/bin
+/datagrid-mvc5Tests1/obj
 /datagrid-mvc5/.vs
 /datagrid-mvc5/App_Data/Northwind1_log.ldf
 /datagrid-mvc5/App_Data/*.ldf
 /datagrid-mvc5/Views/Orders/*.bak
 bin/
+bin/Debug/
+
 obj/
 packages/
 *.bak
+/datagrid-mvc5/node_modules/.bin
+*.suo
+*.pdb

@@ -32,8 +32,8 @@ namespace datagrid_mvc5Tests1.Models
         public void test()
         {
             var builder = AutoFacConfig.Builder;
-            var conta= builder.Build();
-            var order = conta.Resolve<IOrder>();
+            var container= builder.Build();
+            var order = container.Resolve<IOrder>();
 
         }
 

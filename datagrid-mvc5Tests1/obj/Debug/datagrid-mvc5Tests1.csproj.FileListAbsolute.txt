@@ -63,11 +63,6 @@ C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\Microsoft.Vi
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\Newtonsoft.Json.dll
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\nunit.framework.dll
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\DevExtreme.AspNet.Data.dll
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.Razor.dll
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.Razor.dll
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.dll
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\Microsoft.Web.Infrastructure.dll
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.Deployment.dll
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\datagrid-mvc5.pdb
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\datagrid-mvc5.dll.config
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\EntityFramework.xml
@@ -77,12 +72,6 @@ C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\Microsoft.Vi
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\Newtonsoft.Json.xml
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\nunit.framework.pdb
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\nunit.framework.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.Mvc.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\DevExtreme.AspNet.Data.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.Razor.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.Razor.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.xml
-C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\System.Web.WebPages.Deployment.xml
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\obj\Debug\datagrid-mvc5Tests1.csprojAssemblyReference.cache
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\obj\Debug\datagrid-mvc5Tests1.csproj.CoreCompileInputs.cache
 C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\obj\Debug\datagrid-mvc5Tests1.csproj.CopyComplete
@@ -95,3 +84,6 @@ c:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\NUnit3.TestA
 c:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\NUnit3.TestAdapter.pdb
 c:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\nunit.engine.dll
 c:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\nunit.engine.api.dll
+C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll
+C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+C:\Users\titov\source\vue-mvc-Working\datagrid-mvc5Tests1\bin\Debug\ru\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll
