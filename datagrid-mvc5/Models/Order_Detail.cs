@@ -6,7 +6,7 @@ namespace datagrid_mvc5.Models {
     using System.Data.Entity.Spatial;
 
     [Table("Order Details")]
-    public partial class Order_Detail {
+    public partial class Order_Detailold {
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

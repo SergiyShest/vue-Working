@@ -17,6 +17,7 @@ using System.Threading;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using System.Web.WebSockets;
+using Core;
 
 namespace datagrid_mvc5.Controllers
 {
@@ -24,19 +25,20 @@ namespace datagrid_mvc5.Controllers
     public class OrdersController : Controller
     {
 
-      public new ActionResult SimpleIndex()
-      {
+        public new ActionResult SimpleIndex()
+        {
             ViewBag.Orders = _db.Orders;
             return View();
         }
+
         public ActionResult Index()
         {
             var usedCustomers = from o in _db.Orders
-                                select new
-                                {
-                                    Id = o.CustomerID,
-                                    Name = o.Customer.ContactName,
-                                };
+                select new
+                {
+                    Id = o.CustomerID,
+                    Name = o.Customer.ContactName,
+                };
             var usedCust = usedCustomers.Distinct().ToList();
             var sb = new StringBuilder();
             foreach (var cust in usedCust)
@@ -47,6 +49,7 @@ namespace datagrid_mvc5.Controllers
             ViewBag.customers = sb.ToString();
             return View();
         }
+
         public ActionResult Edit(int id = 0)
         {
             ViewBag.Id = id;
@@ -59,26 +62,38 @@ namespace datagrid_mvc5.Controllers
             return View();
         }
 
+        private IOrdersRepositary db;
 
-        Northwind _db = new Northwind();
+        IOrdersRepositary _db
+        {
+            get
+            {
+                if (db == null)
+                {
+                    db = F.Get<IOrdersRepositary>();
+                }
+
+                return db;
+            }
+        }
 
         [HttpGet]
         public ActionResult Get(DataSourceLoadOptions loadOptions)
         {
             loadOptions.PrimaryKey = new[] { "OrderID" };
-            var ordersQuery = from o in _db.Orders
+            var ordersQuery = from o in F.Get<IOrdersRepositary>().Orders
                               select new
                               {
                                   o.OrderID,
                                   o.CustomerID,
                                   //                                  CustomerName = o.Customer.ContactName,
                                   o.EmployeeID,
-                                  EmployeeName = o.Employee.FirstName + " " + o.Employee.LastName,
+                               //   EmployeeName = o.Employee.FirstName + " " + o.Employee.LastName,
                                   o.OrderDate,
                                   o.RequiredDate,
                                   o.ShippedDate,
                                   o.ShipVia,
-                                  ShipViaName = o.Shipper.CompanyName,
+                              //    ShipViaName = o.Shipper.CompanyName,
                                   o.Freight,
                                   o.ShipName,
                                   o.ShipAddress,
@@ -107,7 +122,7 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult GetById(int id)
         {
-            var order = _db.Orders.Find(id);//Получили объект
+            var order = _db.Find(id);//Получили объект
             if (order == null)order = new Order();
             string orderStr = JsonConvert.SerializeObject(order);//Сериализовали его
             return Content(orderStr, "application/json");//отправили 
@@ -116,7 +131,7 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult Validate(int id, string json)
         {
-            var order = _db.Orders.Find(id);
+            var order = _db.Find(id);
             if (order == null) order = new Order();
             JsonConvert.PopulateObject(json, order);
             var errorsD = GetErrorsAndChanged();
@@ -128,12 +143,12 @@ namespace datagrid_mvc5.Controllers
         {
             String res= null;
             List<DbEntityValidationResult> errors=new List<DbEntityValidationResult>();
-            var order = _db.Orders.Find(id);
+            var order = _db.Find(id);
             JsonConvert.PopulateObject(json, order);
-          var changed=  _db.ChangeTracker.HasChanges();
+          var changed=  _db.HasChanges();
             try
             {
-                _db.SaveChanges();
+                _db.Save();
                 changed = false;
             }
             catch (DbEntityValidationException ex)
@@ -147,7 +162,7 @@ namespace datagrid_mvc5.Controllers
 
         private String  GetErrorsAndChanged()
         {
-            var changed=  _db.ChangeTracker.HasChanges();
+            var changed=  _db.HasChanges();
             var errors = _db.GetValidationErrors();
             return GetErrorsAndChanged(errors,changed);
         }
@@ -170,11 +185,11 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult AvaialbeEmploers()
         {
-            var emploer = from o in _db.Employees
+            var emploer = from o in F.Get<IEmployeeRepositary>().Employees
                           select new
                           {
                               Id = o.EmployeeID,
-                              Name = o.Employee1.FirstName
+                              Name = o.FirstName
                           };
             string jsonStr = JsonConvert.SerializeObject(emploer);
             return Content(jsonStr, "application/json");
@@ -183,7 +198,7 @@ namespace datagrid_mvc5.Controllers
         [HttpGet]
         public ActionResult AvaialbeCustomers()
         {
-            var product = from o in _db.Customers
+            var product = from o in F.Get<ICustomerRepositary>().Customers
                           select new
                           {
                               Id = o.CustomerID,
@@ -235,76 +250,76 @@ namespace datagrid_mvc5.Controllers
 
         #endregion
 
-        #region Получение списка селектом
+        //#region Получение списка селектом
 
 
-        [HttpGet]
-        public ActionResult AvaiableCityListSql(string region, string country)
-        {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            string query = "Select distinct ShipCity from orders where {ShipCountry} {ShipRegion}  1=1";
-            query = MadeParam("ShipCountry", country, parameters, query);
-            query = MadeParam("ShipRegion", region, parameters, query);
+        //[HttpGet]
+        //public ActionResult AvaiableCityListSql(string region, string country)
+        //{
+        //    List<SqlParameter> parameters = new List<SqlParameter>();
+        //    string query = "Select distinct ShipCity from orders where {ShipCountry} {ShipRegion}  1=1";
+        //    query = MadeParam("ShipCountry", country, parameters, query);
+        //    query = MadeParam("ShipRegion", region, parameters, query);
 
-            return GetActionResultSql(query, parameters);
-        }
+        //    return GetActionResultSql(query, parameters);
+        //}
 
 
-        [HttpGet]
-        public ActionResult AvaiableCountrySql(string region)
-        {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            string query = "Select distinct ShipCountry from orders where  {ShipRegion}  1=1";
-            query = MadeParam("ShipRegion", region, parameters, query);
+        //[HttpGet]
+        //public ActionResult AvaiableCountrySql(string region)
+        //{
+        //    List<SqlParameter> parameters = new List<SqlParameter>();
+        //    string query = "Select distinct ShipCountry from orders where  {ShipRegion}  1=1";
+        //    query = MadeParam("ShipRegion", region, parameters, query);
 
-            return GetActionResultSql(query, parameters);
-        }
+        //    return GetActionResultSql(query, parameters);
+        //}
 
-        [HttpGet]
-        public ActionResult AvaiableRegionsSql()
-        {
-            string query = "Select distinct ShipRegion from orders";
-            return GetActionResultSql(query);
-        }
+        //[HttpGet]
+        //public ActionResult AvaiableRegionsSql()
+        //{
+        //    string query = "Select distinct ShipRegion from orders";
+        //    return GetActionResultSql(query);
+        //}
 
   
        
 
-        /// <summary>
-        /// получение коллекции запросом
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        private ActionResult GetActionResultSql(string query, List<SqlParameter> parameters = null)
-        {
-            if (parameters == null) parameters = new List<SqlParameter>();
-            var resList = _db.Database.SqlQuery<string>(query, parameters.ToArray()).ToList();
+        ///// <summary>
+        ///// получение коллекции запросом
+        ///// </summary>
+        ///// <param name="query"></param>
+        ///// <param name="parameters"></param>
+        ///// <returns></returns>
+        //private ActionResult GetActionResultSql(string query, List<SqlParameter> parameters = null)
+        //{
+        //    if (parameters == null) parameters = new List<SqlParameter>();
+        //    var resList = _db.Database.SqlQuery<string>(query, parameters.ToArray()).ToList();
 
-            string json = JsonConvert.SerializeObject(resList);
-            return Content(json, "application/json");
-        }
+        //    string json = JsonConvert.SerializeObject(resList);
+        //    return Content(json, "application/json");
+        //}
 
-        private static string MadeParam(string name, string paramValue, List<SqlParameter> parameters, string query)
-        {
-            var prarString = String.Empty;
-            if (!string.IsNullOrEmpty(paramValue))
-            {
-                prarString = name + " = @" + name + " and";
-                if (paramValue == "null")
-                {
-                    prarString = name + " is null and";
-                }
-                else
-                {
-                    parameters.Add(new SqlParameter(name, SqlDbType.Char) { Value = paramValue });
-                }
-            }
+        //private static string MadeParam(string name, string paramValue, List<SqlParameter> parameters, string query)
+        //{
+        //    var prarString = String.Empty;
+        //    if (!string.IsNullOrEmpty(paramValue))
+        //    {
+        //        prarString = name + " = @" + name + " and";
+        //        if (paramValue == "null")
+        //        {
+        //            prarString = name + " is null and";
+        //        }
+        //        else
+        //        {
+        //            parameters.Add(new SqlParameter(name, SqlDbType.Char) { Value = paramValue });
+        //        }
+        //    }
 
-            query = query.Replace("{" + name + "}", prarString);
-            return query;
-        }
-        #endregion
+        //    query = query.Replace("{" + name + "}", prarString);
+        //    return query;
+        //}
+        //#endregion
     }
 
     public  class NamedEntity

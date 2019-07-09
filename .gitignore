@@ -4,5 +4,16 @@
 /datagrid-mvc5/App_Data/Northwind1_log.ldf
 /datagrid-mvc5/App_Data/*.ldf
 /datagrid-mvc5/Views/Orders/*.bak
-
+bin/
+obj/
+packages/
 *.bak
+/datagrid-mvc5/node_modules/.bin
+/.vs/vue-mvc-Working/v16/.suo
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.suo
+*.dtbcache
+*.config

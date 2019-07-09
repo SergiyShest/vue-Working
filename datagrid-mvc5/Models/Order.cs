@@ -1,6 +1,7 @@
 using System.Linq;
 
 namespace datagrid_mvc5.Models {
+    using Core.Interfaces;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -8,10 +9,15 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Order {
+    public partial class OrderOld: IOrder {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Order() {
+        public OrderOld() {
             Order_Details = new HashSet<Order_Detail>();
+        }
+
+       int IOrder.Id  {
+            get {return OrderID;}
+            set { OrderID = value; }
         }
 
         public int OrderID { get; set; }
@@ -35,8 +41,8 @@ namespace datagrid_mvc5.Models {
         [StringLength(40)]
         public string ShipName { get; set; }
 
-        [MinLength(10)]
-        [StringLength(60)]
+
+        [MinMaxLengthAttribute(10,60 ,FieldTitle = "Адрес корабля")]
         public string ShipAddress { get; set; }
 
         [CheckCityAttribute("Поле ShipCity обязательно для заполнения")]
@@ -64,6 +70,14 @@ namespace datagrid_mvc5.Models {
 
         [JsonIgnore]
         public virtual Shipper Shipper { get; set; }
+        ICustomer IOrder.Customer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public  void Delete()
+        {
+         //   var orderRepos = Facrory.Get<IOrdersRepositary>();
+         //   var order = orderRepos.Delete(this.OrderID);
+        }
+
     }
     /// <summary>
     /// Custom Attribute Example
@@ -115,4 +129,53 @@ namespace datagrid_mvc5.Models {
             return result;
         }
     }
+
+    public class MinMaxLengthAttribute : StringLengthAttribute
+    {
+        int? _stringLength = null;
+        public  string FieldTitle { get; set; }
+        public MinMaxLengthAttribute(int minimum, int maximum)
+            : base(maximum)
+        {
+            // SetErrorMessage();
+            MinimumLength = minimum;
+        }
+
+        void SetErrorMessage(string stringLength)
+        {
+      
+            ErrorMessage = $"Длина поля {FieldTitle} должна быть от {MinimumLength} до {MaximumLength} символов." +
+                           $" Текущая длина  {stringLength}  символов.";
+        }
+        //public override bool IsValid(object value)
+        //{
+        //    //string s = value as string;
+        //    //if (s != null)
+        //    //{
+        //    //   var  stringLength = s.Length.ToString();
+        //    //    SetErrorMessage( stringLength);
+        //    //}
+
+        //    return base.IsValid(value);
+        //}
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+
+            var name = FieldTitle ?? validationContext.MemberName;
+            string s = value as string;
+            if (s != null)
+            {
+
+                var stringLength = s.Length;
+                ErrorMessage = $"Длина поля {name} должна быть от {MinimumLength} до {MaximumLength} символов." +
+                               $" Текущая длина  {stringLength}  символов." ;
+            }
+
+            return base.IsValid(value, validationContext);
+        }
+    }
+
+
+
+
 }
