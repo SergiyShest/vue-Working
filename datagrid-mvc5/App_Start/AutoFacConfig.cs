@@ -8,16 +8,21 @@ using System.Web;
 
 namespace datagrid_mvc5.App_Start
 {
-    public static class AutoFacConfig
+    public static class AutoFacConfigX
     {
 
  public static ContainerBuilder Builder { get; set; }
-         static  AutoFacConfig()
+         static  AutoFacConfigX()
         {
             Builder = new ContainerBuilder();
-            var assm = GetAssemblyByName("datagrid-mvc5");
-            Builder.RegisterAssemblyTypes(assm)
+            var assembly = GetAssemblyByName("datagrid-mvc5");
+
+            Builder.RegisterAssemblyTypes(assembly)
             .Where(x => x.Name.EndsWith("Order"))
+            .AsImplementedInterfaces();
+
+            Builder.RegisterAssemblyTypes(assembly)
+            .Where(x => x.Name=="Northwind")
             .AsImplementedInterfaces();
         }
 
@@ -28,3 +33,4 @@ namespace datagrid_mvc5.App_Start
         }
     }
 }
+

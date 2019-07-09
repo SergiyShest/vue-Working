@@ -8,9 +8,9 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
 
 
-    public partial class Customer {
+    public partial class CustomerOld {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Customer() {
+        public CustomerOld() {
             Orders = new HashSet<Order>();
         }
 

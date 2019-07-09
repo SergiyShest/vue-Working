@@ -5,9 +5,9 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Supplier {
+    public partial class Supplierold {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Supplier() {
+        public Supplierold() {
             Products = new HashSet<Product>();
         }
 

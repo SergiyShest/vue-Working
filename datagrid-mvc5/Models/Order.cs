@@ -1,6 +1,7 @@
 using System.Linq;
 
 namespace datagrid_mvc5.Models {
+    using Core.Interfaces;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -8,10 +9,15 @@ namespace datagrid_mvc5.Models {
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Order: IOrder {
+    public partial class OrderOld: IOrder {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Order() {
+        public OrderOld() {
             Order_Details = new HashSet<Order_Detail>();
+        }
+
+       int IOrder.Id  {
+            get {return OrderID;}
+            set { OrderID = value; }
         }
 
         public int OrderID { get; set; }
@@ -64,6 +70,7 @@ namespace datagrid_mvc5.Models {
 
         [JsonIgnore]
         public virtual Shipper Shipper { get; set; }
+        ICustomer IOrder.Customer { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public  void Delete()
         {
