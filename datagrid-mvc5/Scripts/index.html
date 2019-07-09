@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<!--meta http-equiv="refresh" content="1;url="-->
+<title>Draggable and Risizable Dialog Box</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="ZulNs">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="robots" content="all">
+<meta name="copyright" content="ZulNs">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+<!--link rel="icon" href="favicon.png" type="image/png" /-->
+<!--link rel="icon" href="favicon.ico" type="image/x-icon" /-->
+</head>
+<body>
+<link rel="stylesheet" href="draggable-resizable-dialog.css" />
+
+<p><button id="show-dialog" onclick="_showDialog();">Show Dialog</button></p>
+<p id="dialog-status">Dialog hidden...</p>
+<p class="">To move, start dragging from the title bar of the dialog box.</p>
+<p class="">To resize, start dragging from any edge or any corner of the dialog box.</p>
+<div class="dialog" style="width:480px; height:240px;">
+	<div class="titlebar">Pfujkjdfjr af Заголовок диалогового окна</div>
+	<button>Close</button>
+	<div class="content">
+		<p>тело диалогового окна </p>
+	</div>
+	<div class="buttonpane">
+		<div class="buttonset">
+			<button>OK</button>
+			<button>Cancel</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="draggable-resizable-dialog.js"></script>
+</body>
+</html>

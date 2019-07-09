@@ -1,6 +1,10 @@
-﻿new Vue({
+﻿Vue.component('v-select', VueSelect.VueSelect);
+new Vue({
     el: "#app",
     mixins: [baseMixin],
+    components: {
+        VueSelect: window.VueSelect.default
+    },
     data: {
         id: ID,
         selected: '',

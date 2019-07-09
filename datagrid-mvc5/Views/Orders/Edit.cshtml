@@ -7,76 +7,205 @@
     <script src="~/Scripts/vue.js"></script>
     <script src="~/js/Vue/components/vueErrorAborder.js"></script>
     <script src="~/js/Vue/components/BaseMixin.js"></script>
+    <script src="~/Scripts/vue-select.js"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/vueError.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/v-select.css" />
 </head>
 <body>
     <div id="app">
-        <table border="1">
-            <tr>
-                <td>Customer</td>
-                <td>
-                    <select v-model="order.CustomerID" class="input">
-                        <option v-for="customer in AvaialbeCustomers"
-                                :v-key="customer.Id"
-                                v-bind:value="customer.Id">
-                            {{customer.Name}}
-                        </option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Freight</td>
-                <td>
-                    <error-aborder v-bind:error="errors.Freight">
-                        <input type="number" v-model="order.Freight" class="input" />
-                    </error-aborder>
-                </td>
-            </tr>
-            <tr>
-                <td>ShipCountry</td>
-                <td>
-                    <select v-model="order.ShipCountry" class="input">
-                        <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>ShipCity</td>
-                <td>
-                    <error-aborder v-bind:error="errors.ShipCity">
-                        <select v-model="order.ShipCity" class="input">
-                            <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+        <table>
+            <div  v-bind:class="{hider:IsChanged}">v-bind:class="{hider:false}"rrrrrrrrrrrrrrrrrr</div>
+            <table border="1">
+                <tr>
+                    <td>Customer</td>
+                    <td>
+                        <vue-select v-model="order.CustomerID"
+                                    :options="AvaialbeCustomers"
+                                    label="Name"></vue-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Customer</td>
+                    <td>
+                        <select v-model="order.CustomerID" class="input">
+                            <option v-for="customer in AvaialbeCustomers"
+                                    :v-key="customer.Id"
+                                    v-bind:value="customer.Id">
+                                {{customer.Name}}
+                            </option>
                         </select>
-                    </error-aborder>
-                </td>
-            </tr>
-            <tr>
-                <td>Адрес корабля</td>
-                <td>
-                    <error-aborder v-bind:error="errors.ShipAddress">
-                        <input type="text" v-model="order.ShipAddress" class="input" />
-                    </error-aborder>
-                </td>
-            </tr>
-            <tr>
-                <td>OrderDate</td>
-                <td>
-                    <input type="datetime-local" v-model="order.OrderDate" :disabled="true" class="input" />
-                    <p class="tooltiptext" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
-                </td>
-            </tr>
-            <tr>
-                <td> </td>
-                <td>
-                    <button v-on:click="Save()" :disabled="IsChanged===false || hasError " class="alignRight">Save</button>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Freight</td>
+                    <td>
+                        <error-aborder v-bind:error="errors.Freight">
+                            <input type="number" v-model="order.Freight" class="input" />
+                        </error-aborder>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ShipCountry</td>
+                    <td>
+                        <select v-model="order.ShipCountry" class="input">
+                            <option v-for="item in AvaialbeCountrys" :v-key="item">{{item}} </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ShipCity</td>
+                    <td>
+                        <error-aborder v-bind:error="errors.ShipCity">
+                            <select v-model="order.ShipCity" class="input">
+                                <option v-for="city in AvaialbeCitys" :v-key="city">{{city}} </option>
+                            </select>
+                        </error-aborder>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Адрес корабля</td>
+                    <td>
+                        <error-aborder v-bind:error="errors.ShipAddress">
+                            <input type="text" v-model="order.ShipAddress" class="input" />
+                        </error-aborder>
+                    </td>
+                </tr>
+                <tr>
+                    <td>OrderDate</td>
+                    <td>
+                        <input type="datetime-local" v-model="order.OrderDate" :disabled="true" class="input" />
+                        <p class="tooltiptext" v-if="errors.OrderDate!=''">{{errors.OrderDate}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td>
+                        <button v-on:click="Save()" :disabled="IsChanged===false || hasError " class="alignRight">Save</button>
+                    </td>
+                </tr>
+            </table>
         </table>
-
     </div>
-
     <script> var ID=@ViewBag.Id</script>
-    <script src="~/js/Vue/Main.js"></script>
+    <script>
+        Vue.component('v-select', VueSelect.VueSelect);
+    new Vue({
+        el: "#app",
+        mixins: [baseMixin],
+        components: {
+            VueSelect: window.VueSelect.default
+        },
+        data: {
+            id: ID,
+            selected: '',
+            order: {
+                OrderID: 0,
+                CustomerID: 0,
+                EmployeeID: 0,
+                OrderDate: "",
+                RequiredDate: "",
+                ShippedDate: "",
+                ShipVia: 0,
+                Freight: 0,
+                ShipName: "",
+                ShipAddress: "",
+                ShipCity: "",
+                ShipRegion: "",
+                ShipPostalCode: "",
+                ShipCountry: ""
+            },
+            oldOrder: {
+                ShipCountry: ""
+            },
+            errors: {
+                OrderID: null,
+                CustomerID: null,
+                EmployeeID: null,
+                OrderDate: null,
+                RequiredDate: null,
+                ShippedDate: null,
+                ShipVia: null,
+                Freight: null,
+                ShipName: null,
+                ShipAddress: null,
+                ShipCity: null,
+                ShipRegion: null,
+                ShipPostalCode: null,
+                ShipCountry: null
+            },
+            IsChanged: false,
+            IsFormEnabled: false,
+            AvaialbeCustomers: [],
+            AvaialbeCitys: [],
+            AvaialbeRegions: [],
+            AvaialbeCountrys: []
+        },
+        computed:
+        {
+            hasError: function () {
+                for (var err in this.errors) {
+                    var error = this.errors[err];
+                    if (error !== '' || null) return true;
+                }
+                return false;
+            }
+        },
+        methods: {
+            fetchOrder() {
+                var path = "../Orders/GetById?Id=" + this.id;
+                this.fetchJson(path,
+                    json => {
+                        this.order = json;
+                        //     var eb = this.IsFormEnabled;
+                        //  setInterval(function () { eb = true }, 1000);
+                    });
+            },
+
+            fetchCityList() {
+                //Avaiable city depended on  country
+                var country = this.order.ShipCountry;
+                if (country == null || country === "") {
+                    country = '';
+                }
+                var path = "../Orders/AvaiableCityList?country=" + country;
+                this.fetchJson(path, json => { this.AvaialbeCitys = json; });
+            },
+
+            fetchCountrys() {
+                var path = "../Orders/AvaiableCountrys";
+                this.fetchJson(path, jsonResult => { this.AvaialbeCountrys = jsonResult; });
+            },
+
+            fetchAvaialbeCustomers() {
+                var path = "../Orders/AvaialbeCustomers";
+                this.fetchJson(path, jsonResult => { this.AvaialbeCustomers = jsonResult; });
+            },
+
+            SaveOldValue() {
+                this.oldOrder.ShipCountry = this.order.ShipCountry;
+            }
+        },
+        watch: {
+            order: {
+                handler: function (after) {
+                    this.IsChanged = true;
+                    if (this.oldOrder.ShipCountry !== after.ShipCountry) {
+                        this.fetchCityList();
+                    }
+                    this.SaveOldValue();
+                    this.Validate();
+                },
+                deep: true
+            }
+        },
+        mounted: function () {
+            this.ActionPath = "../Orders/";
+            this.fetchOrder();
+            this.SaveOldValue();
+            this.fetchCountrys();
+            this.fetchAvaialbeCustomers();
+        }
+    });</script>
 
 </body>
 </html>

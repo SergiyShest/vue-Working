@@ -6,7 +6,17 @@
     document.execCommand('copy');
     document.body.removeChild(el);
 };
+window.addEventListener('resize',AutoSizeDataGrid );
 
+function AutoSizeDataGrid() {
+
+    var dataGridEl = = $('#grid');
+    console.log(dataGridEl);
+    var grid = $("#grid").dxDataGrid("instance");
+    grid.option("height", dataSource);
+  //  document.querySelector('.width').innerText = document.documentElement.clientWidth;
+  //  document.querySelector('.height').innerText = document.documentElement.clientHeight;
+}
 var statuses = ["All", 'Switzerland', 'Belgium', 'Brazil', 'France', 'Brazil', 'Germany',];
 //добавление пункта меню копировать
 function contextMenuPreparing(e) {
