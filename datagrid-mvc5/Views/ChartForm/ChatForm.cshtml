@@ -1,0 +1,122 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <title>SignalR Simple Chat</title>
+    <style type="text/css">
+        .container {
+            background-color: #99CCFF;
+            border: thick solid #808080;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app" >
+        <input type="text" id="message" />
+        <input type="button" id="sendmessage" value="Send" />
+       
+        <ul>
+
+            <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} </li>
+            </ul>
+</div>
+
+    <!--Add script to update the page and send messages.-->
+    <script type="text/javascript">
+        //function getJSessionId() {
+        //    var jsId = document.cookie.match(/JSESSIONID=[^;]+/);
+        //    if (jsId != null) {
+        //        if (jsId instanceof Array)
+        //            jsId = jsId[0].substring(11);
+        //        else
+        //            jsId = jsId.substring(11);
+        //    }
+        //    return jsId;
+        //}
+
+        //// Declare a proxy to reference the hub.
+        //var chat = $.connection.chatHub;
+        //console.log($.connection);
+        //console.log(chat);
+        //// Create a function that the hub can call to broadcast messages.
+        //chat.client.broadcastMessage = function (name, message) {
+        //    // Html encode display name and message.
+        //    var encodedName = $('<div />').text(name).html();
+        //    var encodedMsg = $('<div />').text(message).html();
+        //    // Add the message to the page.
+        //    $('#discussion').append('<li><strong>' + encodedName
+        //        + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
+        //};
+
+        //// Set initial focus to message input box.
+        //$('#message').focus();
+        //// Start the connection.
+        //$.connection.hub.start().done(function () {
+        //    $('#sendmessage').click(function () {
+        //        // Call the Send method on the hub.
+        //        chat.server.send(getJSessionId(), $('#message').val());
+        //        // Clear text box and reset focus for next comment.
+        //        $('#message').val('').focus();
+        //    });
+        //});
+</script>
+        <script type="text/javascript">
+            var chat = $.connection.chatHub;
+    new Vue({
+    el: "#app",
+    data: {
+    messages:[] 
+    },
+    computed :
+    {
+        //hasError: function () {
+        //    for (var err in  this.errors) {
+        //        var error = this.errors[err];
+        //        if (error !== '' || null) return true;
+        //    }
+        //    return false;
+        //}
+    },
+    methods: {
+        //читаем объект
+        fetchMessages() {
+            var fe = this.fetch;
+            $.connection.hub.start().done(function () {
+                chat.server.getMessages().done(function(val) { fe(val); });
+                //$('#sendmessage').click(function () {
+                //    // Call the Send method on the hub.
+                //    chat.server.send(getJSessionId(), $('#message').val());
+                //    // Clear text box and reset focus for next comment.
+                //    $('#message').val('').focus();
+                //});
+            });
+        },
+        fetch(val) {
+            console.log(val);
+            this.messages = val;
+        }
+
+        ,
+        SendMessage:function(){
+            //this.oldOrder.ShipCountry = this.order.ShipCountry;
+        }
+    },
+    //watch: {
+    //    messages: {
+         
+    //    }
+    //},
+    mounted: function () {
+        this.fetchMessages();//начитываю сообщения
+    }
+        });
+    </script>
+</body>
+</html>

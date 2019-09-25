@@ -1,0 +1,2 @@
+C:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5Tests1\obj\x86\Debug\datagrid-mvc5Tests1.csprojAssemblyReference.cache
+C:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5Tests1\obj\x86\Debug\datagrid-mvc5Tests1.csproj.CoreCompileInputs.cache
