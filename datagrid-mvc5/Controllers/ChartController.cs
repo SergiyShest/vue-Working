@@ -10,15 +10,16 @@ namespace datagrid_mvc5.Controllers
 {
     public class ChatHub : Hub
     {
-        public void Send(string name, string message)
+        public void Send(string message)
         {
             var sessId = sessionStor.sessionId;
             var httpContext = Context.Request.GetHttpContext();
             //    var mSid=  httpContext.Session.SessionID;
-            string name1 = Context.User.Identity.Name;
+            string name = Context.User.Identity.Name;
 
             // Call the broadcastMessage method to update clients.
-            Clients.All.broadcastMessage(sessId, message);
+            
+            Clients.All.broadcastMessage(new ChatMessage() { Id = 1, SenderName = "xxx", Message = message });
         }
 
 

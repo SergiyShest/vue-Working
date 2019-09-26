@@ -15,74 +15,40 @@
             padding: 20px;
             margin: 20px;
         }
+      
+   .layer {
+             overflow: auto; /* Добавляем полосы прокрутки */
+             
+             height: 150px; /* Высота блока */
+             padding: 5px; /* Поля вокруг текста */
+             border: solid 1px black; /* Параметры рамки */
+         } 
+  
     </style>
 </head>
 <body>
     <div class="container" id="app" >
-        <input type="text" id="message" />
-        <input type="button" id="sendmessage" value="Send" />
+        <input type="text" v-model="message" />
+        <input type="button" v-on:click="SendMessage()" value="Send" />
        
-        <ul>
+        <div class="layer">
 
             <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} </li>
-            </ul>
+       </div>
+      
 </div>
 
-    <!--Add script to update the page and send messages.-->
-    <script type="text/javascript">
-        //function getJSessionId() {
-        //    var jsId = document.cookie.match(/JSESSIONID=[^;]+/);
-        //    if (jsId != null) {
-        //        if (jsId instanceof Array)
-        //            jsId = jsId[0].substring(11);
-        //        else
-        //            jsId = jsId.substring(11);
-        //    }
-        //    return jsId;
-        //}
-
-        //// Declare a proxy to reference the hub.
-        //var chat = $.connection.chatHub;
-        //console.log($.connection);
-        //console.log(chat);
-        //// Create a function that the hub can call to broadcast messages.
-        //chat.client.broadcastMessage = function (name, message) {
-        //    // Html encode display name and message.
-        //    var encodedName = $('<div />').text(name).html();
-        //    var encodedMsg = $('<div />').text(message).html();
-        //    // Add the message to the page.
-        //    $('#discussion').append('<li><strong>' + encodedName
-        //        + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
-        //};
-
-        //// Set initial focus to message input box.
-        //$('#message').focus();
-        //// Start the connection.
-        //$.connection.hub.start().done(function () {
-        //    $('#sendmessage').click(function () {
-        //        // Call the Send method on the hub.
-        //        chat.server.send(getJSessionId(), $('#message').val());
-        //        // Clear text box and reset focus for next comment.
-        //        $('#message').val('').focus();
-        //    });
-        //});
-</script>
         <script type="text/javascript">
             var chat = $.connection.chatHub;
     new Vue({
     el: "#app",
     data: {
-    messages:[] 
+        messages: [],
+        message:''
     },
     computed :
     {
-        //hasError: function () {
-        //    for (var err in  this.errors) {
-        //        var error = this.errors[err];
-        //        if (error !== '' || null) return true;
-        //    }
-        //    return false;
-        //}
+      
     },
     methods: {
         //читаем объект
@@ -90,12 +56,6 @@
             var fe = this.fetch;
             $.connection.hub.start().done(function () {
                 chat.server.getMessages().done(function(val) { fe(val); });
-                //$('#sendmessage').click(function () {
-                //    // Call the Send method on the hub.
-                //    chat.server.send(getJSessionId(), $('#message').val());
-                //    // Clear text box and reset focus for next comment.
-                //    $('#message').val('').focus();
-                //});
             });
         },
         fetch(val) {
@@ -104,17 +64,19 @@
         }
 
         ,
-        SendMessage:function(){
-            //this.oldOrder.ShipCountry = this.order.ShipCountry;
+        SendMessage:function() {
+            if(this.message.length>0)
+            { chat.server.send(this.message); }
+            message = '';
+        },
+        broadcastMessage:function(message) {
+            this.messages.push(message);
         }
     },
-    //watch: {
-    //    messages: {
-         
-    //    }
-    //},
+  
     mounted: function () {
         this.fetchMessages();//начитываю сообщения
+        chat.client.broadcastMessage = this.broadcastMessage;
     }
         });
     </script>
