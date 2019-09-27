@@ -31,54 +31,71 @@
         <input type="text" v-model="message" />
         <input type="button" v-on:click="SendMessage()" value="Send" />
        
-        <div class="layer">
+        <div class="layer" id="scroll" >
 
-            <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} </li>
+            <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} _ {{item.Status}}   {{item.CrDate}}</li>
        </div>
       
 </div>
 
-        <script type="text/javascript">
-            var chat = $.connection.chatHub;
-    new Vue({
-    el: "#app",
-    data: {
-        messages: [],
-        message:''
-    },
-    computed :
-    {
-      
-    },
-    methods: {
-        //читаем объект
-        fetchMessages() {
-            var fe = this.fetch;
-            $.connection.hub.start().done(function () {
-                chat.server.getMessages().done(function(val) { fe(val); });
-            });
-        },
-        fetch(val) {
-            console.log(val);
-            this.messages = val;
-        }
-
-        ,
-        SendMessage:function() {
-            if(this.message.length>0)
-            { chat.server.send(this.message); }
-            message = '';
-        },
-        broadcastMessage:function(message) {
-            this.messages.push(message);
-        }
-    },
-  
-    mounted: function () {
-        this.fetchMessages();//начитываю сообщения
-        chat.client.broadcastMessage = this.broadcastMessage;
+<script type="text/javascript">
+    function scrollSmoothToBottom (id) {
+        var div = document.getElementById(id);
+        $('#' + id).animate({
+            scrollTop: div.scrollHeight - div.clientHeight + 50
+    }, 500);
     }
-        });
-    </script>
+    var chat = $.connection.chatHub;
+    new Vue({
+        el: "#app",
+        data: {
+            messages: [],
+            message:''
+        },
+        computed :
+        {
+      
+        },
+        methods: {
+            //читаем объект
+            fetchMessages() {
+                var fe = this.fetch;
+                $.connection.hub.start().done(function () {
+                    chat.server.getMessages().done(function(val) { fe(val); });
+                });
+            },
+            fetch(val) {
+                this.messages = val;
+            }
+
+            ,
+            SendMessage:function() {
+                if(this.message.length>0)
+                { chat.server.send(this.message); }
+               // this.message = '';
+            },
+            broadcastMessage:function(message) {
+                this.messages.push(message);
+                scrollSmoothToBottom('scroll');
+            },
+            ChangeMessageStatus:function(messageId,status) {
+                for (var i = 0; i < this.messages.length; i++) {
+                    var mess = this.messages[i];
+                    if (mess.Id === messageId) {
+                        mess.Status = status;
+                        break;
+                    }
+                }
+            }
+
+        },
+  
+        mounted: function () {
+            this.fetchMessages();//начитываю сообщения
+            chat.client.broadcastMessage = this.broadcastMessage;
+            chat.client.changeMessageStatus = this.ChangeMessageStatus;
+        }
+    });
+</script>
 </body>
 </html>
