@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/Scripts/vue.js"></script>
@@ -15,87 +14,95 @@
             padding: 20px;
             margin: 20px;
         }
-      
-   .layer {
-             overflow: auto; /* Добавляем полосы прокрутки */
-             
-             height: 150px; /* Высота блока */
-             padding: 5px; /* Поля вокруг текста */
-             border: solid 1px black; /* Параметры рамки */
-         } 
-  
+
+        .layer {
+            overflow: auto; /* Добавляем полосы прокрутки */
+            height: 150px; /* Высота блока */
+            padding: 5px; /* Поля вокруг текста */
+            border: solid 1px black; /* Параметры рамки */
+        }
     </style>
 </head>
 <body>
-    <div class="container" id="app" >
-        <input type="text" v-model="message" />
+    <div class="container" id="app">
+
+
+        <div class="layer" id="scroll">
+
+            <li v-for="item in messages" :v-key="item" v-bind:style="getStyle(item.Status)">
+                {{item.SenderName}} {{item.Message}} _ {{item.Status}}   {{item.CrDate}}
+            </li>
+        </div>
+        <textarea v-model="message" style="width:100%" v-on:keydown="keydown"></textarea>
         <input type="button" v-on:click="SendMessage()" value="Send" />
-       
-        <div class="layer" id="scroll" >
+    </div>
 
-            <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} _ {{item.Status}}   {{item.CrDate}}</li>
-       </div>
-      
-</div>
+    <script>
+        function scrollSmoothToBottom(id) {
+            var div = document.getElementById(id);
+            $('#' + id).animate({
+                scrollTop: div.scrollHeight - div.clientHeight + 50
+            }, 500);
+        }
+        var chat = $.connection.chatHub;
+        new Vue({
+            el: "#app",
+            data: {
+                messages: [],
+                message: '',
+             
+            },
+            methods: {
+                keydown: function (event) {
+                    if (event.keyCode == 13 && event.ctrlKey) {//on press Ctrl+Enter
+                        this.SendMessage();
+                    }
+                },
+                getStyle: function (status) {
+                    switch (status) {
+                        case 0: return { 'background-color': 'red' }; break;
+                        case 1: return { 'background-color': 'green' }; break;
+                        case 2: return { 'background-color': 'grey' }; break;
+                        default: return { 'background-color': '#558', 'color': '#FFF' }; break;
+                    }
 
-<script type="text/javascript">
-    function scrollSmoothToBottom (id) {
-        var div = document.getElementById(id);
-        $('#' + id).animate({
-            scrollTop: div.scrollHeight - div.clientHeight + 50
-    }, 500);
-    }
-    var chat = $.connection.chatHub;
-    new Vue({
-        el: "#app",
-        data: {
-            messages: [],
-            message:''
-        },
-        computed :
-        {
-      
-        },
-        methods: {
-            //читаем объект
-            fetchMessages() {
-                var fe = this.fetch;
-                $.connection.hub.start().done(function () {
-                    chat.server.getMessages().done(function(val) { fe(val); });
-                });
-            },
-            fetch(val) {
-                this.messages = val;
-            }
+                },
 
-            ,
-            SendMessage:function() {
-                if(this.message.length>0)
-                { chat.server.send(this.message); }
-               // this.message = '';
-            },
-            broadcastMessage:function(message) {
-                this.messages.push(message);
-                scrollSmoothToBottom('scroll');
-            },
-            ChangeMessageStatus:function(messageId,status) {
-                for (var i = 0; i < this.messages.length; i++) {
-                    var mess = this.messages[i];
-                    if (mess.Id === messageId) {
-                        mess.Status = status;
-                        break;
+                //читаем объект
+                fetchMessages: function () {
+                    var fe = this.fetch;
+                    $.connection.hub.start().done(function () {
+                        chat.server.getMessages().done(function (val) { fe(val); });
+                    });
+                },
+                fetch: function (val) {
+                    this.messages = val;
+                }
+                ,
+                SendMessage: function () {
+                    if (this.message.length > 0) { chat.server.send(this.message); }
+                },
+                broadcastMessage: function (message) {
+                    this.messages.push(message);
+                    scrollSmoothToBottom('scroll');
+                },
+                ChangeMessageStatus: function (messageId, status) {
+                    for (var i = 0; i < this.messages.length; i++) {
+                        var mess = this.messages[i];
+                        if (mess.Id === messageId) {
+                            mess.Status = status;
+                            break;
+                        }
                     }
                 }
-            }
 
-        },
-  
-        mounted: function () {
-            this.fetchMessages();//начитываю сообщения
-            chat.client.broadcastMessage = this.broadcastMessage;
-            chat.client.changeMessageStatus = this.ChangeMessageStatus;
-        }
-    });
-</script>
+            },
+            mounted: function () {
+                this.fetchMessages();//начитываю сообщения
+                chat.client.broadcastMessage = this.broadcastMessage;
+                chat.client.changeMessageStatus = this.ChangeMessageStatus;
+            }
+        });
+    </script>
 </body>
 </html>
