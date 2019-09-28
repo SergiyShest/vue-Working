@@ -197,7 +197,7 @@
     <Content Include="Scripts\zip.js" />
     <Content Include="Views\Orders\Edit.cshtml" />
     <Content Include="Views\ChartForm\Index.cshtml" />
-    <Content Include="Views\ChartForm\ChatForm.cshtml" />
+    <None Include="Views\ChartForm\ChatForm.cshtml" />
     <None Include="Views\Orders\Index.cshtml" />
     <Content Include="js\code.js" />
     <Content Include="Scripts\dx.all.js" />

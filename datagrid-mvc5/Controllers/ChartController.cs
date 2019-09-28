@@ -16,19 +16,17 @@ namespace datagrid_mvc5.Controllers
        static List<ChatMessage> Messages=new List<ChatMessage>();
 
         public void Send(string messageStr)
-        {
-            JsonSerializerSettings microsoftDateFormatSettings = new JsonSerializerSettings
-            {
-                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
-            };
+        { //throw new Exception("dfas");
 
-            var sessId = sessionStor.sessionId;
+            var sessId = Context.ConnectionId;
             var httpContext = Context.Request.GetHttpContext();
             //    var mSid=  httpContext.Session.SessionID;
             string name = Context.User.Identity.Name;
 
             // Call the broadcastMessage method to update clients.
-            var mess = new ChatMessage() {Id = ++counter, SenderName = "xxx", Message = messageStr, CrDate = DateTime.Now};
+            var mess = new ChatMessage() {Id = ++counter,
+                SenderName = sessId.Substring(0,5),
+                Message = messageStr, CrDate = DateTime.Now};
             Clients.All.broadcastMessage(mess);
             Messages.Add(mess);
 
@@ -37,6 +35,7 @@ namespace datagrid_mvc5.Controllers
                 message.Status++;
                 Clients.All.changeMessageStatus(message.Id,message.Status);
             }
+           
         }
 
         public List<ChatMessage> GetMessages()
@@ -45,6 +44,7 @@ namespace datagrid_mvc5.Controllers
             {
                 new ChatMessage(){Id = ++counter,SenderName = "xxx",Message = "ssss"},
                 new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs"},
+
             };
         }
 
@@ -68,7 +68,7 @@ public int Status{ get; set;}
     {
         public CustomDateTimeConverter()
         {
-            base.DateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+            base.DateTimeFormat = "dd.MMM HH:mm:ss";
         }
     }
 }

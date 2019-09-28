@@ -15,50 +15,101 @@
             padding: 20px;
             margin: 20px;
         }
-      
-   .layer {
-             overflow: auto; /* Добавляем полосы прокрутки */
-             
-             height: 150px; /* Высота блока */
-             padding: 5px; /* Поля вокруг текста */
-             border: solid 1px black; /* Параметры рамки */
-         } 
-  
+
+        .layer {
+            overflow: auto; /* Добавляем полосы прокрутки */
+            height: 150px; /* Высота блока */
+            padding: 5px; /* Поля вокруг текста */
+            border: solid 1px black; /* Параметры рамки */
+        }
+        .item {
+            margin: 2px;
+            padding: 2px; /* Поля вокруг текста */
+            border: double 1px black; /* Параметры рамки */
+            background-color: #66CCFF;
+        }
+      .p1 {
+            margin: 2px;
+            padding: 2px; /* Поля вокруг текста */
+        }
+      .nam {
+          color: red;
+          font-size: large;
+         /* margin-block-end: 13px;*/
+        }
+      .dat {
+          color: brown;
+          font-size: medium;
+         font-style: oblique;
+          float: right;
+         /* margin-block-end: 13px;*/
+        }
+        .item:hover {
+            box-shadow: inset 0 0 0 3px #a3a593;
+            cursor: pointer; 
+        }
+textarea {
+    width: 98%;
+    border: transparent;
+   
+}
     </style>
 </head>
 <body>
-    <div class="container" id="app" >
-        <input type="text" v-model="message" />
-        <input type="button" v-on:click="SendMessage()" value="Send" />
-       
-        <div class="layer" id="scroll" >
+    <div class="container" id="app">
 
-            <li v-for="item in messages" :v-key="item">{{item.SenderName}} {{item.Message}} _ {{item.Status}}   {{item.CrDate}}</li>
-       </div>
-      
-</div>
+        <div id="scroll" class="layer">
+            <div class="item" v-for="(item,i) in messages" :v-key="item">
+                <p class="p1">
+                    {{i}})
+                    <span class="nam">{{item.SenderName}}  </span>
+                    {{item.Status}}
+                    <span class="dat"> {{item.CrDate}}</span>
+                </p>
+                <div>{{item.Message}}</div>
+                @*<textarea onmouseenter="auto_grow(this)" readonly></textarea>*@
+            </div>
+        </div>@*onmouseleave="auto_un_grow(this)"*@
+        <textarea v-model="message" oninput="auto_grow(this)"></textarea>
+        <input type="button" v-on:click="SendMessage()" value="Send" />
+
+    </div>
 
 <script type="text/javascript">
-    function scrollSmoothToBottom (id) {
+
+    $.connection.hub.error(function (error) {
+        console.log('SignalR error: ' + error);
+    });
+
+    function scrollSmoothToBottom(id) {
         var div = document.getElementById(id);
         $('#' + id).animate({
             scrollTop: div.scrollHeight - div.clientHeight + 50
-    }, 500);
+        }, 500);
     }
+
+    function auto_grow(element) {
+        // var element = document.getElementById(id);
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight)+"px";
+    }
+    function auto_un_grow(element) {
+        // var element = document.getElementById(id);
+        element.style.rows = "2";
+
+    }
+
     var chat = $.connection.chatHub;
-    new Vue({
+    var vue =  new Vue({
         el: "#app",
         data: {
             messages: [],
-            message:''
-        },
-        computed :
-        {
-      
+            message: ''
         },
         methods: {
             //читаем объект
             fetchMessages() {
+
                 var fe = this.fetch;
                 $.connection.hub.start().done(function () {
                     chat.server.getMessages().done(function(val) { fe(val); });
@@ -66,19 +117,15 @@
             },
             fetch(val) {
                 this.messages = val;
-            }
-
-            ,
-            SendMessage:function() {
-                if(this.message.length>0)
-                { chat.server.send(this.message); }
-               // this.message = '';
             },
-            broadcastMessage:function(message) {
+            SendMessage: function () {
+                if (this.message.length > 0) { chat.server.send(this.message); }
+            },
+            broadcastMessage: function (message) {
                 this.messages.push(message);
                 scrollSmoothToBottom('scroll');
             },
-            ChangeMessageStatus:function(messageId,status) {
+            ChangeMessageStatus: function (messageId, status) {
                 for (var i = 0; i < this.messages.length; i++) {
                     var mess = this.messages[i];
                     if (mess.Id === messageId) {
@@ -86,14 +133,17 @@
                         break;
                     }
                 }
+            },
+            error: function (error) {
+                console.log('SignalR error: ' + error);
             }
-
         },
-  
+
         mounted: function () {
             this.fetchMessages();//начитываю сообщения
             chat.client.broadcastMessage = this.broadcastMessage;
             chat.client.changeMessageStatus = this.ChangeMessageStatus;
+            $.connection.hub.error = this.error;
         }
     });
 </script>
