@@ -66,7 +66,7 @@
 
         <div id="scroll" class="layer">
             <div class="item" v-for="(item,num) in messages" :v-key="item" 
-                 v-bind:style="getStyle(item.Status)"
+                 v-bind:style="getStyle(item.SenderName,item.Status)"
                  v-on:click="setMessageReaded(item.Id,item.Status)"
                  >
                 <p class="p1">
@@ -125,9 +125,16 @@
                 fetch: function (val) {
                     this.messages = val;
                 },
-                getStyle: function (status) {
+                getStyle: function (senderName, status) {
+
+                   var id= $.connection.hub.id.substr(0,5 );
+                    var cursor = 'pointer';
+                    if (id===senderName) {
+                        cursor = 'auto';
+                    }
+
                     if (status < 2) {
-                        return {'background-color':'red',color:'white',cursor: 'pointer',};
+                        return {'background-color':'red',cursor: cursor};
                     } else {
                        return {'background-color':'grey'};
                     }
