@@ -49,10 +49,10 @@
             /* margin-block-end: 13px;*/
         }
 
-        .item:hover {
+        /*.item:hover {
             box-shadow: inset 0 0 0 3px #a3a593;
             cursor: pointer;
-        }
+        }*/
 
         textarea {
             margin: 2px;
@@ -71,7 +71,7 @@
                  >
                 <p class="p1">
                     {{num}})
-                    <span class="nam">{{item.SenderName}}  </span>
+                    <span class="nam">{{item.SenderName}}</span>
                     {{item.Status}}
                     <span class="dat"> {{item.CrDate}}</span>
                 </p>
@@ -127,7 +127,7 @@
                 },
                 getStyle: function (status) {
                     if (status < 2) {
-                        return {'background-color':'red'};
+                        return {'background-color':'red',color:'white',cursor: 'pointer',};
                     } else {
                        return {'background-color':'grey'};
                     }
