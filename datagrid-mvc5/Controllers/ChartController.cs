@@ -30,24 +30,32 @@ namespace datagrid_mvc5.Controllers
             Clients.All.broadcastMessage(mess);
             Messages.Add(mess);
 
-            foreach (var message in Messages)
-            {
-                message.Status++;
-                Clients.All.changeMessageStatus(message.Id,message.Status);
-            }
+            //foreach (var message in Messages)
+            //{
+            //    message.Status++;
+            //    Clients.All.changeMessageStatus(message.Id,message.Status);
+            //}
            
         }
 
         public List<ChatMessage> GetMessages()
         {
-            return new List<ChatMessage>()
+           var mess= new List<ChatMessage>()
             {
-                new ChatMessage(){Id = ++counter,SenderName = "xxx",Message = "ssss"},
-                new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs"},
+                new ChatMessage(){Id = ++counter,SenderName = "жну",Message = "ssss",CrDate = DateTime.Now.AddDays(-1)},
+                new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs",CrDate = DateTime.Now},
 
             };
+           Messages.AddRange(mess);
+           return mess;
         }
 
+        public void SetMessageReaded(int messageId)
+        {
+         var message =   Messages.Find(m=> m.Id==messageId);
+         message.Status = 3;
+         Clients.All.changeMessageStatus(message.Id, message.Status);
+        }
     }
 
     public class ChatMessage

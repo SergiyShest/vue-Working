@@ -67,6 +67,7 @@
         <div id="scroll" class="layer">
             <div class="item" v-for="(item,num) in messages" :v-key="item" 
                  v-bind:style="getStyle(item.Status)"
+                 v-on:click="setMessageReaded(item.Id,item.Status)"
                  >
                 <p class="p1">
                     {{num}})
@@ -79,7 +80,7 @@
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
-        <input type="button" v-on:click="SendMessage()" value="Send" />
+        <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
 
     </div>
 
@@ -131,14 +132,20 @@
                        return {'background-color':'grey'};
                     }
                 },
-                SendMessage: function () {
+                setMessageReaded:function(id,status) {
+                    if (status < 2) {
+                        chat.server.setMessageReaded(id);
+                    }
+                },
+
+                sendMessage: function () {
                     if (this.message.length > 0) { chat.server.send(this.message); }
                 },
                 broadcastMessage: function (message) {
                     this.messages.push(message);
                     scrollSmoothToBottom('scroll');
                 },
-                ChangeMessageStatus: function (messageId, status) {
+                changeMessageStatus: function (messageId, status) {
                     for (var i = 0; i < this.messages.length; i++) {
                         var mess = this.messages[i];
                         if (mess.Id === messageId) {
@@ -155,7 +162,7 @@
             mounted: function () {
                 this.fetchMessages();//начитываю сообщения
                 chat.client.broadcastMessage = this.broadcastMessage;
-                chat.client.changeMessageStatus = this.ChangeMessageStatus;
+                chat.client.changeMessageStatus = this.changeMessageStatus;
                 $.connection.hub.error = this.error;
             }
         });
