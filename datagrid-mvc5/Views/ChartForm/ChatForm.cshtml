@@ -65,10 +65,9 @@
     <div class="container" id="chatForm">
 
         <div id="scroll" class="layer">
-            <div class="item" v-for="(item,num) in messages" :v-key="item" 
+            <div class="item" v-for="(item,num) in messages" :v-key="item"
                  v-bind:style="getStyle(item.SenderName,item.Status)"
-                 v-on:click="setMessageReaded(item.Id,item.Status)"
-                 >
+                 v-on:click="setMessageReaded(item.Id,item.Status)">
                 <p class="p1">
                     {{num}})
                     <span class="nam">{{item.SenderName}}</span>
@@ -81,98 +80,111 @@
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
-
+        <input id="file" type="file" />
+        <input  type="button" value="Go" onclick="uploadFile()" />
     </div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        $.connection.hub.error(function (error) {
-            console.log('SignalR error: ' + error);
-        });
+    function uploadFile() {
+        var elem = document.getElementById('file');
+        var  photo = elem.files[0];  // file from input
+        var  req = new XMLHttpRequest();
+        var  formData = new FormData();
 
-        function scrollSmoothToBottom(id) {
-            var div = document.getElementById(id);
-            $('#' + id).animate({
-                scrollTop: div.scrollHeight
-            }, 500);
-        }
+        formData.append("photo", photo);                                
+        req.open("POST", 'uploadFile');
+        req.send(formData);
+    }
 
-        function auto_grow(element) {
 
-            element.style.height = "5px";
-            element.style.height = (element.scrollHeight) + "px";
-            var form = document.getElementById('chatForm');
-            form.style.height = "5px";
-            form.style.height = (form.scrollHeight) + "px";
-        }
+    $.connection.hub.error(function (error) {
+        console.log('SignalR error: ' + error);
+    });
 
-        var chat = $.connection.chatHub;
-        var vue = new Vue({
-            el: "#chatForm",
-            data: {
-                messages: [],
-                message: ''
+    function scrollSmoothToBottom(id) {
+        var div = document.getElementById(id);
+        $('#' + id).animate({
+            scrollTop: div.scrollHeight
+        }, 500);
+    }
+
+    function auto_grow(element) {
+
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight) + "px";
+        var form = document.getElementById('chatForm');
+        form.style.height = "5px";
+        form.style.height = (form.scrollHeight) + "px";
+    }
+
+    var chat = $.connection.chatHub;
+    var vue = new Vue({
+        el: "#chatForm",
+        data: {
+            messages: [],
+            message: ''
+        },
+        methods: {
+            //читаем объект
+            fetchMessages: function () {
+
+                var fe = this.fetch;
+                $.connection.hub.start().done(function () {
+                    chat.server.getMessages().done(function (val) { fe(val); });
+                });
             },
-            methods: {
-                //читаем объект
-                fetchMessages: function () {
+            fetch: function (val) {
+                this.messages = val;
+            },
+            getStyle: function (senderName, status) {
 
-                    var fe = this.fetch;
-                    $.connection.hub.start().done(function () {
-                        chat.server.getMessages().done(function (val) { fe(val); });
-                    });
-                },
-                fetch: function (val) {
-                    this.messages = val;
-                },
-                getStyle: function (senderName, status) {
+                var id= $.connection.hub.id.substr(0,5 );
+                var cursor = 'pointer';
+                if (id===senderName) {
+                    cursor = 'auto';
+                }
 
-                   var id= $.connection.hub.id.substr(0,5 );
-                    var cursor = 'pointer';
-                    if (id===senderName) {
-                        cursor = 'auto';
-                    }
-
-                    if (status < 2) {
-                        return {'background-color':'red',cursor: cursor};
-                    } else {
-                       return {'background-color':'grey'};
-                    }
-                },
-                setMessageReaded:function(id,status) {
-                    if (status < 2) {
-                        chat.server.setMessageReaded(id);
-                    }
-                },
-
-                sendMessage: function () {
-                    if (this.message.length > 0) { chat.server.send(this.message); }
-                },
-                broadcastMessage: function (message) {
-                    this.messages.push(message);
-                    scrollSmoothToBottom('scroll');
-                },
-                changeMessageStatus: function (messageId, status) {
-                    for (var i = 0; i < this.messages.length; i++) {
-                        var mess = this.messages[i];
-                        if (mess.Id === messageId) {
-                            mess.Status = status;
-                            break;
-                        }
-                    }
-                },
-                error: function (error) {
-                    console.log('SignalR error: ' + error);
+                if (status < 2) {
+                    return {'background-color':'red',cursor: cursor};
+                } else {
+                    return {'background-color':'grey'};
+                }
+            },
+            setMessageReaded:function(id,status) {
+                if (status < 2) {
+                    chat.server.setMessageReaded(id);
                 }
             },
 
-            mounted: function () {
-                this.fetchMessages();//начитываю сообщения
-                chat.client.broadcastMessage = this.broadcastMessage;
-                chat.client.changeMessageStatus = this.changeMessageStatus;
-                $.connection.hub.error = this.error;
+            sendMessage: function () {
+                if (this.message.length > 0) { chat.server.send(this.message); }
+            },
+            broadcastMessage: function (message) {
+                this.messages.push(message);
+                scrollSmoothToBottom('scroll');
+            },
+            changeMessageStatus: function (messageId, status) {
+                for (var i = 0; i < this.messages.length; i++) {
+                    var mess = this.messages[i];
+                    if (mess.Id === messageId) {
+                        mess.Status = status;
+                        break;
+                    }
+                }
+            },
+            error: function (error) {
+                console.log('SignalR error: ' + error);
             }
-        });
-    </script>
+        },
+
+        mounted: function () {
+            this.fetchMessages();//начитываю сообщения
+            chat.client.broadcastMessage = this.broadcastMessage;
+            chat.client.changeMessageStatus = this.changeMessageStatus;
+            $.connection.hub.error = this.error;
+        }
+    });
+</script>
 </body>
 </html>
