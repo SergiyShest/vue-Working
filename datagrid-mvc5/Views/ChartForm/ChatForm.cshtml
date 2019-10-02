@@ -75,16 +75,16 @@
                     <span class="dat"> {{item.CrDate}}</span>
                 </p>
                 <pre class="p1">{{item.Message}}</pre>
-
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
-        <input id="file" type="file" />
-        <input  type="button" value="Go" onclick="uploadFile()" />
+        <input id="file" v-model="files"    multiple type="file" v-on:change="showFileSize()"   />
+        <input  type="button"  value="Go" v-on:click="uploadFile()" />
     </div>
 
 <script type="text/javascript">
+
 
     function uploadFile() {
         var elem = document.getElementById('file');
@@ -93,8 +93,9 @@
         var  formData = new FormData();
 
         formData.append("photo", photo);                                
-        req.open("POST", 'uploadFile');
+        req.open("POST", 'chartForm/uploadFile');
         req.send(formData);
+        elem.v
     }
 
 
@@ -117,54 +118,57 @@
         form.style.height = "5px";
         form.style.height = (form.scrollHeight) + "px";
     }
-
+</script> 
+    <script type="text/javascript">
     var chat = $.connection.chatHub;
     var vue = new Vue({
         el: "#chatForm",
         data: {
             messages: [],
-            message: ''
+            message: '',
+            files: []
         },
         methods: {
             //читаем объект
-            fetchMessages: function () {
-
+            fetchMessages: function() {
                 var fe = this.fetch;
-                $.connection.hub.start().done(function () {
-                    chat.server.getMessages().done(function (val) { fe(val); });
+                $.connection.hub.start().done(function() {
+                    chat.server.getMessages().done(function(val) { fe(val); });
                 });
             },
-            fetch: function (val) {
+            fetch: function(val) {
                 this.messages = val;
             },
-            getStyle: function (senderName, status) {
+            getStyle: function(senderName, status) {
 
-                var id= $.connection.hub.id.substr(0,5 );
+                var id = $.connection.hub.id.substr(0, 5);
                 var cursor = 'pointer';
-                if (id===senderName) {
+                if (id === senderName) {
                     cursor = 'auto';
                 }
 
                 if (status < 2) {
-                    return {'background-color':'red',cursor: cursor};
+                    return { 'background-color': 'red', cursor: cursor };
                 } else {
-                    return {'background-color':'grey'};
+                    return { 'background-color': 'grey' };
                 }
             },
-            setMessageReaded:function(id,status) {
+            setMessageReaded: function(id, status) {
                 if (status < 2) {
                     chat.server.setMessageReaded(id);
                 }
             },
 
-            sendMessage: function () {
-                if (this.message.length > 0) { chat.server.send(this.message); }
+            sendMessage: function() {
+                if (this.message.length > 0) {
+                    chat.server.send(this.message);
+                }
             },
-            broadcastMessage: function (message) {
+            broadcastMessage: function(message) {
                 this.messages.push(message);
                 scrollSmoothToBottom('scroll');
             },
-            changeMessageStatus: function (messageId, status) {
+            changeMessageStatus: function(messageId, status) {
                 for (var i = 0; i < this.messages.length; i++) {
                     var mess = this.messages[i];
                     if (mess.Id === messageId) {
@@ -172,6 +176,28 @@
                         break;
                     }
                 }
+            },
+            
+             uploadFile:function() {
+                if (this.files.length === 0) return;
+                var elem = document.getElementById('file');
+                var photo = elem.files[0];  // file from input
+                var req   = new XMLHttpRequest();
+                var formData = new FormData();
+
+                formData.append("photo", photo);                                
+                req.open("POST", 'chartForm/uploadFile');
+                req.send(formData);
+                
+            }
+            ,
+            showFileSize: function() {
+                console.log(this.files);
+                var fileInp = document.getElementById('file');
+                var fileSize = (fileInp.files[0].size/1024/1024).toFixed(2) + "MB";
+                console.log(fileSize);
+              //  var file = this.files[0];
+              // console.log("File " + file.name + " is " + file.size + " bytes in size");
             },
             error: function (error) {
                 console.log('SignalR error: ' + error);
