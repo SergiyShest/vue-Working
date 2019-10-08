@@ -1,8 +1,0 @@
-﻿@inherits System.Web.Mvc.WebViewPage
-<table >
-    @foreach (var item in ViewBag.Orders)
-    {
-        <tr><td><a href="Edit?id=@item.OrderID">@item.OrderID</a></td></tr>
-    }
-</table>
-
