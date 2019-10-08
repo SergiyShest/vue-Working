@@ -1,0 +1,13 @@
+{
+	"root": true,
+
+<<<<<<< HEAD
+	"extends": "../.eslintrc-browser.json"
+=======
+	"extends": "../.eslintrc-browser.json",
+
+	"globals": {
+		"jQuery": true
+	}
+>>>>>>> master
+}

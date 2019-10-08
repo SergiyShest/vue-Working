@@ -1,0 +1,319 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <title>SignalR Simple Chat</title>
+    <style type="text/css">
+        .container {
+            background-color: #99CCFF;
+            border: thick solid #808080;
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .layer {
+            overflow: auto; /* Добавляем полосы прокрутки */
+            height: 150px; /* Высота блока */
+            padding: 5px; /* Поля вокруг текста */
+            border: solid 1px black; /* Параметры рамки */
+        }
+
+        .item {
+            margin: 2px;
+            padding: 2px; /* Поля вокруг текста */
+            border: double 1px black; /* Параметры рамки */
+            background-color: #66CCFF;
+        }
+
+        .p1 {
+            margin: 2px;
+            padding: 2px; /* Поля вокруг текста */
+        }
+
+        .nam {
+            color: red;
+            font-size: large;
+            /* margin-block-end: 13px;*/
+        }
+
+        .dat {
+            color: brown;
+            font-size: medium;
+            font-style: oblique;
+            float: right;
+            /* margin-block-end: 13px;*/
+        }
+
+        /*.item:hover {
+            box-shadow: inset 0 0 0 3px #a3a593;
+            cursor: pointer;
+        }*/
+        .status {
+            float: right;
+            z-index: 2147483647;
+            background: white;
+        }
+
+        textarea {
+            margin: 2px;
+            width: 99%;
+            border: transparent;
+        }
+        .loader {
+            position: absolute;
+            height: 100%;width: 100%;margin:0px;
+            border: transparent;
+            align-content:center;
+            background:rgba(204, 51, 255, 0.5);
+        }       
+        .loader-icon {
+           
+            height: 100px;
+     margin-left: auto;
+    margin-right: auto;
+            border: transparent;
+            align-self:center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="chatForm">
+        <div class="loader">
+            <img class="loader-icon" src="~/Content/icons/loading.gif" />
+        </div>
+            <div>
+                {{connection.hub.state}}---{{connectionState1}}
+           
+        <div>{{connectionState}}</div>
+        <input type="button" value="reload" v-on:click="fetchMessages()" />
+        <input type="button" value="stop" v-on:click="stop()" />
+        <div id="scroll" class="layer">
+            <div class="item" v-for="(item,num) in messages" :v-key="item"
+                 v-bind:style="getStyle(item.SenderName,item.Status)"
+                 v-on:click="setMessageReaded(item.Id,item.Status)">
+                @*<div class="status" >{{item.Status}}</div>*@
+                <img class="status" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
+                <p class="p1">
+                    {{num}})
+                    <span class="nam">{{item.SenderName}}</span>
+                    {{item.Status}}
+                    <span class="dat"> {{item.CrDate}}</span>
+                </p>
+                <pre class="p1">{{item.Message}}</pre>
+
+
+            </div>
+        </div>
+        <textarea v-model="message" oninput="auto_grow(this)"></textarea>
+        <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
+        <input id="file" type="file" v-on:change="showFileSize()" /><span> {{fileSize}}</span>
+        <input type="button" value="Загрузить файл" v-on:click="uploadFile()" />
+    </div>
+
+    <script type="text/javascript">
+
+        function GetFormatedFileSize() {
+            var fileInp = document.getElementById('file');
+            var fileSizeStr = '';
+            if (fileInp.files.length === 0) return fileSizeStr;
+            var fileSize = fileInp.files[0].size;
+            console.log(fileSize);
+            if (fileSize < 1024)
+                fileSizeStr = fileSize + 'байт';
+            else {
+                if (fileSize < 1024 * 1024 / 2) {//все меньше 500 кбайт
+                    fileSizeStr = (fileSize / 1024).toFixed(2) + ' Кбайт';
+                } else {
+                    fileSizeStr = (fileSize / (1024 * 1024)).toFixed(2) + ' Мбайт';
+                }
+            }
+            return fileSizeStr;
+        }
+        function uploadFile() {
+            var elem = document.getElementById('file');
+            var photo = elem.files[0];  // file from input
+            var req = new XMLHttpRequest();
+            var formData = new FormData();
+
+            formData.append("photo", photo);
+            req.open("POST", 'chartForm/uploadFile');
+            req.send(formData);
+
+        }
+
+        $.connection.hub.disconnected(function () {
+            console.log('We are currently experiencing difficulties with the connection.');
+            $.connection.hub.start();
+        });
+
+        $.connection.hub.error(function (error) {
+            console.log('SignalR error: ' + error);
+        });
+        //плавная прокурутка при добавлении сообщения
+        function scrollSmoothToBottom(id) {
+            var div = document.getElementById(id);
+            $('#' + id).animate({
+                scrollTop: div.scrollHeight
+            }, 500);
+        }
+
+        //
+        function auto_grow(element) {
+
+            element.style.height = "5px";
+            element.style.height = (element.scrollHeight) + "px";
+            var form = document.getElementById('chatForm');
+            form.style.height = "5px";
+            form.style.height = (form.scrollHeight) + "px";
+        }
+    </script>
+    <script type="text/javascript">
+        var chatId = 444;
+        var chat = $.connection.chatHub;
+        var vue = new Vue({
+            el: "#chatForm",
+            data: {
+                connection: $.connection,
+                connectionSt:$.connection.hub.state,
+                connectionState: '',
+                errors: 'Ok',
+                messages: [],
+                message: '',
+                files: [],
+                fileSize: ''
+            },
+            computed: {
+                connectionState1: function() {
+                    return 'state: ' + this.connectionSt;
+                }
+            },
+            methods: {
+                checkConnection: function (collBack) {
+                    if (this.connection.connectionState !== 4) {
+                        $.connection.hub.start().done(function() { collBack(); });
+                    } else {
+                     collBack();
+                    }
+                },
+                stop: function () {
+
+                    $.connection.hub.stop(); //.done(function () { collBack(); });
+                },
+                uploadFile: function () {
+                    //  if (this.files.length === 0) return;
+                    var fileInp = document.getElementById('file');
+                    if (fileInp.files.length === 0) return;
+                    var file = fileInp.files[0];  // file from input
+                    var req = new XMLHttpRequest();
+                    var formData = new FormData();
+                    formData.append("chatId", chatId);
+                    formData.append("file", file);
+                    req.open("POST", 'ChartForm/uploadFile');
+                    req.send(formData);
+
+                }
+                ,
+                showFileSize: function () {
+                    //  if (this.files === '') { this.fileSize = '';return;}
+                    this.fileSize = GetFormatedFileSize();
+                },
+
+                //читаем сообщения
+                fetchMessages: function () {
+                    var fetchRef = this.fetch;
+                    //$.connection.hub.start().done(function () {
+                    //    chat.server.getMessages().done(function(val) {  });
+                    //});
+                    var fetchRef = this.fetch;
+                    $.connection.hub.start()
+                        .done(function () {
+                            console.log('Now connected, connection ID=' + $.connection.hub.id);
+                            chat.server.getMessages()
+                                .done(function (val) { fetchRef(val); });
+                        })
+                        .fail(function (e) {
+                            console.error('Could not Connect!' + e);
+                            this.errors = e;
+                        });
+                },
+                fetch: function (val) {
+                    this.messages = val;
+                },
+                getStyle: function (senderName, status) {
+                    var id = '';
+                    if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5);}
+                    var cursor = 'pointer';
+                    if (id === senderName) {
+                        cursor = 'auto';
+                    }
+
+                    if (status < 2) {
+                        return { 'background-color': 'red', cursor: cursor };
+                    } else {
+                        return { 'background-color': 'grey' };
+                    }
+                },
+                setMessageReaded: function (id, status) {
+                    if (status < 2) {
+                        this.checkConnection(function() {
+                            chat.server.setMessageReaded(id);
+                        });
+                    }
+                },
+                sendMessage: function () {
+                    var messRef = this.message;
+                    if (this.message.length > 0) {
+                        this.checkConnection(function () {
+                            chat.server.send(messRef);
+                        });
+                    }
+                },
+                broadcastMessage: function (message) {
+                    this.messages.push(message);
+                    scrollSmoothToBottom('scroll');
+                },
+                changeMessageStatus: function (messageId, status) {
+                    for (var i = 0; i < this.messages.length; i++) {
+                        var mess = this.messages[i];
+                        if (mess.Id === messageId) {
+                            mess.Status = status;
+                            break;
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.log('SignalR error: ' + error);
+                },
+                stateChanged: function () {
+                    var arr = [];
+                    for(var key in $.connection.connectionState){
+                        arr[$.connection.connectionState[key]]=key;
+                    }
+                    this.connectionState = arr[$.connection.hub.state];
+                }
+            },
+
+            mounted: function () {
+
+
+
+                $.connection.hub.stateChanged(function () {
+                    console.log('stateChanged.');
+                    sch(vvv);
+
+                });
+             
+                this.fetchMessages();//начитываю сообщения
+                chat.client.broadcastMessage = this.broadcastMessage;
+                chat.client.changeMessageStatus = this.changeMessageStatus;
+                $.connection.hub.error = this.error;
+            }
+        });
+    </script>
+</body>
+</html>
