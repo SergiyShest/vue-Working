@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "datagrid-mvc5", "datagrid-mvc5.csproj", "{CC571F0F-9F4E-4046-8073-C6AEFE46641D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "datagrid-mvc5Tests1", "..\datagrid-mvc5Tests1\datagrid-mvc5Tests1.csproj", "{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRTest", "..\SignalRTest\SignalRTest.csproj", "{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,30 @@ Global
 		{CC571F0F-9F4E-4046-8073-C6AEFE46641D}.Release|x64.Build.0 = Release|x64
 		{CC571F0F-9F4E-4046-8073-C6AEFE46641D}.Release|x86.ActiveCfg = Release|x86
 		{CC571F0F-9F4E-4046-8073-C6AEFE46641D}.Release|x86.Build.0 = Release|x86
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|x64.Build.0 = Debug|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|x86.ActiveCfg = Debug|x86
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Debug|x86.Build.0 = Debug|x86
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|x64.ActiveCfg = Release|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|x64.Build.0 = Release|Any CPU
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|x86.ActiveCfg = Release|x86
+		{5E1FCCCF-B7AA-497B-9BAB-671FBC87D970}.Release|x86.Build.0 = Release|x86
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Debug|x86.Build.0 = Debug|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|x64.Build.0 = Release|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|x86.ActiveCfg = Release|Any CPU
+		{174B2EB6-CBAC-44D9-B758-CAC65924EEF2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

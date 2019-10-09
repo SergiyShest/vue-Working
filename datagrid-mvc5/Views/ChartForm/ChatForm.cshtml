@@ -64,9 +64,13 @@
             width: 99%;
             border: transparent;
         }
-        .loader {
+        .loader { 
+            display:none;
             position: absolute;
-            height: 100%;width: 100%;margin:0px;
+            height: 100%;width: 100%;
+            margin:0px; 
+            margin-left: 0;
+            margin-right: 0;
             border: transparent;
             align-content:center;
             background:rgba(204, 51, 255, 0.5);
@@ -74,8 +78,7 @@
         .loader-icon {
            
             height: 100px;
-     margin-left: auto;
-    margin-right: auto;
+           
             border: transparent;
             align-self:center;
         }
@@ -86,7 +89,7 @@
         <div class="loader">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
-            <div>
+          
                 {{connection.hub.state}}---{{connectionState1}}
            
         <div>{{connectionState}}</div>
@@ -289,29 +292,32 @@
                 error: function (error) {
                     console.log('SignalR error: ' + error);
                 },
-                stateChanged: function () {
+                stateChanged: function (state) {
+                    console.log(state);
                     var arr = [];
                     for(var key in $.connection.connectionState){
                         arr[$.connection.connectionState[key]]=key;
                     }
                     this.connectionState = arr[$.connection.hub.state];
+                },
+                getName: function () {
+                    return 'name';
                 }
             },
 
             mounted: function () {
-
-
-
-                $.connection.hub.stateChanged(function () {
+                var sch = this.stateChanged;
+                $.connection.hub.stateChanged(function (vvv) {
                     console.log('stateChanged.');
                     sch(vvv);
-
                 });
-             
-                this.fetchMessages();//начитываю сообщения
+                chat.client.getName = this.getName;
+                
                 chat.client.broadcastMessage = this.broadcastMessage;
                 chat.client.changeMessageStatus = this.changeMessageStatus;
                 $.connection.hub.error = this.error;
+
+                this.fetchMessages();//начитываю сообщения
             }
         });
     </script>

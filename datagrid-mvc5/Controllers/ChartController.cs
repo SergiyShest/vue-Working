@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Threading.Tasks;
 
 namespace datagrid_mvc5.Controllers
 {
@@ -56,7 +57,17 @@ namespace datagrid_mvc5.Controllers
          message.Status = 3;
          Clients.All.changeMessageStatus(message.Id, message.Status);
         }
+
+        public override Task OnConnected()
+        {
+            // My code OnConnected
+         var name=   Clients.Caller.GetName();
+            return base.OnConnected();
+        }
+
     }
+
+    
 
     public class ChatMessage
     {
