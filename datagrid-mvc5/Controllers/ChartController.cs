@@ -11,24 +11,107 @@ using System.Threading.Tasks;
 
 namespace datagrid_mvc5.Controllers
 {
+    public class ConnectionMapping<T>
+    {
+        private readonly Dictionary<T, HashSet<string>> _connections =
+            new Dictionary<T, HashSet<string>>();
+
+        public int Count
+        {
+            get
+            {
+                return _connections.Count;
+            }
+        }
+
+        public void Add(T key, string connectionId)
+        {
+            lock (_connections)
+            {
+                HashSet<string> connections;
+                if (!_connections.TryGetValue(key, out connections))
+                {
+                    connections = new HashSet<string>();
+                    _connections.Add(key, connections);
+                }
+
+                lock (connections)
+                {
+                    connections.Add(connectionId);
+                }
+            }
+        }
+
+        public IEnumerable<string> GetConnections(T key)
+        {
+            HashSet<string> connections;
+            if (_connections.TryGetValue(key, out connections))
+            {
+                return connections;
+            }
+
+            return Enumerable.Empty<string>();
+        }
+
+        public void Remove(T key, string connectionId)
+        {
+            lock (_connections)
+            {
+                HashSet<string> connections;
+                if (!_connections.TryGetValue(key, out connections))
+                {
+                    return;
+                }
+
+                lock (connections)
+                {
+                    connections.Remove(connectionId);
+
+                    if (connections.Count == 0)
+                    {
+                        _connections.Remove(key);
+                    }
+                }
+            }
+        }
+    }
+
+    public interface IClientContract
+    {
+        void broadcastMessage(string mess);
+        void changeMessageStatus(int Id, int Status);
+    }
+
     public class ChatHub : Hub
-    { 
-        static int counter=0;
-       static List<ChatMessage> Messages=new List<ChatMessage>();
+    {
+
+
+        private readonly static ConnectionMapping<string> _connections = new ConnectionMapping<string>();
+
+        static int counter = 0;
+        static List<ChatMessage> Messages = new List<ChatMessage>();
 
         public void Send(string messageStr)
         { //throw new Exception("dfas");
 
             var sessId = Context.ConnectionId;
-            var httpContext = Context.Request.GetHttpContext();
+            //var httpContext = Context.Request.GetHttpContext();
             //    var mSid=  httpContext.Session.SessionID;
-            string name = Context.User.Identity.Name;
+            //string name = Context.User.Identity.Name;
 
             // Call the broadcastMessage method to update clients.
-            var mess = new ChatMessage() {Id = ++counter,
-                SenderName = sessId.Substring(0,5),
-                Message = messageStr, CrDate = DateTime.Now};
-            Clients.All.broadcastMessage(mess);
+            var mess = new ChatMessage()
+            {
+                Id = ++counter,
+                SenderName = sessId.Substring(0, 5),
+                Message = messageStr,
+                CrDate = DateTime.Now
+            };
+
+
+
+            Clients.Client(Context.ConnectionId).broadcastMessage(mess);
+
             Messages.Add(mess);
 
             foreach (var message in Messages)
@@ -41,46 +124,50 @@ namespace datagrid_mvc5.Controllers
 
         public List<ChatMessage> GetMessages()
         {
-           var mess= new List<ChatMessage>()
+            var mess = new List<ChatMessage>()
             {
                 new ChatMessage(){Id = ++counter,SenderName = "жну",Message = "ssss",CrDate = DateTime.Now.AddDays(-1)},
                 new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs",CrDate = DateTime.Now},
 
             };
-           Messages.AddRange(mess);
-           return mess;
+            Messages.AddRange(mess);
+            return mess;
         }
 
         public void SetMessageReaded(int messageId)
         {
-         var message =   Messages.Find(m=> m.Id==messageId);
-         message.Status = 3;
-         Clients.All.changeMessageStatus(message.Id, message.Status);
+            var message = Messages.Find(m => m.Id == messageId);
+            message.Status = 3;
+            Clients.All.changeMessageStatus(message.Id, message.Status);
         }
 
         public override Task OnConnected()
         {
             // My code OnConnected
-         var name=   Clients.Caller.GetName();
+            var name = Clients.Caller.GetName().Result;
             return base.OnConnected();
+        }
+        public override Task OnReconnected()
+        {
+            return base.OnReconnected();
         }
 
     }
 
-    
+
 
     public class ChatMessage
     {
         public int Id { get; set; }
 
-public string SenderName { get; set; }
+        public string SenderName { get; set; }
 
-public string Message { get; set; }
-[JsonConverter(typeof(CustomDateTimeConverter))]
+        public string Message { get; set; }
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime CrDate { get; set; }
 
 
-public int Status{ get; set;}
+        public int Status { get; set; }
 
     }
     class CustomDateTimeConverter : IsoDateTimeConverter

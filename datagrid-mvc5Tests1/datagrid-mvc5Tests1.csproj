@@ -147,7 +147,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Models\OrderTests.cs" />
-    <Compile Include="Models\SignalR.cs" />
+    <Compile Include="Models\SignalRTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

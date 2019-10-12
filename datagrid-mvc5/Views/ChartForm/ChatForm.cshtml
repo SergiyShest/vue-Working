@@ -10,6 +10,7 @@
     <title>SignalR Simple Chat</title>
     <style type="text/css">
         .container {
+            position: relative;
             background-color: #99CCFF;
             border: thick solid #808080;
             padding: 20px;
@@ -17,6 +18,7 @@
         }
 
         .layer {
+           
             overflow: auto; /* Добавляем полосы прокрутки */
             height: 150px; /* Высота блока */
             padding: 5px; /* Поля вокруг текста */
@@ -64,38 +66,38 @@
             width: 99%;
             border: transparent;
         }
-        .loader { 
-            display:none;
+/*display: block;*/
+        .loader {
+            
             position: absolute;
-            height: 100%;width: 100%;
-            margin:0px; 
-            margin-left: 0;
-            margin-right: 0;
-            border: transparent;
-            align-content:center;
-            background:rgba(204, 51, 255, 0.5);
-        }       
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            /*background-image:url(/Content/icons/loading.gif);*/
+            /*align-content: center;*/
+            background: rgba(204, 51, 255, 0.5);
+        }
+
         .loader-icon {
-           
-            height: 100px;
-           
-            border: transparent;
-            align-self:center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+ 
         }
     </style>
 </head>
 <body>
     <div class="container" id="chatForm">
-        <div class="loader">
-            <img class="loader-icon" src="~/Content/icons/loading.gif" />
-        </div>
-          
-                {{connection.hub.state}}---{{connectionState1}}
-           
+
+
+        {{connection.hub.state}}---{{connectionState1}}
+
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
         <input type="button" value="stop" v-on:click="stop()" />
         <div id="scroll" class="layer">
+
             <div class="item" v-for="(item,num) in messages" :v-key="item"
                  v-bind:style="getStyle(item.SenderName,item.Status)"
                  v-on:click="setMessageReaded(item.Id,item.Status)">
@@ -116,6 +118,9 @@
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
         <input id="file" type="file" v-on:change="showFileSize()" /><span> {{fileSize}}</span>
         <input type="button" value="Загрузить файл" v-on:click="uploadFile()" />
+        <div class="loader">
+            <img class="loader-icon" src="~/Content/icons/loading.gif" />
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -182,7 +187,7 @@
             el: "#chatForm",
             data: {
                 connection: $.connection,
-                connectionSt:$.connection.hub.state,
+                connectionSt: $.connection.hub.state,
                 connectionState: '',
                 errors: 'Ok',
                 messages: [],
@@ -191,16 +196,16 @@
                 fileSize: ''
             },
             computed: {
-                connectionState1: function() {
+                connectionState1: function () {
                     return 'state: ' + this.connectionSt;
                 }
             },
             methods: {
                 checkConnection: function (collBack) {
                     if (this.connection.connectionState !== 4) {
-                        $.connection.hub.start().done(function() { collBack(); });
+                        $.connection.hub.start().done(function () { collBack(); });
                     } else {
-                     collBack();
+                        collBack();
                     }
                 },
                 stop: function () {
@@ -249,7 +254,7 @@
                 },
                 getStyle: function (senderName, status) {
                     var id = '';
-                    if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5);}
+                    if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
                     var cursor = 'pointer';
                     if (id === senderName) {
                         cursor = 'auto';
@@ -263,7 +268,7 @@
                 },
                 setMessageReaded: function (id, status) {
                     if (status < 2) {
-                        this.checkConnection(function() {
+                        this.checkConnection(function () {
                             chat.server.setMessageReaded(id);
                         });
                     }
@@ -295,8 +300,8 @@
                 stateChanged: function (state) {
                     console.log(state);
                     var arr = [];
-                    for(var key in $.connection.connectionState){
-                        arr[$.connection.connectionState[key]]=key;
+                    for (var key in $.connection.connectionState) {
+                        arr[$.connection.connectionState[key]] = key;
                     }
                     this.connectionState = arr[$.connection.hub.state];
                 },
@@ -312,7 +317,7 @@
                     sch(vvv);
                 });
                 chat.client.getName = this.getName;
-                
+
                 chat.client.broadcastMessage = this.broadcastMessage;
                 chat.client.changeMessageStatus = this.changeMessageStatus;
                 $.connection.hub.error = this.error;
