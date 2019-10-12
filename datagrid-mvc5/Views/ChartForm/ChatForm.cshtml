@@ -66,9 +66,9 @@
             width: 99%;
             border: transparent;
         }
-/*display: block;*/
+        .hided{display: block;}
         .loader {
-            
+            display: none; 
             position: absolute;
             left: 0;
             right: 0;
@@ -91,7 +91,7 @@
     <div class="container" id="chatForm">
 
 
-        {{connection.hub.state}}---{{connectionState1}}
+        {{connection.hub.state}}---{{connected}}
 
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
@@ -118,7 +118,7 @@
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
         <input id="file" type="file" v-on:change="showFileSize()" /><span> {{fileSize}}</span>
         <input type="button" value="Загрузить файл" v-on:click="uploadFile()" />
-        <div class="loader">
+        <div class="loader  " v-bind:style="{display:connected}" >
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
@@ -156,7 +156,7 @@
 
         $.connection.hub.disconnected(function () {
             console.log('We are currently experiencing difficulties with the connection.');
-            $.connection.hub.start();
+            setTimeout( $.connection.hub.start(),3000);
         });
 
         $.connection.hub.error(function (error) {
@@ -188,7 +188,7 @@
             data: {
                 connection: $.connection,
                 connectionSt: $.connection.hub.state,
-                connectionState: '',
+                connectionState: '',connectionSt:0,
                 errors: 'Ok',
                 messages: [],
                 message: '',
@@ -196,10 +196,14 @@
                 fileSize: ''
             },
             computed: {
-                connectionState1: function () {
-                    return 'state: ' + this.connectionSt;
+                connected: function () {
+                    if (this.connectionSt == 1) {
+                        return 'none';
+                    }
+                   return 'block';
                 }
             },
+
             methods: {
                 checkConnection: function (collBack) {
                     if (this.connection.connectionState !== 4) {
@@ -209,8 +213,7 @@
                     }
                 },
                 stop: function () {
-
-                    $.connection.hub.stop(); //.done(function () { collBack(); });
+                    $.connection.hub.stop(); 
                 },
                 uploadFile: function () {
                     //  if (this.files.length === 0) return;
@@ -303,6 +306,7 @@
                     for (var key in $.connection.connectionState) {
                         arr[$.connection.connectionState[key]] = key;
                     }
+                    this.connectionSt = $.connection.hub.state;
                     this.connectionState = arr[$.connection.hub.state];
                 },
                 getName: function () {
