@@ -9,20 +9,34 @@
     <script src="~/signalr/hubs"></script>
     <title>SignalR Simple Chat</title>
     <style type="text/css">
-        .container {
-            position: relative;
-            background-color: #99CCFF;
-            border: thick solid #808080;
-            padding: 20px;
-            margin: 20px;
+        {
+            box-sizing: border-box;
         }
+        .container {
+            overflow: hidden;
+            background-color: #99CCFF;
+            border: unset solid #808080;
+            padding: 5px;
+            margin: 0px;
+            height: 95vh;
+        }
+        
+/* Добавлено */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
 
-        .layer {
-           
+
+        .scrollArea {
+            position: relative;
             overflow: auto; /* Добавляем полосы прокрутки */
-            height: 150px; /* Высота блока */
+            height: 100%; /*Высота блока */
             padding: 5px; /* Поля вокруг текста */
-            border: solid 1px black; /* Параметры рамки */
+            border: solid 5px black; /* Параметры рамки */
+            flex-grow: 1;
         }
 
         .item {
@@ -66,9 +80,13 @@
             width: 99%;
             border: transparent;
         }
-        .hided{display: block;}
+
+        .hided {
+            display: block;
+        }
+
         .loader {
-            display: none; 
+            display: none;
             position: absolute;
             left: 0;
             right: 0;
@@ -83,12 +101,11 @@
             display: block;
             margin-left: auto;
             margin-right: auto;
- 
         }
     </style>
 </head>
-<body>
-    <div class="container" id="chatForm">
+<body style="padding:0px;margin:0px" class="container">
+    <div class="wrap" id="chatForm">
 
 
         {{connection.hub.state}}---{{connected}}
@@ -96,7 +113,7 @@
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
         <input type="button" value="stop" v-on:click="stop()" />
-        <div id="scroll" class="layer">
+        <div id="scroll" class="scrollArea">
 
             <div class="item" v-for="(item,num) in messages" :v-key="item"
                  v-bind:style="getStyle(item.SenderName,item.Status)"
@@ -118,7 +135,7 @@
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
         <input id="file" type="file" v-on:change="showFileSize()" /><span> {{fileSize}}</span>
         <input type="button" value="Загрузить файл" v-on:click="uploadFile()" />
-        <div class="loader  " v-bind:style="{display:connected}" >
+        <div class="loader  " v-bind:style="{display:connected}">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
@@ -156,7 +173,7 @@
 
         $.connection.hub.disconnected(function () {
             console.log('We are currently experiencing difficulties with the connection.');
-            setTimeout( $.connection.hub.start(),3000);
+            setTimeout($.connection.hub.start(), 3000);
         });
 
         $.connection.hub.error(function (error) {
@@ -188,7 +205,7 @@
             data: {
                 connection: $.connection,
                 connectionSt: $.connection.hub.state,
-                connectionState: '',connectionSt:0,
+                connectionState: '', connectionSt: 0,
                 errors: 'Ok',
                 messages: [],
                 message: '',
@@ -200,7 +217,7 @@
                     if (this.connectionSt == 1) {
                         return 'none';
                     }
-                   return 'block';
+                    return 'block';
                 }
             },
 
@@ -213,7 +230,7 @@
                     }
                 },
                 stop: function () {
-                    $.connection.hub.stop(); 
+                    $.connection.hub.stop();
                 },
                 uploadFile: function () {
                     //  if (this.files.length === 0) return;
@@ -236,10 +253,6 @@
 
                 //читаем сообщения
                 fetchMessages: function () {
-                    var fetchRef = this.fetch;
-                    //$.connection.hub.start().done(function () {
-                    //    chat.server.getMessages().done(function(val) {  });
-                    //});
                     var fetchRef = this.fetch;
                     $.connection.hub.start()
                         .done(function () {

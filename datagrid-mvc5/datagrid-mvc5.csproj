@@ -197,6 +197,7 @@
     <Content Include="Scripts\zip.js" />
     <Content Include="Views\Orders\Edit.cshtml" />
     <Content Include="Views\ChartForm\Index.cshtml" />
+    <Content Include="Views\ChartForm\Maket.cshtml" />
     <None Include="Views\ChartForm\ChatForm.cshtml" />
     <Content Include="Views\ChartForm\fileApiExample.cshtml" />
     <Content Include="Views\ChartForm\context.cshtml" />

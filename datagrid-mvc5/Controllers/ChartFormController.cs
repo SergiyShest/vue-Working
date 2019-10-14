@@ -22,7 +22,10 @@ namespace datagrid_mvc5.Controllers
 
             return View("context");
         }
-
+        public ActionResult Maket()
+        {
+            return View("Maket");
+        }
 
         public ActionResult Index()
         {
