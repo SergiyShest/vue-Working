@@ -12,6 +12,7 @@
         {
             box-sizing: border-box;
         }
+
         .container {
             overflow: hidden;
             background-color: #99CCFF;
@@ -20,14 +21,14 @@
             margin: 0px;
             height: 95vh;
         }
-        
-/* Добавлено */
-.wrap {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
+
+        /* Добавлено */
+        .wrap {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
 
 
         .scrollArea {
@@ -141,6 +142,16 @@
     </div>
 
     <script type="text/javascript">
+        function getBase64(file) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                console.log(reader.result);
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
+        }
 
         function GetFormatedFileSize() {
             var fileInp = document.getElementById('file');
@@ -161,11 +172,14 @@
         }
         function uploadFile() {
             var elem = document.getElementById('file');
-            var photo = elem.files[0];  // file from input
+ console.log(file);
+            var file = elem.files[0];
+            console.log(getBase64(file));
             var req = new XMLHttpRequest();
             var formData = new FormData();
-
-            formData.append("photo", photo);
+            formData.append("file", file);
+            formData.append("chatId", 15);
+            formData.append("message", this.message);
             req.open("POST", 'chartForm/uploadFile');
             req.send(formData);
 
@@ -233,10 +247,10 @@
                     $.connection.hub.stop();
                 },
                 uploadFile: function () {
-                    //  if (this.files.length === 0) return;
                     var fileInp = document.getElementById('file');
                     if (fileInp.files.length === 0) return;
-                    var file = fileInp.files[0];  // file from input
+                    var file = fileInp.files[0];
+                    console.log(getBase64(file));
                     var req = new XMLHttpRequest();
                     var formData = new FormData();
                     formData.append("chatId", chatId);
