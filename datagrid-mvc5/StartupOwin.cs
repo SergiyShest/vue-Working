@@ -14,7 +14,9 @@ namespace datagrid_mvc5
         {
             var hubConfiguration = new HubConfiguration();
              hubConfiguration.EnableDetailedErrors = true;
-             app.MapSignalR(hubConfiguration);
+            GlobalHost.Configuration.MaxIncomingWebSocketMessageSize = null;
+//GlobalHost.Configuration.KeepAlive
+            app.MapSignalR(hubConfiguration);
             //app.MapSignalR();
         }
     }

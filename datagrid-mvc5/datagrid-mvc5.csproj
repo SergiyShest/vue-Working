@@ -144,6 +144,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="StartupOwin.cs" />
+    <Content Include="Content\icons\delete.jpg" />
     <Content Include="Content\icons\filter.png" />
     <Content Include="Content\icons\loading.gif" />
     <Content Include="Content\modal.CSS" />

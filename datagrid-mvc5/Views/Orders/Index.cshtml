@@ -19,8 +19,26 @@
     <link rel="stylesheet" type="text/css" href="~/Content/modal.CSS" />
 </head>
 <script>
+    console.log('sddfsdfad')
+    window.addEventListener("message", receiveMessage, false);
+
+function receiveMessage(event)
+{
+    alert(event.origin);
+    return;
+
+  // ...
+}
+    function listener(event) {
+ 
+
+  alert( "получено: " + event.data );
+}
 
 
+  window.addEventListener("message", listener);
+
+ 
 
     function FilterStatus(status) {
         var dataGrid = $('#grid').dxDataGrid('instance');
@@ -51,6 +69,11 @@
         var path = "http://" + document.location.host + '/Orders/Edit?id=' + selected[0];
         window.open(path);
     }
+    function openChat() {
+     var v = window.open('/chartForm', '', 'width=800,height=400,scrollbars=0');
+        v.parent = window;
+    }
+
 </script>
 <body>
     <div class="modal" id="filterPopup">
@@ -72,15 +95,15 @@
 
     <button onclick="FilterClear()">FilterClear</button>
     <button onclick="Edit()">редактировать</button>
-    <button onclick="window.open( '/chartForm','',
-        'width=800,height=400,scrollbars=0')
-    ">
+    <button onclick="openChat()">
+
         Чат
     </button>
+
     <button onclick="window.open( '/chartForm/Maket','',
         'width=800,height=400,scrollbars=0')
     ">
-       maket
+        maket
     </button>
     <br />
     <div id="grid"></div>

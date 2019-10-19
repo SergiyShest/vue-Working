@@ -134,9 +134,21 @@
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
-        <input id="file" type="file" v-on:change="showFileSize()" /><span> {{fileSize}}</span>
-        <input type="button" value="Загрузить файл" v-on:click="uploadFile()" />
-        <div class="loader  " v-bind:style="{display:connected}">
+        <div v-for="(fileInf,num) in filesFrame" :v-key="fileInf">
+            <div v-if='fileInf.fileName.length==0'>
+                <input type="file" v-on:change="showFileSize()" />
+            </div>
+            <div v-if='fileInf.fileSize.length>0'>
+                <span> {{num+1}}</span>
+                <span>{{fileInf.fileName}}</span>
+                <span>{{fileInf.fileSize}}</span>
+                <button >
+                    <img src="~/Content/icons/delete.jpg" height="20" alt="удалить файл"
+                         style="vertical-align: middle">
+                </button>
+            </div>
+        </div>
+        <div class="loader" v-bind:style="{display:connected}">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
@@ -146,15 +158,18 @@
             var reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function () {
-                console.log(reader.result);
+                for (var i = 0; i < reader.result.length; i++) {
+                    chat.server.send(substr(i, 10000), reader.result);
+                }
             };
             reader.onerror = function (error) {
                 console.log('Error: ', error);
             };
         }
 
-        function GetFormatedFileSize() {
-            var fileInp = document.getElementById('file');
+        function GetFormatedFileSize(elem) {
+            console.log(elem);
+            var fileInp = elem;//document.getElementById('file');
             var fileSizeStr = '';
             if (fileInp.files.length === 0) return fileSizeStr;
             var fileSize = fileInp.files[0].size;
@@ -170,16 +185,17 @@
             }
             return fileSizeStr;
         }
-        function uploadFile() {
+
+        function uploadFile(chatId, messageId) {
             var elem = document.getElementById('file');
- console.log(file);
+
             var file = elem.files[0];
-            console.log(getBase64(file));
+
             var req = new XMLHttpRequest();
             var formData = new FormData();
             formData.append("file", file);
-            formData.append("chatId", 15);
-            formData.append("message", this.message);
+            formData.append("chatId", messageId);
+            formData.append("message", message);
             req.open("POST", 'chartForm/uploadFile');
             req.send(formData);
 
@@ -206,9 +222,9 @@
 
             element.style.height = "5px";
             element.style.height = (element.scrollHeight) + "px";
-            var form = document.getElementById('chatForm');
-            form.style.height = "5px";
-            form.style.height = (form.scrollHeight) + "px";
+            // var form = document.getElementById('chatForm');
+            // form.style.height = "5px";
+            // form.style.height = (form.scrollHeight) + "px";
         }
     </script>
     <script type="text/javascript">
@@ -223,8 +239,7 @@
                 errors: 'Ok',
                 messages: [],
                 message: '',
-                files: [],
-                fileSize: ''
+                filesFrame: [{ fileName: '', fileSize: '', elem: null }],
             },
             computed: {
                 connected: function () {
@@ -250,21 +265,41 @@
                     var fileInp = document.getElementById('file');
                     if (fileInp.files.length === 0) return;
                     var file = fileInp.files[0];
-                    console.log(getBase64(file));
-                    var req = new XMLHttpRequest();
-                    var formData = new FormData();
-                    formData.append("chatId", chatId);
-                    formData.append("file", file);
-                    req.open("POST", 'ChartForm/uploadFile');
-                    req.send(formData);
+                    window.postMessage("getData", '*');
+
+                    // getBase64(file);
+                    //var req = new XMLHttpRequest();
+                    //var formData = new FormData();
+                    //formData.append("chatId", chatId);
+                    //formData.append("file", file);
+                    //req.open("POST", 'ChartForm/uploadFile');
+                    //req.send(formData);
 
                 }
                 ,
                 showFileSize: function () {
-                    //  if (this.files === '') { this.fileSize = '';return;}
-                    this.fileSize = GetFormatedFileSize();
+                    if (!event) { event = window.event; }
+                    var el = (event.target || event.srcElement);
+                    var curFrame = this.filesFrame[this.filesFrame.length - 1];
+                    curFrame.fileSize = GetFormatedFileSize(el);
+                    curFrame.fileName = el.files[0].name;
+                    curFrame.el = el;
+                    this.filesFrame.push({ fileName: '', fileSize: '' });
                 },
-
+                getFileElementVisible: function (fileSize) {
+                    if (fileSize.length > 0) {
+                        return { 'display': 'none' };
+                    } else {
+                        return { 'display': 'inline-block' };
+                    }
+                },
+                getDelButtonVisible: function (fileSize) {
+                    if (fileSize.length > 0) {
+                        return { 'display': 'inline-block' };
+                    } else {
+                        return { 'display': 'none' };
+                    }
+                },
                 //читаем сообщения
                 fetchMessages: function () {
                     var fetchRef = this.fetch;
@@ -297,6 +332,7 @@
                     }
                 },
                 setMessageReaded: function (id, status) {
+
                     if (status < 2) {
                         this.checkConnection(function () {
                             chat.server.setMessageReaded(id);
@@ -304,6 +340,8 @@
                     }
                 },
                 sendMessage: function () {
+                    var v = window.parent.innerHeight;
+                    window.parent.postMessage(this.message, '*');
                     var messRef = this.message;
                     if (this.message.length > 0) {
                         this.checkConnection(function () {
