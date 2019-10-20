@@ -266,6 +266,11 @@
                             fileSize: GetFormatedFileSize(file.size),
                             status:0
                         }
+                        if (file.size/(1024 * 1024) > 10 )
+                        {
+                            fileInfo.status = 3;
+                            fileInfo.error='Превышен максимальный размер 10 Мбт.'
+                        }
                         this.filesFrame.push(fileInfo);
                     }
                     el.value = '' ;
@@ -327,6 +332,7 @@
                 loadFile: function (messageId) {
                     for (var i = 0; i < this.filesFrame.length; i++) {
                         var ff = this.filesFrame[i];
+                        if (ff.status != 0) continue;
                         ff.status = 2;
                         uploadFile(ff, messageId, this.fileProgress);
                     }
@@ -339,9 +345,11 @@
                     } 
 
                     var f = this.filesFrame.filter(function(fileInfo){
-                        if (fileIndo.status == 0) return true;
-                        if (fileIndo.error) return true;
+                        if (fileInfo.status == 0||fileInfo.status==2) return true;
+                        if (fileInfo.error) return true;
+                        return false;
                     });
+
                   //  if (f.length == 0)
                   //  {
                         this.filesFrame = f;
