@@ -30,16 +30,9 @@ function receiveMessage(event)
   // ...
 }
     function listener(event) {
- 
-
   alert( "получено: " + event.data );
 }
-
-
   window.addEventListener("message", listener);
-
- 
-
     function FilterStatus(status) {
         var dataGrid = $('#grid').dxDataGrid('instance');
         var filter = ["ShipCountry", "=", status];
@@ -48,7 +41,6 @@ function receiveMessage(event)
         console.time("x");
     }
     var filterInit = false;
-
     function HideFilter() {
         var modal = document.getElementById('filterPopup');
         modal.style.display = "none";

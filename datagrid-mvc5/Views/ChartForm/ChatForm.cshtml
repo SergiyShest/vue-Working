@@ -119,7 +119,7 @@
             <div class="item" v-for="(item,num) in messages" :v-key="item"
                  v-bind:style="getStyle(item.SenderName,item.Status)"
                  v-on:click="setMessageReaded(item.Id,item.Status)">
-                @*<div class="status" >{{item.Status}}</div>*@
+
                 <img class="status" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
                 <p class="p1">
                     {{num}})
@@ -128,52 +128,39 @@
                     <span class="dat"> {{item.CrDate}}</span>
                 </p>
                 <pre class="p1">{{item.Message}}</pre>
-
-
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
         <div v-for="(fileInf,num) in filesFrame" :v-key="fileInf">
-            <div v-if='fileInf.fileName.length==0'>
-                <input type="file" v-on:change="showFileSize()" />
-            </div>
-            <div v-if='fileInf.fileSize.length>0'>
-                <span> {{num+1}}</span>
-                <span>{{fileInf.fileName}}</span>
-                <span>{{fileInf.fileSize}}</span>
-                <button >
-                    <img src="~/Content/icons/delete.jpg" height="20" alt="удалить файл"
-                         style="vertical-align: middle">
-                </button>
-            </div>
+            <span> {{num+1}}</span>
+            <img src="~/Content/icons/delete.jpg"
+                 height="20"
+                 alt="удалить файл"
+                 style="vertical-align: middle" 
+                 v-on:click="removeFile(fileInf)">
+            <span class="nam">{{fileInf.file.name}}</span>
+            <span>{{fileInf.fileSize}}</span>
+            <span>{{fileInf.status}}</span>
+            <span>{{fileInf.error}}</span>
         </div>
+        <input type="file" v-on:change="addFiles()" multiple />
         <div class="loader" v-bind:style="{display:connected}">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
 
     <script type="text/javascript">
-        function getBase64(file) {
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                for (var i = 0; i < reader.result.length; i++) {
-                    chat.server.send(substr(i, 10000), reader.result);
-                }
-            };
-            reader.onerror = function (error) {
-                console.log('Error: ', error);
-            };
-        }
+       function arrayRemove(arr, value) {
 
-        function GetFormatedFileSize(elem) {
-            console.log(elem);
-            var fileInp = elem;//document.getElementById('file');
+   return arr.filter(function(ele){
+       return ele != value;
+   });
+
+}
+
+        function GetFormatedFileSize(fileSize) {
             var fileSizeStr = '';
-            if (fileInp.files.length === 0) return fileSizeStr;
-            var fileSize = fileInp.files[0].size;
-            console.log(fileSize);
             if (fileSize < 1024)
                 fileSizeStr = fileSize + 'байт';
             else {
@@ -186,20 +173,28 @@
             return fileSizeStr;
         }
 
-        function uploadFile(chatId, messageId) {
-            var elem = document.getElementById('file');
-
-            var file = elem.files[0];
-
+        function uploadFile(fileInf, messageId,collBack) {
             var req = new XMLHttpRequest();
             var formData = new FormData();
-            formData.append("file", file);
-            formData.append("chatId", messageId);
-            formData.append("message", message);
+            formData.append("file", fileInf.file);
+            formData.append("messageId", messageId);
             req.open("POST", 'chartForm/uploadFile');
             req.send(formData);
+            req.onreadystatechange = function () {
+                if (this.readyState == 3) { collBack(fileInf, this.readyState,this.responseText); }
+            }
+            req.onload= function () { collBack(fileInf, this.readyState); }
+           // req.onloadend = function () { collBack(fileInf, this.readyState); }
 
-        }
+
+            req.onerror = function () {
+                collBack(fileInf, this.readyState);
+            }
+
+                
+            }
+
+        
 
         $.connection.hub.disconnected(function () {
             console.log('We are currently experiencing difficulties with the connection.');
@@ -239,7 +234,7 @@
                 errors: 'Ok',
                 messages: [],
                 message: '',
-                filesFrame: [{ fileName: '', fileSize: '', elem: null }],
+                filesFrame: [],
             },
             computed: {
                 connected: function () {
@@ -261,44 +256,23 @@
                 stop: function () {
                     $.connection.hub.stop();
                 },
-                uploadFile: function () {
-                    var fileInp = document.getElementById('file');
-                    if (fileInp.files.length === 0) return;
-                    var file = fileInp.files[0];
-                    window.postMessage("getData", '*');
-
-                    // getBase64(file);
-                    //var req = new XMLHttpRequest();
-                    //var formData = new FormData();
-                    //formData.append("chatId", chatId);
-                    //formData.append("file", file);
-                    //req.open("POST", 'ChartForm/uploadFile');
-                    //req.send(formData);
-
-                }
-                ,
-                showFileSize: function () {
+                addFiles: function () {
                     if (!event) { event = window.event; }
                     var el = (event.target || event.srcElement);
-                    var curFrame = this.filesFrame[this.filesFrame.length - 1];
-                    curFrame.fileSize = GetFormatedFileSize(el);
-                    curFrame.fileName = el.files[0].name;
-                    curFrame.el = el;
-                    this.filesFrame.push({ fileName: '', fileSize: '' });
-                },
-                getFileElementVisible: function (fileSize) {
-                    if (fileSize.length > 0) {
-                        return { 'display': 'none' };
-                    } else {
-                        return { 'display': 'inline-block' };
+                    for (var f = 0; f < el.files.length; f++) {
+                        var file = el.files[f];
+                        var fileInfo = {
+                            file: file,
+                            fileSize: GetFormatedFileSize(file.size),
+                            status:0
+                        }
+                        this.filesFrame.push(fileInfo);
                     }
+                    el.value = '' ;
                 },
-                getDelButtonVisible: function (fileSize) {
-                    if (fileSize.length > 0) {
-                        return { 'display': 'inline-block' };
-                    } else {
-                        return { 'display': 'none' };
-                    }
+                removeFile: function (fileInf)
+                {
+                    this.filesFrame = arrayRemove(this.filesFrame, fileInf);
                 },
                 //читаем сообщения
                 fetchMessages: function () {
@@ -332,7 +306,6 @@
                     }
                 },
                 setMessageReaded: function (id, status) {
-
                     if (status < 2) {
                         this.checkConnection(function () {
                             chat.server.setMessageReaded(id);
@@ -343,11 +316,36 @@
                     var v = window.parent.innerHeight;
                     window.parent.postMessage(this.message, '*');
                     var messRef = this.message;
+                    var done = this.loadFile;
+
                     if (this.message.length > 0) {
                         this.checkConnection(function () {
-                            chat.server.send(messRef);
+                            chat.server.send(messRef).done(done);
                         });
                     }
+                },
+                loadFile: function (messageId) {
+                    for (var i = 0; i < this.filesFrame.length; i++) {
+                        var ff = this.filesFrame[i];
+                        ff.status = 2;
+                        uploadFile(ff, messageId, this.fileProgress);
+                    }
+                },
+                fileProgress: function (fileInf, state,respText) {
+                    console.log(fileInf.file.name+'  '+ state+'  '+ new Date().getSeconds() +':'+ new Date().getMilliseconds());
+                    fileInf.status = state;
+                    if (respText) {
+                        fileInf.error = "Ошибка загрузки";
+                    } 
+
+                    var f = this.filesFrame.filter(function(fileInfo){
+                        if (fileIndo.status == 0) return true;
+                        if (fileIndo.error) return true;
+                    });
+                  //  if (f.length == 0)
+                  //  {
+                        this.filesFrame = f;
+                  //  }
                 },
                 broadcastMessage: function (message) {
                     this.messages.push(message);

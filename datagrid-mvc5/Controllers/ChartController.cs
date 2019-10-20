@@ -91,14 +91,13 @@ namespace datagrid_mvc5.Controllers
         static int counter = 0;
         static List<ChatMessage> Messages = new List<ChatMessage>();
 
-        public void Send(string messageStr)
+        public int Send(string messageStr)
         { //throw new Exception("dfas");
 
             var sessId = Context.ConnectionId;
             //var httpContext = Context.Request.GetHttpContext();
-            //    var mSid=  httpContext.Session.SessionID;
+            //var mSid=  httpContext.Session.SessionID;
             //string name = Context.User.Identity.Name;
-
             // Call the broadcastMessage method to update clients.
             var mess = new ChatMessage()
             {
@@ -107,7 +106,7 @@ namespace datagrid_mvc5.Controllers
                 Message = messageStr,
                 CrDate = DateTime.Now
             };
-
+            
 
 
             Clients.Client(Context.ConnectionId).broadcastMessage(mess);
@@ -119,7 +118,7 @@ namespace datagrid_mvc5.Controllers
                 //    message.Status++;
                 //    Clients.All.changeMessageStatus(message.Id,message.Status);
             }
-
+return mess.Id;
         }
 
         public List<ChatMessage> GetMessages()

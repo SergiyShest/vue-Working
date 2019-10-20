@@ -36,13 +36,13 @@ namespace datagrid_mvc5.Controllers
             return View("ChatForm");
         }
         [HttpPost]
-        public ActionResult uploadFile()
+        public void uploadFile()
         {
 
             foreach (string file in base.Request.Files)
             {
           var fileS=      Request.Form["file"];
-var chatId =      Request.Form["chatId"];
+var messageId =      Request.Form["messageId"];
                 using (MemoryStream ms = new MemoryStream())
                 {
                     Request.Files[file].InputStream.CopyTo(ms);
@@ -56,7 +56,7 @@ var chatId =      Request.Form["chatId"];
                     }
                 }
             }
-            return RedirectToAction("upload");
+           // return RedirectToAction("upload");
         }
 
         public ActionResult FileApi()
