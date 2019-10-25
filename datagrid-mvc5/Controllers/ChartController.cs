@@ -81,11 +81,24 @@ namespace datagrid_mvc5.Controllers
         void broadcastMessage(string mess);
         void changeMessageStatus(int Id, int Status);
     }
+    public interface IChatRepository
+    {
+        void Add(string name, string message);
+        // Other methods not shown.
+    }
+
+    public class ChatRepository:IChatRepository
+    {
+       public void Add(string name, string message) { }
+        // Other methods not shown.
+    }
 
     public class ChatHub : Hub
     {
+public  ChatHub(IChatRepository ch)
+        {
 
-
+        }
         private readonly static ConnectionMapping<string> _connections = new ConnectionMapping<string>();
 
         static int counter = 0;
@@ -118,14 +131,14 @@ namespace datagrid_mvc5.Controllers
                 //    message.Status++;
                 //    Clients.All.changeMessageStatus(message.Id,message.Status);
             }
-return mess.Id;
+             return mess.Id;
         }
 
         public List<ChatMessage> GetMessages()
         {
             var mess = new List<ChatMessage>()
             {
-                new ChatMessage(){Id = ++counter,SenderName = "жну",Message = "ssss",CrDate = DateTime.Now.AddDays(-1)},
+                new ChatMessage(){Id = ++counter,SenderName = "жну",Message = "ssss",CrDate = DateTime.Now.AddDays(-1),Files=new {"fff"} },
                 new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs",CrDate = DateTime.Now},
 
             };
@@ -138,6 +151,11 @@ return mess.Id;
             var message = Messages.Find(m => m.Id == messageId);
             message.Status = 3;
             Clients.All.changeMessageStatus(message.Id, message.Status);
+        }
+
+       public void  FilesUploaded(int messageId)
+        {
+        Clients.All.filesUploaded(messageId,new[] { "message","Status","sgdfgsdf"});
         }
 
         public override Task OnConnected()
@@ -165,7 +183,7 @@ return mess.Id;
         [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime CrDate { get; set; }
 
-
+      IEnumerable<string>  Files{ get; set; }
         public int Status { get; set; }
 
     }

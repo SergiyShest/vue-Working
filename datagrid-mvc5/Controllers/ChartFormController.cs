@@ -42,7 +42,7 @@ namespace datagrid_mvc5.Controllers
             foreach (string file in base.Request.Files)
             {
           var fileS=      Request.Form["file"];
-var messageId =      Request.Form["messageId"];
+          var messageId =      Request.Form["messageId"];
                 using (MemoryStream ms = new MemoryStream())
                 {
                     Request.Files[file].InputStream.CopyTo(ms);
@@ -58,6 +58,14 @@ var messageId =      Request.Form["messageId"];
             }
            // return RedirectToAction("upload");
         }
+
+        public FileResult Download(string xxxx)
+        {
+            byte[] fileBytes = System.IO.File.ReadAllBytes(@"c:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5\App_Data\attribcache140.bin");
+            string fileName = "myfile.ext";
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, xxxx + fileName);
+        }
+
 
         public ActionResult FileApi()
         {

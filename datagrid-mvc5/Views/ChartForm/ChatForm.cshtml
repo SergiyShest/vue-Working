@@ -68,8 +68,12 @@
 
         /*.item:hover {
             box-shadow: inset 0 0 0 3px #a3a593;
-            cursor: pointer;
+            cursor: pointer; 
         }*/
+     .message {
+          
+            border:inset 3px ;
+         }
         .status {
             float: right;
             z-index: 2147483647;
@@ -103,6 +107,54 @@
             margin-left: auto;
             margin-right: auto;
         }
+    .inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+/*.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: ;
+    display: inline-block;
+}
+.inputfile:focus + label,
+
+.inputfile + label {
+	cursor: pointer; 
+
+}
+*/
+.openFileDialogButton:hover {
+     cursor: pointer; 
+}
+.openFileDialogButton:active {
+  color: green;  border:  inset ;
+}
+.openFileDialogButton {
+  width:100px;
+  display: inline-block;
+  background:  linear-gradient( #eeeeee, #eee);
+  border: 2px outset #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  cursor: pointer;
+         }
+
+
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
     </style>
 </head>
 <body style="padding:0px;margin:0px" class="container">
@@ -113,7 +165,8 @@
 
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
-        <input type="button" value="stop" v-on:click="stop()" />
+        <input type="button" value="stop+" v-on:click="stop()" />
+        <a href="http://localhost:63164/chartForm/Download">vvvv</a>
         <div id="scroll" class="scrollArea">
 
             <div class="item" v-for="(item,num) in messages" :v-key="item"
@@ -127,24 +180,27 @@
                     {{item.Status}}
                     <span class="dat"> {{item.CrDate}}</span>
                 </p>
-                <pre class="p1">{{item.Message}}</pre>
+                <pre class="p1 message">{{item.Message}}</pre>
+                <a href="http://localhost:63164/chartForm/Download?xxxx=33">vvvv</a>
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
         <div v-for="(fileInf,num) in filesFrame" :v-key="fileInf">
             <span> {{num+1}}</span>
-            <img src="~/Content/icons/delete.jpg"
+            <img src="~/Content/icons/delete.png"
                  height="20"
                  alt="удалить файл"
-                 style="vertical-align: middle" 
+                 toolTip="удалить файл"
+                 style="vertical-align: middle"
                  v-on:click="removeFile(fileInf)">
             <span class="nam">{{fileInf.file.name}}</span>
             <span>{{fileInf.fileSize}}</span>
             <span>{{fileInf.status}}</span>
             <span>{{fileInf.error}}</span>
         </div>
-        <input type="file" v-on:change="addFiles()" multiple />
+        <input id="file" type="file" v-on:change="addFiles()" multiple class="inputfile" />
+        <label for="file" class="openFileDialogButton" >Добавить файл</label>
         <div class="loader" v-bind:style="{display:connected}">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
@@ -181,14 +237,16 @@
             req.open("POST", 'chartForm/uploadFile');
             req.send(formData);
             req.onreadystatechange = function () {
-                if (this.readyState == 3) { collBack(fileInf, this.readyState,this.responseText); }
+                if (this.readyState == 3) {
+                    collBack(fileInf, this.readyState, this.responseText,messageId);
+                }
             }
-            req.onload= function () { collBack(fileInf, this.readyState); }
+            req.onload= function () { collBack(fileInf, this.readyState,'',messageId); }
            // req.onloadend = function () { collBack(fileInf, this.readyState); }
 
 
-            req.onerror = function () {
-                collBack(fileInf, this.readyState);
+            req.onerror = function (error) {
+                collBack(fileInf, this.readyState, error,messageId);
             }
 
                 
@@ -216,10 +274,7 @@
         function auto_grow(element) {
 
             element.style.height = "5px";
-            element.style.height = (element.scrollHeight) + "px";
-            // var form = document.getElementById('chatForm');
-            // form.style.height = "5px";
-            // form.style.height = (form.scrollHeight) + "px";
+            element.style.height =  element.scrollHeight  + "px";
         }
     </script>
     <script type="text/javascript">
@@ -258,9 +313,9 @@
                 },
                 addFiles: function () {
                     if (!event) { event = window.event; }
-                    var el = (event.target || event.srcElement);
-                    for (var f = 0; f < el.files.length; f++) {
-                        var file = el.files[f];
+                    var fileInput = (event.target || event.srcElement);
+                    for (var f = 0; f < fileInput.files.length; f++) {
+                        var file = fileInput.files[f];
                         var fileInfo = {
                             file: file,
                             fileSize: GetFormatedFileSize(file.size),
@@ -273,7 +328,7 @@
                         }
                         this.filesFrame.push(fileInfo);
                     }
-                    el.value = '' ;
+                    fileInput.value = '' ;
                 },
                 removeFile: function (fileInf)
                 {
@@ -337,23 +392,40 @@
                         uploadFile(ff, messageId, this.fileProgress);
                     }
                 },
-                fileProgress: function (fileInf, state,respText) {
+                fileProgress: function (fileInf, state,respText,messageId) {
                     console.log(fileInf.file.name+'  '+ state+'  '+ new Date().getSeconds() +':'+ new Date().getMilliseconds());
                     fileInf.status = state;
-                    if (respText) {
+                    if (typeof(respText)!=='undefined'){
                         fileInf.error = "Ошибка загрузки";
                     } 
 
                     var f = this.filesFrame.filter(function(fileInfo){
-                        if (fileInfo.status == 0||fileInfo.status==2) return true;
+                        if (fileInfo.status == 0||fileInfo.status==2) return true;//
                         if (fileInfo.error) return true;
                         return false;
                     });
 
-                  //  if (f.length == 0)
-                  //  {
                         this.filesFrame = f;
-                  //  }
+
+                    f = this.filesFrame.filter(function (fileInfo) {
+                        if (fileInfo.error||fileInfo.status==3) return false;
+                        return true;
+                     });
+                        if (f.length == 0) {
+                          this.checkConnection(function () {
+                            chat.server.filesUploaded(messageId);
+                        });
+                    }
+
+                },
+                filesUploaded:function (messageId,files) {
+                   for (var i = 0; i < this.messages.length; i++) {
+                        var mess = this.messages[i];
+                        if (mess.Id === messageId) {
+                            mess.Files = files;
+                            break;
+                        }
+                    }
                 },
                 broadcastMessage: function (message) {
                     this.messages.push(message);
@@ -395,6 +467,7 @@
 
                 chat.client.broadcastMessage = this.broadcastMessage;
                 chat.client.changeMessageStatus = this.changeMessageStatus;
+                chat.client.filesUploaded = this.filesUploaded;
                 $.connection.hub.error = this.error;
 
                 this.fetchMessages();//начитываю сообщения

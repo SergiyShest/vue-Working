@@ -45,6 +45,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.9.4.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>packages\Autofac.4.9.4\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.SignalR, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>packages\Autofac.SignalR.3.0.2\lib\net40\Autofac.Integration.SignalR.dll</HintPath>
+    </Reference>
     <Reference Include="DevExtreme.AspNet.Data, Version=2.5.0.0, Culture=neutral, PublicKeyToken=982f5dab1439d0f7, processorArchitecture=MSIL">
       <HintPath>packages\DevExtreme.AspNet.Data.2.5.0\lib\net452\DevExtreme.AspNet.Data.dll</HintPath>
     </Reference>
@@ -145,6 +151,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="StartupOwin.cs" />
     <Content Include="Content\icons\delete.jpg" />
+    <Content Include="Content\icons\delete.png" />
     <Content Include="Content\icons\filter.png" />
     <Content Include="Content\icons\loading.gif" />
     <Content Include="Content\modal.CSS" />
