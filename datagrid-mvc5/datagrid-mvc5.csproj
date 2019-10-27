@@ -154,6 +154,7 @@
     <Content Include="Content\icons\delete.png" />
     <Content Include="Content\icons\filter.png" />
     <Content Include="Content\icons\loading.gif" />
+    <Content Include="Content\icons\search.jpg" />
     <Content Include="Content\modal.CSS" />
     <Content Include="Content\vueError.css" />
     <Compile Include="Controllers\ChartController.cs" />

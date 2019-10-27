@@ -87,15 +87,20 @@ namespace datagrid_mvc5.Controllers
         // Other methods not shown.
     }
 
-    public class ChatRepository:IChatRepository
+    public class ChatRepository : IChatRepository
     {
-       public void Add(string name, string message) { }
+        public void Add(string name, string message) { }
         // Other methods not shown.
     }
 
     public class ChatHub : Hub
     {
-public  ChatHub(IChatRepository ch)
+        public ChatHub(IChatRepository ch)
+        {
+
+        }
+
+        public ChatHub()
         {
 
         }
@@ -117,30 +122,47 @@ public  ChatHub(IChatRepository ch)
                 Id = ++counter,
                 SenderName = sessId.Substring(0, 5),
                 Message = messageStr,
-                CrDate = DateTime.Now
+                CrDate = DateTime.Now,
+                Files = new List<string>() ,
+                DeliveryList = new[] {
+                        new Delivery() {Status=0,User="VASA" },
+                        new Delivery() {Status=0,User="PETA" },
+                        new Delivery() {Status=0,User="GLOK" }
+                    }
             };
-            
+
 
 
             Clients.Client(Context.ConnectionId).broadcastMessage(mess);
 
             Messages.Add(mess);
 
-            foreach (var message in Messages)
-            {
+          //  foreach (var message in Messages)
+          //  {
                 //    message.Status++;
                 //    Clients.All.changeMessageStatus(message.Id,message.Status);
-            }
-             return mess.Id;
+           // }
+            return mess.Id;
         }
 
         public List<ChatMessage> GetMessages()
         {
             var mess = new List<ChatMessage>()
             {
-                new ChatMessage(){Id = ++counter,SenderName = "жну",Message = "ssss",CrDate = DateTime.Now.AddDays(-1),Files=new {"fff"} },
-                new ChatMessage(){Id = ++counter,SenderName = "xxdd",Message = "ssscccs",CrDate = DateTime.Now},
-
+                new ChatMessage(){Id = ++counter,SenderName = "PUK",Message = "ssss",CrDate = DateTime.Now.AddDays(-1),
+                    Files =new[] {"fff","bla bla bla.txt","mx my .com" } ,
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" },
+                        new Delivery() {Status=1,User="PETA" },
+                        new Delivery() {Status=1,User="GLOK" },
+                    }},
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "ssscccs",CrDate = DateTime.Now,
+                    Files =new[] {"fff.ee" },
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
             };
             Messages.AddRange(mess);
             return mess;
@@ -153,21 +175,38 @@ public  ChatHub(IChatRepository ch)
             Clients.All.changeMessageStatus(message.Id, message.Status);
         }
 
-       public void  FilesUploaded(int messageId)
+        public void FilesUploaded(int messageId)
         {
-        Clients.All.filesUploaded(messageId,new[] { "message","Status","sgdfgsdf"});
+            Clients.All.filesUploaded(messageId, new[] { "message", "Status", "sgdfgsdf" });
         }
 
         public override Task OnConnected()
         {
-            // My code OnConnected
-            var name = Clients.Caller.GetName().Result;
+            string name = Context.User.Identity.Name;
+
+            _connections.Add(name, Context.ConnectionId);
+            var named = Clients.Caller.GetName().Result;
             return base.OnConnected();
         }
         public override Task OnReconnected()
         {
+            string name = Context.User.Identity.Name;
+            var named = Clients.Caller.GetName().Result;
+            if (!_connections.GetConnections(name).Contains(Context.ConnectionId))
+            {
+                _connections.Add(name, Context.ConnectionId);
+            }
             return base.OnReconnected();
         }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            string name = Context.User.Identity.Name;
+
+            _connections.Remove(name, Context.ConnectionId);
+            return base.OnDisconnected(stopCalled);
+        }
+
 
     }
 
@@ -183,10 +222,20 @@ public  ChatHub(IChatRepository ch)
         [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime CrDate { get; set; }
 
-      IEnumerable<string>  Files{ get; set; }
+        public IEnumerable<Delivery> DeliveryList { get; set; }
+
+        public IEnumerable<string> Files { get; set; }
+
         public int Status { get; set; }
 
     }
+
+    public class Delivery
+    {
+        public int Status { get; set; }
+        public string User { get; set; }
+    }
+
     class CustomDateTimeConverter : IsoDateTimeConverter
     {
         public CustomDateTimeConverter()

@@ -3,85 +3,47 @@
 <html>
 <head>
 
-   
-    <style type="text/css">
 
 
-Скрыть код
-
-/* Добавлено */
-* {
-  box-sizing: border-box;
-}
-
-.container {
-  overflow: hidden;
-  background-color: #99CCFF;
-  padding: 5px;
-  margin: 0px;
-  height: 100vh;
-  border: solid 5px red;
-}
-
-
-/* Добавлено */
-.wrap {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-
-.scrollArea {
-  overflow: auto;
-  height: 100%;
-  padding: 5px;
-  border: solid 5px black;
-  
-  /* Добавлено */
-  flex-grow: 1;
-}
-
-
-        .item {
-            margin: 2px;
-            padding: 2px; 
-            border: double 1px black;
-            background-color: #66CCFF;
-        }
-        h1{ border: double 1px black;margin:0px }
-    </style>
 </head>
 <script>
 
 
-    window.addEventListener( "resize", function (event) {
+    window.addEventListener("resize", function (event) {
         var conteiner = window.document.getElementById('container');
         var header = window.document.getElementById('header');
         var scrollArea = window.document.getElementById('scrollArea');
         var footer = window.document.getElementById('footer');
-        var avaiableH = conteiner.clientHeight; 
-        var h =avaiableH-header.clientHeight-footer.clientHeight;
+        var avaiableH = conteiner.clientHeight;
+        var h = avaiableH - header.clientHeight - footer.clientHeight;
 
 
-});
+    });
 </script>
 <body style="padding:0px;margin:0px" class="container" id="container">
-    <div class="wrap">
-        <h1 id="header">Header</h1>
-        <div id="scrollArea" class="scrollArea">
-            <div class="item">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
-                <p>item.Status</p>
-                <pre>проба 1</pre>
+    <style type="text/css">
+        a:visited {color: red;}
+    </style>
+    <a href="http://localhost:63164/chartForm/Download">vvvv.bbb</a>
+    <a href="http://localhost:63164/chartForm/Download?ч=3">vvvv.bbb</a>
+    <a href="http://localhost:63164/chartForm/Download?у=3">vvvv.bbb</a>
+  //  к примеру такой код ( по ссылке загржается файл)
+  //  ссылка становится красной после посещения в IЕ но не в Chrome
+    @*<div class="wrap">
+            <h1 id="header">Header</h1>
+            <div id="scrollArea" class="scrollArea">
+                <div class="item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
+                    <p>item.Status</p>
+                    <pre>проба 1</pre>
+                </div>
+                <div class="item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
+                    <p>item.Status</p>
+                    <pre>проба 2</pre>
+                </div>
             </div>
-            <div class="item">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
-                <p>item.Status</p>
-                <pre>проба 2</pre>
-            </div>
-        </div>
-        <h1 id="footer">Footer</h1>
-    </div>
+            <h1 id="footer">Footer</h1>
+        </div>*@
 </body>
 </html>

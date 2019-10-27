@@ -8,9 +8,82 @@
     <script src="~/Scripts/vue.js"></script>
     <script src="~/signalr/hubs"></script>
     <title>SignalR Simple Chat</title>
+
+
+</head>
+<body style="padding:0px;margin:0px" class="container">
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 3px;
+            padding: 3px;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        .dropbtn {
+            display: inline-block;
+            font-style: italic;
+            color: white;
+            padding: 2px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: red;
+            color: yellow;
+        }
+
+        li.dropdown {
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            margin-left: -200px;
+            min-width: 260px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+            /*.dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                text-align: left;
+            }*/
+
+            .dropdown-content a:hover {
+                background-color: #f1f1f1;
+            }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
     <style type="text/css">
-        {
-            box-sizing: border-box;
+        /*a:link {
+            color: #0000d0;
+        }*/
+        a:visited {
+            color: #900060; /* Цвет посещенных ссылок */
+        }
+
+
+
+        a:link:hover {
+            color: white;
+        }
+
+        a:visited:hover {
+            color: red;
         }
 
         .container {
@@ -60,24 +133,40 @@
 
         .dat {
             color: brown;
-            font-size: medium;
+            font-size: large;
+            /* font-size: medium;
             font-style: oblique;
             float: right;
-            /* margin-block-end: 13px;*/
+            text-align:center;
+            vertical-align:central;
+            margin-block-end: 13px;*/
         }
 
         /*.item:hover {
-            box-shadow: inset 0 0 0 3px #a3a593;
-            cursor: pointer; 
-        }*/
-     .message {
-          
-            border:inset 3px ;
-         }
-        .status {
+                        box-shadow: inset 0 0 0 3px #a3a593;
+                        cursor: pointer;
+                    }*/
+        .message {
+            border: 1px;
+        }
+
+        .message-text {
+            border: inset 3px;
+        }
+
+        .message-header {
+            height: 25px;
+        }
+
+        .message-header1 {
+            float: left;
+        }
+
+        .message-status {
+            border-radius: 5px;
+            z-index: 1;
             float: right;
-            z-index: 2147483647;
-            background: white;
+            background: green;
         }
 
         textarea {
@@ -107,86 +196,125 @@
             margin-left: auto;
             margin-right: auto;
         }
-    .inputfile {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
-}
-/*.inputfile + label {
-    font-size: 1.25em;
-    font-weight: 700;
-    color: white;
-    background-color: ;
-    display: inline-block;
-}
-.inputfile:focus + label,
 
-.inputfile + label {
-	cursor: pointer; 
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+        /*.inputfile + label {
+                font-size: 1.25em;
+                font-weight: 700;
+                color: white;
+                background-color: ;
+                display: inline-block;
+            }
+            .inputfile:focus + label,
 
-}
-*/
-.openFileDialogButton:hover {
-     cursor: pointer; 
-}
-.openFileDialogButton:active {
-  color: green;  border:  inset ;
-}
-.openFileDialogButton {
-  width:100px;
-  display: inline-block;
-  background:  linear-gradient( #eeeeee, #eee);
-  border: 2px outset #999;
-  border-radius: 3px;
-  padding: 5px 8px;
-  outline: none;
-  white-space: nowrap;
-  cursor: pointer;
-         }
+            .inputfile + label {
+                cursor: pointer;
+
+            }
+            */
+        .openFileDialogButton:hover {
+            cursor: pointer;
+        }
+
+        .openFileDialogButton:active {
+            color: green;
+            border: inset;
+        }
+
+        .openFileDialogButton {
+            width: 150px;
+            display: inline-block;
+            /*background: linear-gradient( #eeeeee, #eee);
+                border: 2px outset #999;
+                border-radius: 3px;
+                padding: 5px 8px;
+                outline: none;
+                white-space: nowrap; cursor: pointer;*/
+            user-select: none;
+            white-space: pre;
+            align-items: flex-start;
+            text-align: center;
+            cursor: default;
+            color: buttontext;
+            background-color: buttonface;
+            box-sizing: border-box;
+            padding: 2px 6px 3px;
+            border-width: 2px;
+            border-style: outset;
+            border-color: buttonface;
+            border-image: initial;
+        }
 
 
-.custom-file-input:hover::before {
-  border-color: black;
-}
-.custom-file-input:active::before {
-  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-}
+        .custom-file-input:hover::before {
+            border-color: black;
+        }
 
+        .custom-file-input:active::before {
+            background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+        }
     </style>
-</head>
-<body style="padding:0px;margin:0px" class="container">
+
+    <a href="javasctipt:void(0)">vvvv.bbb</a>
     <div class="wrap" id="chatForm">
-
-
         {{connection.hub.state}}---{{connected}}
-
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
-        <input type="button" value="stop+" v-on:click="stop()" />
-        <a href="http://localhost:63164/chartForm/Download">vvvv</a>
+        <input type="button" value="stop" v-on:click="stop()" />
+        <div style="display:flex">
+            <div style="display:inline-flex;flex-grow:1">
+                это сообщение текстового блока
+            </div>
+            <div style="display:inline-flex">
+                <input type="text" v-model="filter" style="display:inline-block" /><img src="~/Content/icons/search.jpg"
+                                                                style="vertical-align: middle">
+                
+            </div>
+        </div>
         <div id="scroll" class="scrollArea">
-
-            <div class="item" v-for="(item,num) in messages" :v-key="item"
-                 v-bind:style="getStyle(item.SenderName,item.Status)"
-                 v-on:click="setMessageReaded(item.Id,item.Status)">
-
-                <img class="status" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NS40IDQ1LjQiPjxwYXRoIGZpbGw9IiNmOTY5MGUiIGQ9Ik00MS4zIDE4LjZIMjYuOFY0YzAtMi0xLjgtNC00LTQtMi40IDAtNC4yIDItNC4yIDR2MTQuNkg0Yy0yIDAtNCAxLjgtNCA0IDAgMS4yLjUgMi4zIDEuMiAzIC44LjggMS44IDEuMyAzIDEuM2gxNC40djE0LjNjMCAxIC40IDIgMS4yIDMgLjcuNiAxLjggMSAzIDEgMi4yIDAgNC0xLjcgNC00VjI3aDE0LjVjMi4zIDAgNC0yIDQtNC4zcy0xLjgtNC00LTR6Ii8+PC9zdmc+" width="12">
-                <p class="p1">
-                    {{num}})
-                    <span class="nam">{{item.SenderName}}</span>
-                    {{item.Status}}
-                    <span class="dat"> {{item.CrDate}}</span>
-                </p>
-                <pre class="p1 message">{{item.Message}}</pre>
-                <a href="http://localhost:63164/chartForm/Download?xxxx=33">vvvv</a>
+            <div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>
+            <div class="message" v-for="(message,num) in messagesFiltred" :v-key="message"
+                 v-bind:style="getStyle(message.SenderName,message.Status)"
+                 v-on:click="setMessageReaded(message.Id,message.Status)">
+                <div class="message-header">
+                    <div class="p1 message-header1">
+                        {{num}})
+                        <span class="p1 nam">{{message.SenderName}}</span>
+                        {{message.Status}}
+                        <span class="p1 dat"> {{message.CrDate}}</span>
+                    </div>
+                    <div class="p1 message-status">
+                        <div class="dropdown">
+                            <div class="dropbtn">
+                                {{getMessageStatusTxt(message)}}
+                            </div>
+                            <div class="dropdown-content">
+                                <span>Cообщение получили:</span>
+                                <div v-for="(delivery,num) in message.DeliveryList">
+                                    {{getDeliveryStatusTxt(delivery)}} {{delivery.User}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <pre class="p1 message-text">{{message.Message}}</pre>
+                @*место для файлов*@
+                <div v-for="(file,num) in message.Files">
+                    <span>{{num+1}}</span>
+                    <a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>
+                </div>
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
-        <div v-for="(fileInf,num) in filesFrame" :v-key="fileInf">
+        <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
             <span> {{num+1}}</span>
             <img src="~/Content/icons/delete.png"
                  height="20"
@@ -200,20 +328,18 @@
             <span>{{fileInf.error}}</span>
         </div>
         <input id="file" type="file" v-on:change="addFiles()" multiple class="inputfile" />
-        <label for="file" class="openFileDialogButton" >Добавить файл</label>
+        <label for="file" class="openFileDialogButton">Добавить файл</label>
         <div class="loader" v-bind:style="{display:connected}">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
-
     <script type="text/javascript">
-       function arrayRemove(arr, value) {
+        function arrayRemove(arr, value) {
+            return arr.filter(function (ele) {
+                return ele != value;
+            });
 
-   return arr.filter(function(ele){
-       return ele != value;
-   });
-
-}
+        }
 
         function GetFormatedFileSize(fileSize) {
             var fileSizeStr = '';
@@ -229,7 +355,7 @@
             return fileSizeStr;
         }
 
-        function uploadFile(fileInf, messageId,collBack) {
+        function uploadFile(fileInf, messageId, collBack) {
             var req = new XMLHttpRequest();
             var formData = new FormData();
             formData.append("file", fileInf.file);
@@ -238,23 +364,26 @@
             req.send(formData);
             req.onreadystatechange = function () {
                 if (this.readyState == 3) {
-                    collBack(fileInf, this.readyState, this.responseText,messageId);
+                    collBack(fileInf, this.readyState, this.responseText, messageId);
                 }
             }
-            req.onload= function () { collBack(fileInf, this.readyState,'',messageId); }
-           // req.onloadend = function () { collBack(fileInf, this.readyState); }
+            req.onload = function () { collBack(fileInf, this.readyState, '', messageId); }
+            // req.onloadend = function () { collBack(fileInf, this.readyState); }
 
 
             req.onerror = function (error) {
-                collBack(fileInf, this.readyState, error,messageId);
+                collBack(fileInf, this.readyState, error, messageId);
             }
 
-                
-            }
 
-        
+        }
+
+
 
         $.connection.hub.disconnected(function () {
+            if ($.connection.hub.lastError) {
+                alert("Disconnected. Reason: " + $.connection.hub.lastError.message);
+            }
             console.log('We are currently experiencing difficulties with the connection.');
             setTimeout($.connection.hub.start(), 3000);
         });
@@ -272,9 +401,8 @@
 
         //
         function auto_grow(element) {
-
             element.style.height = "5px";
-            element.style.height =  element.scrollHeight  + "px";
+            element.style.height = element.scrollHeight + "px";
         }
     </script>
     <script type="text/javascript">
@@ -288,16 +416,26 @@
                 connectionState: '', connectionSt: 0,
                 errors: 'Ok',
                 messages: [],
+
+                filter: '',
+                filesList: [],
                 message: '',
-                filesFrame: [],
             },
+
             computed: {
                 connected: function () {
                     if (this.connectionSt == 1) {
                         return 'none';
                     }
                     return 'block';
-                }
+                },
+
+                messagesFiltred: function () {
+                    var f = this.filter.toLowerCase()
+                    return this.messages.filter(function (message) {
+                        return message.Message.toLowerCase().includes(f);
+                    });
+                },
             },
 
             methods: {
@@ -319,20 +457,18 @@
                         var fileInfo = {
                             file: file,
                             fileSize: GetFormatedFileSize(file.size),
-                            status:0
+                            status: 0
                         }
-                        if (file.size/(1024 * 1024) > 10 )
-                        {
+                        if (file.size / (1024 * 1024) > 10) {
                             fileInfo.status = 3;
-                            fileInfo.error='Превышен максимальный размер 10 Мбт.'
+                            fileInfo.error = 'Превышен максимальный размер 10 Мбт.'
                         }
-                        this.filesFrame.push(fileInfo);
+                        this.filesList.push(fileInfo);
                     }
-                    fileInput.value = '' ;
+                    fileInput.value = '';
                 },
-                removeFile: function (fileInf)
-                {
-                    this.filesFrame = arrayRemove(this.filesFrame, fileInf);
+                removeFile: function (fileInf) {
+                    this.filesList = arrayRemove(this.filesList, fileInf);
                 },
                 //читаем сообщения
                 fetchMessages: function () {
@@ -385,41 +521,41 @@
                     }
                 },
                 loadFile: function (messageId) {
-                    for (var i = 0; i < this.filesFrame.length; i++) {
-                        var ff = this.filesFrame[i];
+                    for (var i = 0; i < this.filesList.length; i++) {
+                        var ff = this.filesList[i];
                         if (ff.status != 0) continue;
                         ff.status = 2;
                         uploadFile(ff, messageId, this.fileProgress);
                     }
                 },
-                fileProgress: function (fileInf, state,respText,messageId) {
-                    console.log(fileInf.file.name+'  '+ state+'  '+ new Date().getSeconds() +':'+ new Date().getMilliseconds());
+                fileProgress: function (fileInf, state, respText, messageId) {
+                    console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
                     fileInf.status = state;
-                    if (typeof(respText)!=='undefined'){
+                    if (typeof (respText) !== 'undefined') {
                         fileInf.error = "Ошибка загрузки";
-                    } 
+                    }
 
-                    var f = this.filesFrame.filter(function(fileInfo){
-                        if (fileInfo.status == 0||fileInfo.status==2) return true;//
+                    var f = this.filesList.filter(function (fileInfo) {
+                        if (fileInfo.status == 0 || fileInfo.status == 2) return true;//
                         if (fileInfo.error) return true;
                         return false;
                     });
 
-                        this.filesFrame = f;
+                    this.filesList = f;
 
-                    f = this.filesFrame.filter(function (fileInfo) {
-                        if (fileInfo.error||fileInfo.status==3) return false;
+                    f = this.filesList.filter(function (fileInfo) {
+                        if (fileInfo.error || fileInfo.status == 3) return false;
                         return true;
-                     });
-                        if (f.length == 0) {
-                          this.checkConnection(function () {
+                    });
+                    if (f.length == 0) {
+                        this.checkConnection(function () {
                             chat.server.filesUploaded(messageId);
                         });
                     }
 
                 },
-                filesUploaded:function (messageId,files) {
-                   for (var i = 0; i < this.messages.length; i++) {
+                filesUploaded: function (messageId, files) {
+                    for (var i = 0; i < this.messages.length; i++) {
                         var mess = this.messages[i];
                         if (mess.Id === messageId) {
                             mess.Files = files;
@@ -440,6 +576,27 @@
                         }
                     }
                 },
+                getMessageStatusTxt: function (message) {
+                    var res = 'жопа';
+                    switch (message.Status) {
+                        case 0: res = 'Новый'; break;
+                        case 1: res = 'Доставленный'; break;
+                        case 3: res = 'Прочитанный'; break;
+                    }
+                    return res;
+
+                },
+
+                getDeliveryStatusTxt: function (delivery) {
+                    var res = 'жопа Ч';
+                    switch (delivery.Status) {
+                        case 0: res = 'Доставлено'; break;
+                        case 1: res = 'Прочитано'; break;
+                    }
+                    return res;
+
+                },
+
                 error: function (error) {
                     console.log('SignalR error: ' + error);
                 },
@@ -464,12 +621,10 @@
                     sch(vvv);
                 });
                 chat.client.getName = this.getName;
-
                 chat.client.broadcastMessage = this.broadcastMessage;
                 chat.client.changeMessageStatus = this.changeMessageStatus;
                 chat.client.filesUploaded = this.filesUploaded;
                 $.connection.hub.error = this.error;
-
                 this.fetchMessages();//начитываю сообщения
             }
         });
