@@ -271,11 +271,14 @@
         <div style="display:flex">
             <div style="display:inline-flex;flex-grow:1">
                 это сообщение текстового блока
+               <H2>это сообщение текстового блока</H2>
+        <H2>это сообщение текстового блока</H2>
+        <H2>это сообщение текстового блока</H2>
             </div>
-            <div style="display:inline-flex">
-                <input type="text" v-model="filter" style="display:inline-block" /><img src="~/Content/icons/search.jpg"
-                                                                style="vertical-align: middle">
-                
+            <div style="display:inline-flex;height:25px;background-color:transparent;"  >
+                <input type="text" v-model="filter" style="display:inline-block" placeholder="поиск..." />
+                <img src="~/Content/icons/search.jpg" 
+     style="vertical-align: middle;height:24px;float:left;z-index:1">
             </div>
         </div>
         <div id="scroll" class="scrollArea">
@@ -429,11 +432,10 @@
                     }
                     return 'block';
                 },
-
                 messagesFiltred: function () {
                     var f = this.filter.toLowerCase()
                     return this.messages.filter(function (message) {
-                        return message.Message.toLowerCase().includes(f);
+                        return message.Message.toLowerCase().indexOf(f) > -1;
                     });
                 },
             },
