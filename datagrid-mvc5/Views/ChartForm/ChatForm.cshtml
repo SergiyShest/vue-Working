@@ -8,11 +8,14 @@
     <script src="~/Scripts/vue.js"></script>
     <script src="~/signalr/hubs"></script>
     <title>SignalR Simple Chat</title>
-
-
 </head>
 <body style="padding:0px;margin:0px" class="container">
     <style>
+        pre {
+            white-space: pre-wrap; /* Since CSS 2.1 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+        }
+
         ul {
             list-style-type: none;
             margin: 3px;
@@ -66,6 +69,31 @@
 
         .dropdown:hover .dropdown-content {
             display: block;
+        }
+
+
+        .imgButton {
+            vertical-align: middle;
+            height: 16px;
+            z-index: 1;
+          
+        }
+
+            /*.imgButton:active {
+                border: thin unset;
+            }*/
+
+            .imgButton:hover {
+                cursor: pointer
+            }
+
+        .highlight {
+            background-color: rgb(161, 248, 86);
+        }
+
+
+        .selectHighlighted {
+            background-color: rgb(161, 28, 86);
         }
     </style>
     <style type="text/css">
@@ -151,7 +179,8 @@
         }
 
         .message-text {
-            border: inset 3px;
+            border: inset 6px;
+            text-wrap: normal;
         }
 
         .message-header {
@@ -261,29 +290,43 @@
             background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
         }
     </style>
-
-    <a href="javasctipt:void(0)">vvvv.bbb</a>
     <div class="wrap" id="chatForm">
-        {{connection.hub.state}}---{{connected}}
+        {{connection.hub.state}}- -{{connected}}
         <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
         <input type="button" value="stop" v-on:click="stop()" />
-        <div style="display:flex">
-            <div style="display:inline-flex;flex-grow:1">
-                это сообщение текстового блока
-               <H2>это сообщение текстового блока</H2>
-        <H2>это сообщение текстового блока</H2>
-        <H2>это сообщение текстового блока</H2>
+        <div style="display:block;">
+            <div style="float:right;"  >
+                <input type="text" v-model="searchString" placeholder="поиск..."
+                       v-on:keyup.enter="find()" />
+                <button v-on:click="find()" style="float:left;margin:1px;padding:0px" :disabled="searchString.length>0" >
+                    <img src="~/Content/icons/search.png"
+                         class="imgButton">
+                </button>
+                <div style="display:flex;align-items: flex-start; " v-if="searchExecuted" >
+                    Cовпадений: {{searchResultLength}}
+                    <div v-if="searchResultLength>0" >
+                        <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
+                            <img class="imgButton" src="~/Content/icons/down.png">
+                        </button>
+                        {{curentFinded+1}}
+                        <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
+                            <img class="imgButton" src="~/Content/icons/up.png">
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div style="display:inline-flex;height:25px;background-color:transparent;"  >
-                <input type="text" v-model="filter" style="display:inline-block" placeholder="поиск..." />
-                <img src="~/Content/icons/search.jpg" 
-     style="vertical-align: middle;height:24px;float:left;z-index:1">
+
+            <div>
+                это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
+                <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
+                @*<H2>это сообщение текстового блока</H2>
+                    <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
             </div>
         </div>
         <div id="scroll" class="scrollArea">
-            <div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>
-            <div class="message" v-for="(message,num) in messagesFiltred" :v-key="message"
+            @*<div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>*@
+            <div class="message" v-for="(message,num) in messages" :v-key="message" v-bind:id="'message'+num"
                  v-bind:style="getStyle(message.SenderName,message.Status)"
                  v-on:click="setMessageReaded(message.Id,message.Status)">
                 <div class="message-header">
@@ -307,29 +350,41 @@
                         </div>
                     </div>
                 </div>
-                <pre class="p1 message-text">{{message.Message}}</pre>
+                <pre v-bind:id="'mess'+num" class="p1 message-text">{{message.Message}}</pre>
                 @*место для файлов*@
-                <div v-for="(file,num) in message.Files">
-                    <span>{{num+1}}</span>
-                    <a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>
+                <div>
+                    <div v-for="(file,num) in message.Files">
+                        <span>{{num+1}}</span>
+                        <a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>
+                    </div>
                 </div>
             </div>
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
-        <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
-            <span> {{num+1}}</span>
-            <img src="~/Content/icons/delete.png"
-                 height="20"
-                 alt="удалить файл"
-                 toolTip="удалить файл"
-                 style="vertical-align: middle"
-                 v-on:click="removeFile(fileInf)">
-            <span class="nam">{{fileInf.file.name}}</span>
-            <span>{{fileInf.fileSize}}</span>
-            <span>{{fileInf.status}}</span>
-            <span>{{fileInf.error}}</span>
+
+        @*scrollable area above files*@
+        <div style="background: rgba(204, 51, 255, 0.5);
+        max-height: 200px;
+        height:min-content;
+        overflow:auto;
+        flex-grow:1;
+      ">
+            <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
+                <span> {{num+1}}</span>
+                <img src="~/Content/icons/delete.png"
+                     height="20"
+                     alt="удалить файл"
+                     toolTip="удалить файл"
+                     style="vertical-align: middle"
+                     v-on:click="removeFile(fileInf)">
+                <span class="nam">{{fileInf.file.name}}</span>
+                <span>{{fileInf.fileSize}}</span>
+                <span>{{fileInf.status}}</span>
+                <span>{{fileInf.error}}</span>
+            </div>
         </div>
+
         <input id="file" type="file" v-on:change="addFiles()" multiple class="inputfile" />
         <label for="file" class="openFileDialogButton">Добавить файл</label>
         <div class="loader" v-bind:style="{display:connected}">
@@ -337,6 +392,48 @@
         </div>
     </div>
     <script type="text/javascript">
+        function selectElementContents(el, start, end) {
+            var range = document.createRange();
+            // range.selectNodeContents(el);
+            range.setStart(el, start);
+            range.setEnd(el, end);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function highlightAndGetHighlighted(container, what, spanClass) {
+
+            var ret = [];
+            var clearPrevPattern = new RegExp('<span([^>]*?)>(.*?)</span>', 'g');
+            container.innerHTML = container.innerHTML.replace(clearPrevPattern, '$2');
+
+            var content = container.innerHTML;
+            var pattern = new RegExp('(' + what + ')', 'ig');
+
+            var replaceWith = '<span ' + (spanClass ? 'class="' + spanClass + '"' : '') + '">$1</span>';
+
+            //var counter = 0;
+            //while (result = pattern.exec(content)) {
+            //    result.i = counter;
+            //    result.elem = container;
+            //    result.endIndex = pattern.lastIndex;
+            //    ret.push(result);
+            //    counter++;
+            //}
+            var highlighted = content.replace(pattern, replaceWith);
+
+            container.innerHTML = highlighted;
+            var nodes = container.childNodes;
+            for (var i = 0, count = 0; i < nodes.length; i++) {
+                node = nodes[i];
+                if (node.nodeName == 'SPAN' && node.className == spanClass) {
+                    ret.push(node);
+                }
+            }
+            return ret;
+        }
+
         function arrayRemove(arr, value) {
             return arr.filter(function (ele) {
                 return ele != value;
@@ -347,7 +444,7 @@
         function GetFormatedFileSize(fileSize) {
             var fileSizeStr = '';
             if (fileSize < 1024)
-                fileSizeStr = fileSize + 'байт';
+                fileSizeStr = fileSize + ' Байт';
             else {
                 if (fileSize < 1024 * 1024 / 2) {//все меньше 500 кбайт
                     fileSizeStr = (fileSize / 1024).toFixed(2) + ' Кбайт';
@@ -381,8 +478,6 @@
 
         }
 
-
-
         $.connection.hub.disconnected(function () {
             if ($.connection.hub.lastError) {
                 alert("Disconnected. Reason: " + $.connection.hub.lastError.message);
@@ -401,7 +496,6 @@
                 scrollTop: div.scrollHeight
             }, 500);
         }
-
         //
         function auto_grow(element) {
             element.style.height = "5px";
@@ -420,7 +514,11 @@
                 errors: 'Ok',
                 messages: [],
 
-                filter: '',
+                searchString: '',
+                searchResultLength: 0,
+                searchResult: [],
+                curentFinded: 0,
+                searchExecuted: false,
                 filesList: [],
                 message: '',
             },
@@ -431,16 +529,49 @@
                         return 'none';
                     }
                     return 'block';
-                },
-                messagesFiltred: function () {
-                    var f = this.filter.toLowerCase()
-                    return this.messages.filter(function (message) {
-                        return message.Message.toLowerCase().indexOf(f) > -1;
-                    });
-                },
+                }
             },
 
             methods: {
+                find: function () {
+                    this.searchExecuted = true;
+                    this.searchResult.length = 0;
+                    this.curentFinded = 0;
+                    for (var i = 0; i < this.messages.length; i++) {
+                        var elem = document.getElementById('mess' + i);
+                        var sRes = highlightAndGetHighlighted(elem, this.searchString, 'highlight');
+                        Array.prototype.push.apply(this.searchResult, sRes);
+                    }
+                    if (this.searchResult.length > 0) {
+                        this.hilightFinded('selectHighlighted');
+                        // selectElementContents(selElem,match.index,match.endIndex);
+                    }
+
+
+                    this.searchResultLength = this.searchResult.length
+
+                },
+                nextFinded: function () {
+                    if (this.curentFinded >= this.searchResult.length - 1) return;
+                    this.hilightFinded('highlight');
+                    this.curentFinded++;
+                    this.hilightFinded('selectHighlighted');
+
+                },
+                prevFinded: function () {
+
+                    if (this.curentFinded == 0) return;
+                    this.hilightFinded('highlight');
+                    this.curentFinded--;
+                    this.hilightFinded('selectHighlighted');
+                },
+                hilightFinded: function (className) {
+
+                    var selElem = this.searchResult[this.curentFinded];
+                    selElem.className = className;
+                    selElem.scrollIntoView();
+                },
+
                 checkConnection: function (collBack) {
                     if (this.connection.connectionState !== 4) {
                         $.connection.hub.start().done(function () { collBack(); });
@@ -588,7 +719,6 @@
                     return res;
 
                 },
-
                 getDeliveryStatusTxt: function (delivery) {
                     var res = 'жопа Ч';
                     switch (delivery.Status) {

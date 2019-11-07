@@ -75,7 +75,6 @@ namespace datagrid_mvc5.Controllers
             }
         }
     }
-
     public interface IClientContract
     {
         void broadcastMessage(string mess);
@@ -163,6 +162,94 @@ namespace datagrid_mvc5.Controllers
                         new Delivery() {Status=0,User="PETA" }
                     }
                 },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = @"sstestcs\r\ntest\r\nэээ test ",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "еуые test sss",CrDate = DateTime.Now,
+                    Files =new[] {"fff.ee" },
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "Несе Галя воду",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "Как ныне сбирается Вещий Олег Щиты прибивать на ворота",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "PUK",Message = "ssss",CrDate = DateTime.Now.AddDays(-1),
+                    Files =new[] {"fff","bla bla bla.txt","mx my .com" } ,
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" },
+                        new Delivery() {Status=1,User="PETA" },
+                        new Delivery() {Status=1,User="GLOK" },
+                    }},
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "ssscccs",CrDate = DateTime.Now,
+                    Files =new[] {"fff.ee" },
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = @"sstestcs\r\ntest\r\nэээ test ",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "testеуые test sss test",CrDate = DateTime.Now,
+                    Files =new[] {"fff.ee" },
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "Несе Галя воду",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },
+                new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "test.Олег.Как ныне сбирается Вещий Олег Щиты прибивать на ворота",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },               new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "Несе Галя воду",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },               new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "Несе Галя воду",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                },               new ChatMessage(){Id = ++counter,SenderName = "CLOK",Message = "testНесе Галя воду",CrDate = DateTime.Now,
+                    Files =new List <string> (0),
+                    DeliveryList= new[] {
+                        new Delivery() {Status=1,User="VASA" } ,
+                        new Delivery() {Status=0,User="PETA" }
+                    }
+                }
             };
             Messages.AddRange(mess);
             return mess;
