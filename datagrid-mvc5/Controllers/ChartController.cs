@@ -8,6 +8,8 @@ using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace datagrid_mvc5.Controllers
 {
@@ -136,11 +138,6 @@ namespace datagrid_mvc5.Controllers
 
             Messages.Add(mess);
 
-          //  foreach (var message in Messages)
-          //  {
-                //    message.Status++;
-                //    Clients.All.changeMessageStatus(message.Id,message.Status);
-           // }
             return mess.Id;
         }
 
@@ -270,7 +267,6 @@ namespace datagrid_mvc5.Controllers
         public override Task OnConnected()
         {
             string name = Context.User.Identity.Name;
-
             _connections.Add(name, Context.ConnectionId);
             var named = Clients.Caller.GetName().Result;
             return base.OnConnected();
@@ -294,6 +290,22 @@ namespace datagrid_mvc5.Controllers
             return base.OnDisconnected(stopCalled);
         }
 
+
+        public string pass()
+        {
+
+            HttpClient client = new HttpClient((new HttpClientHandler() { UseDefaultCredentials = true }));
+             var c = base.Context.Request.Url.Authority;
+            var x = client.GetAsync("http://" + c + "/home/GetPassword").Result;
+            var xx = x.Content.ReadAsStringAsync().Result;
+
+            var byteArray = Convert.FromBase64String(xx);
+            byte[] unencodedBytes = ProtectedData.Unprotect(byteArray
+                , null
+                , DataProtectionScope.CurrentUser);
+            string utfString = Encoding.UTF8.GetString(unencodedBytes, 0, unencodedBytes.Length);
+            return utfString;
+        }
 
     }
 

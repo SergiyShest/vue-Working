@@ -6,17 +6,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 
 namespace datagrid_mvc5.Controllers
 {
-
     public class ChartFormController : Controller
     {
-
-
         public ActionResult context()
         {
 
@@ -26,7 +25,6 @@ namespace datagrid_mvc5.Controllers
         {
             return View("Maket");
         }
-
         public ActionResult Index()
         {
             var seessionID = base.ControllerContext.HttpContext.Session.SessionID;
@@ -58,15 +56,12 @@ namespace datagrid_mvc5.Controllers
             }
            // return RedirectToAction("upload");
         }
-
         public FileResult Download(string xxxx)
         {
             byte[] fileBytes = System.IO.File.ReadAllBytes(@"c:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5\App_Data\attribcache140.bin");
             string fileName = "myfile.ext";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, xxxx + fileName);
         }
-
-
         public ActionResult FileApi()
         {
             var seessionID = base.ControllerContext.HttpContext.Session.SessionID;
@@ -76,6 +71,17 @@ namespace datagrid_mvc5.Controllers
             return View("fileApiExample");
         }
 
+        [HttpGet]
+        // [AllowAnonymous]
+        public ActionResult GetPassword()
+        {
+            var byteArray = Encoding.UTF8.GetBytes("username:password1234");
+            byte[] encodedBytes = ProtectedData.Protect(byteArray
+                , null
+                , DataProtectionScope.CurrentUser);
+            string utfString = Convert.ToBase64String(encodedBytes, 0, encodedBytes.Length);
+            return Content(utfString, "application/text");
+        }
 
     }
 
