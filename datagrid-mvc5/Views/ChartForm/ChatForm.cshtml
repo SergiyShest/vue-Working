@@ -319,7 +319,8 @@
                 это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
                 <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
                 @*<H2>это сообщение текстового блока</H2>
-                    <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
+                  
+                  <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
             </div>
         </div>
         <div id="scroll" class="scrollArea">
@@ -362,28 +363,29 @@
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
 
         @*scrollable area above files*@
-        <div style="background: rgba(204, 51, 255, 0.5);
+    <div style="background: rgba(204, 51, 255, 0.5);
         max-height: 200px;
-
-        min-height: 50px; /*/min-content;*/
-        overflow:auto;
+        height: min-content; 
+        min-height: 25px; 
+        overflow: scroll;
         flex-grow:1;
-      ">
-            <div id="filesPlace"></div>
-            @*<div v-for="(fileInf,num) in filesList" :v-key="fileInf">
-                    <span> {{num+1}}</span>
-                    <img src="~/Content/icons/delete.png"
-                         height="20"
-                         alt="удалить файл"
-                         toolTip="удалить файл"
-                         style="vertical-align: middle"
-                         v-on:click="removeFile(fileInf)">
-                    <span class="nam">{{fileInf.file.name}}</span>
-                    <span>{{fileInf.fileSize}}</span>
-                    <span>{{fileInf.status}}</span>
-                    <span>{{fileInf.error}}</span>
-                </div>*@
-        </div>
+      "
+         id="filesPlace">
+        @*<div ></div>
+        <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
+                <span> {{num+1}}</span>
+                <img src="~/Content/icons/delete.png"
+                     height="20"
+                     alt="удалить файл"
+                     toolTip="удалить файл"
+                     style="vertical-align: middle"
+                     v-on:click="removeFile(fileInf)">
+                <span class="nam">{{fileInf.file.name}}</span>
+                <span>{{fileInf.fileSize}}</span>
+                <span>{{fileInf.status}}</span>
+                <span>{{fileInf.error}}</span>
+            </div>*@
+    </div>
 
         <input id="file" type="file" onchange="addFiles()" multiple class="inputfile" />
         <label for="file" class="openFileDialogButton">Добавить файл</label>
@@ -523,13 +525,50 @@
                     '     onclick="removeFile(' + i + ')">' +
                     '<span class="nam">' + fileInf.file.name + '</span>' +
                     '<span>' + fileInf.fileSize + '</span>' +
-                     '<span>' + fileInf.status + '</span>' +
-                     '<span>' + fileInf.error + '</span>' +
+                    '<span>' + fileInf.status + '</span>' +
+                    '<span>' + fileInf.error + '</span>' +
                     '</div>';
             }
             var elem = document.getElementById('filesPlace')
             elem.innerHTML = content;
         }
+
+        function loadFile(messageId) {
+            for (var i = 0; i < filesList.length; i++) {
+                var ff = filesList[i];
+                if (ff.status != 0) continue;
+                ff.status = 2;
+                uploadFile(ff, messageId, fileProgress);
+            }
+        }
+
+
+        function fileProgress(fileInf, state, respText, messageId) {
+          //  console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
+            fileInf.status = state;
+            if (typeof (respText) !== 'undefined' && respText.length < 0) {
+                console.error(respText);
+                fileInf.error = "Ошибка загрузки";
+            }
+
+            var f = filesList.filter(function (fileInfo) {
+                if (fileInfo.status == 0 || fileInfo.status == 2) return true;//
+                if (fileInfo.error) return true;
+                return false;
+            });
+            filesList = f;
+            f = filesList.filter(function (fileInfo) {
+                if (fileInfo.error || fileInfo.status == 3) return false;
+                return true;
+            });
+            if (f.length == 0) {
+               // this.checkConnection(function () {
+                    chat.server.filesUploaded(messageId);
+               // });
+            }
+            redrawFileList();
+        }
+
 
 
         $.connection.hub.disconnected(function () {
@@ -555,6 +594,18 @@
             element.style.height = "5px";
             element.style.height = element.scrollHeight + "px";
         }
+
+                       function getMessageStatusTxt(message) {
+                    var res = 'жопа';
+                    switch (message.Status) {
+                        case 0: res = 'Новый'; break;
+                        case 1: res = 'Доставленный'; break;
+                        case 3: res = 'Прочитанный'; break;
+                    }
+                    return res;
+
+                }
+
     </script>
     <script type="text/javascript">
         var chatId = 444;
@@ -671,7 +722,7 @@
                     var v = window.parent.innerHeight;
                     window.parent.postMessage(this.message, '*');
                     var messRef = this.message;
-                    var done = this.loadFile;
+                    var done = loadFile;
 
                     if (this.message.length > 0) {
                         this.checkConnection(function () {
@@ -679,39 +730,7 @@
                         });
                     }
                 },
-                loadFile: function (messageId) {
-                    for (var i = 0; i < filesList.length; i++) {
-                        var ff = filesList[i];
-                        if (ff.status != 0) continue;
-                        ff.status = 2;
-                        uploadFile(ff, messageId, this.fileProgress);
-                    }
-                },
-                fileProgress: function (fileInf, state, respText, messageId) {
-                    console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
-                    fileInf.status = state;
-                    if (typeof (respText) !== 'undefined' && respText.length < 0) {
-                        console.error(respText);
-                        fileInf.error = "Ошибка загрузки";
-                    }
 
-                    var f = filesList.filter(function (fileInfo) {
-                        if (fileInfo.status == 0 || fileInfo.status == 2) return true;//
-                        if (fileInfo.error) return true;
-                        return false;
-                    });
-                    filesList = f;
-                    f = filesList.filter(function (fileInfo) {
-                        if (fileInfo.error || fileInfo.status == 3) return false;
-                        return true;
-                    });
-                    if (f.length == 0) {
-                        this.checkConnection(function () {
-                            chat.server.filesUploaded(messageId);
-                        });
-                    }
-                    redrawFileList();
-                },
                 filesUploaded: function (messageId, files) {
                     for (var i = 0; i < this.messages.length; i++) {
                         var mess = this.messages[i];
@@ -734,14 +753,9 @@
                         }
                     }
                 },
-                getMessageStatusTxt: function (message) {
-                    var res = 'жопа';
-                    switch (message.Status) {
-                        case 0: res = 'Новый'; break;
-                        case 1: res = 'Доставленный'; break;
-                        case 3: res = 'Прочитанный'; break;
-                    }
-                    return res;
+                        getMessageStatusTxt: function (message) {
+                  
+                    return getMessageStatusTxt(message);
 
                 },
                 getDeliveryStatusTxt: function (delivery) {
