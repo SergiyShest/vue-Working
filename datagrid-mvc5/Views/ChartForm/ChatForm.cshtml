@@ -319,8 +319,8 @@
                 это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
                 <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
                 @*<H2>это сообщение текстового блока</H2>
-                  
-                  <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
+
+                    <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
             </div>
         </div>
         <div id="scroll" class="scrollArea">
@@ -363,29 +363,30 @@
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
 
         @*scrollable area above files*@
-    <div style="background: rgba(204, 51, 255, 0.5);
+        <div style="background: rgb(161, 248, 86);
         max-height: 200px;
-        height: min-content; 
-        min-height: 25px; 
+height: min-content;
+min-height: 5px;
+flex-grow:1;
+
         overflow: scroll;
-        flex-grow:1;
-      "
-         id="filesPlace">
-        @*<div ></div>
-        <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
-                <span> {{num+1}}</span>
-                <img src="~/Content/icons/delete.png"
-                     height="20"
-                     alt="удалить файл"
-                     toolTip="удалить файл"
-                     style="vertical-align: middle"
-                     v-on:click="removeFile(fileInf)">
-                <span class="nam">{{fileInf.file.name}}</span>
-                <span>{{fileInf.fileSize}}</span>
-                <span>{{fileInf.status}}</span>
-                <span>{{fileInf.error}}</span>
-            </div>*@
-    </div>
+        "
+             id="filesPlace">
+            @*<div ></div>
+                <div v-for="(fileInf,num) in filesList" :v-key="fileInf">
+                        <span> {{num+1}}</span>
+                        <img src="~/Content/icons/delete.png"
+                             height="20"
+                             alt="удалить файл"
+                             toolTip="удалить файл"
+                             style="vertical-align: middle"
+                             v-on:click="removeFile(fileInf)">
+                        <span class="nam">{{fileInf.file.name}}</span>
+                        <span>{{fileInf.fileSize}}</span>
+                        <span>{{fileInf.status}}</span>
+                        <span>{{fileInf.error}}</span>
+                    </div>*@
+        </div>
 
         <input id="file" type="file" onchange="addFiles()" multiple class="inputfile" />
         <label for="file" class="openFileDialogButton">Добавить файл</label>
@@ -394,8 +395,9 @@
         </div>
     </div>
     <script type="text/javascript">
+        //выделение элемента
         function selectElementContents(el, start, end) {
-            var range = document.createRange();
+            var range = document.createRange();//ra
             // range.selectNodeContents(el);
             range.setStart(el, start);
             range.setEnd(el, end);
@@ -403,7 +405,7 @@
             sel.removeAllRanges();
             sel.addRange(range);
         }
-
+        //подсветка найденного
         function highlightAndGetHighlighted(container, what, spanClass) {
 
             var ret = [];
@@ -415,19 +417,11 @@
 
             var replaceWith = '<span ' + (spanClass ? 'class="' + spanClass + '"' : '') + '">$1</span>';
 
-            //var counter = 0;
-            //while (result = pattern.exec(content)) {
-            //    result.i = counter;
-            //    result.elem = container;
-            //    result.endIndex = pattern.lastIndex;
-            //    ret.push(result);
-            //    counter++;
-            //}
             var highlighted = content.replace(pattern, replaceWith);
 
             container.innerHTML = highlighted;
             var nodes = container.childNodes;
-            for (var i = 0, count = 0; i < nodes.length; i++) {
+            for (var i = 0; i < nodes.length; i++) {
                 node = nodes[i];
                 if (node.nodeName == 'SPAN' && node.className == spanClass) {
                     ret.push(node);
@@ -510,7 +504,7 @@
             filesList = arrayRemove(filesList, fileInf);
             redrawFileList();
         }
-
+        //№
         function redrawFileList() {
             var content = '';
             for (var i = 0; i < filesList.length; i++) {
@@ -531,6 +525,9 @@
             }
             var elem = document.getElementById('filesPlace')
             elem.innerHTML = content;
+            var height = Math.min(100, filesList.length * 25);
+            elem.style.minHeight = height+'px';
+
         }
 
         function loadFile(messageId) {
@@ -544,7 +541,7 @@
 
 
         function fileProgress(fileInf, state, respText, messageId) {
-          //  console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
+            //  console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
             fileInf.status = state;
             if (typeof (respText) !== 'undefined' && respText.length < 0) {
                 console.error(respText);
@@ -562,9 +559,9 @@
                 return true;
             });
             if (f.length == 0) {
-               // this.checkConnection(function () {
-                    chat.server.filesUploaded(messageId);
-               // });
+                // this.checkConnection(function () {
+                chat.server.filesUploaded(messageId);
+                // });
             }
             redrawFileList();
         }
@@ -595,16 +592,16 @@
             element.style.height = element.scrollHeight + "px";
         }
 
-                       function getMessageStatusTxt(message) {
-                    var res = 'жопа';
-                    switch (message.Status) {
-                        case 0: res = 'Новый'; break;
-                        case 1: res = 'Доставленный'; break;
-                        case 3: res = 'Прочитанный'; break;
-                    }
-                    return res;
+        function getMessageStatusTxt(message) {
+            var res = 'жопа';
+            switch (message.Status) {
+                case 0: res = 'Новый'; break;
+                case 1: res = 'Доставленный'; break;
+                case 3: res = 'Прочитанный'; break;
+            }
+            return res;
 
-                }
+        }
 
     </script>
     <script type="text/javascript">
@@ -753,8 +750,8 @@
                         }
                     }
                 },
-                        getMessageStatusTxt: function (message) {
-                  
+                getMessageStatusTxt: function (message) {
+
                     return getMessageStatusTxt(message);
 
                 },
