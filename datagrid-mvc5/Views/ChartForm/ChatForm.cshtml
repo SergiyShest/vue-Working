@@ -390,7 +390,10 @@ flex-grow:1;
 
         <input id="file" type="file" onchange="addFiles()" multiple class="inputfile" />
         <label for="file" class="openFileDialogButton">Добавить файл</label>
-        <div class="loader" v-bind:style="{display:connected}">
+        <div class="loader" 
+             id="loader" 
+             style="display:none"
+             >
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
@@ -783,8 +786,14 @@ flex-grow:1;
             mounted: function () {
                 var sch = this.stateChanged;
                 $.connection.hub.stateChanged(function (vvv) {
-                    console.log('stateChanged.');
+                    console.log('stateChanged.'+$.connection.hub.state);
                     sch(vvv);
+                    var bl="block"
+                    if ($.connection.hub.state == 1)
+                    {
+                        bl='none'
+                    }
+                    $('#loader').css('display', bl);
                 });
                 chat.client.getName = this.getName;
                 chat.client.broadcastMessage = this.broadcastMessage;
