@@ -173,7 +173,8 @@
                         cursor: pointer;
                     }*/
         .message {
-            border: 1px;
+            border: double 1px grey;
+            /*background:grey;*/
         }
 
         .message-text {
@@ -320,12 +321,12 @@
                 <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
                 @*<H2>это сообщение текстового блока</H2>
 
-                    <H2>это сообщение текстового блока only wery wery long onlddddddddddddddddd fgsfdgsdfdddddddddddddddddd</H2>*@
+                    <H2>это сообщение текстового блока only wery wery long onld</H2>*@
             </div>
         </div>
         <div id="scroll" class="scrollArea">
             @*<div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>*@
-            <div class="message" v-for="(message,num) in messages" :v-key="message" v-bind:id="'message'+num"
+            @*<div class="message" v-for="(message,num) in messages" :v-key="message" v-bind:id="'message'+num"
                  v-bind:style="getStyle(message.SenderName,message.Status)"
                  v-on:click="setMessageReaded(message.Id,message.Status)">
                 <div class="message-header">
@@ -349,15 +350,15 @@
                         </div>
                     </div>
                 </div>
-                <pre v-bind:id="'mess'+num" class="p1 message-text">{{message.Message}}</pre>
-                @*место для файлов*@
-                <div>
-                    <div v-for="(file,num) in message.Files">
-                        <span>{{num+1}}</span>
-                        <a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>
+                <pre v-bind:id="'mess'+num" class="p1 message-text">{{message.Message}}</pre>*@
+            @*место для файлов*@
+            @*<div>
+                        <div v-for="(file,num) in message.Files">
+                            <span>{{num+1}}</span>
+                            <a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>*@
         </div>
         <textarea v-model="message" oninput="auto_grow(this)"></textarea>
         <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
@@ -390,14 +391,16 @@ flex-grow:1;
 
         <input id="file" type="file" onchange="addFiles()" multiple class="inputfile" />
         <label for="file" class="openFileDialogButton">Добавить файл</label>
-        <div class="loader" 
-             id="loader" 
-             style="display:none"
-             >
+        <div class="loader"
+             id="loader"
+             style="display:none">
             <img class="loader-icon" src="~/Content/icons/loading.gif" />
         </div>
     </div>
     <script type="text/javascript">
+        var filesList = [];//список файлов для загрузки
+        var messagesList = [];//список загруженных  сообщений
+
         //выделение элемента
         function selectElementContents(el, start, end) {
             var range = document.createRange();//ra
@@ -433,11 +436,11 @@ flex-grow:1;
             return ret;
         }
 
-        function arrayRemove(arr, value) {
+        function arrayRemove(arr, value)
+        {
             return arr.filter(function (ele) {
                 return ele != value;
             });
-
         }
 
         function GetFormatedFileSize(fileSize) {
@@ -453,8 +456,6 @@ flex-grow:1;
             }
             return fileSizeStr;
         }
-
-        var filesList = [];
 
         function uploadFile(fileInf, messageId, collBack) {
             var req = new XMLHttpRequest();
@@ -507,32 +508,6 @@ flex-grow:1;
             filesList = arrayRemove(filesList, fileInf);
             redrawFileList();
         }
-        //№
-        function redrawFileList() {
-            var content = '';
-            for (var i = 0; i < filesList.length; i++) {
-                fileInf = filesList[i];
-                content += '<div >' +
-                    '<span> ' + (i + 1) + '</span>' +
-                    '<img src="/Content/icons/delete.png"' +
-                    '     height="20"' +
-                    '     alt="удалить файл"' +
-                    '     toolTip="удалить файл"' +
-                    '     style="vertical-align: middle"' +
-                    '     onclick="removeFile(' + i + ')">' +
-                    '<span class="nam">' + fileInf.file.name + '</span>' +
-                    '<span>' + fileInf.fileSize + '</span>' +
-                    '<span>' + fileInf.status + '</span>' +
-                    '<span>' + fileInf.error + '</span>' +
-                    '</div>';
-            }
-            var elem = document.getElementById('filesPlace')
-            elem.innerHTML = content;
-            var height = Math.min(100, filesList.length * 25);
-            elem.style.minHeight = height+'px';
-
-        }
-
         function loadFile(messageId) {
             for (var i = 0; i < filesList.length; i++) {
                 var ff = filesList[i];
@@ -568,8 +543,97 @@ flex-grow:1;
             }
             redrawFileList();
         }
+       //№1
+       function redrawFileList() {
+            var content = '';
+            for (var i = 0; i < filesList.length; i++) {
+                fileInf = filesList[i];
+                content += '<div >' +
+                    '<span> ' + (i + 1) + '</span>' +
+                    '<img src="/Content/icons/delete.png"' +
+                    '     height="20"' +
+                    '     alt="удалить файл"' +
+                    '     toolTip="удалить файл"' +
+                    '     style="vertical-align: middle"' +
+                    '     onclick="removeFile(' + i + ')">' +
+                    '<span class="nam">' + fileInf.file.name + '</span>' +
+                    '<span>' + fileInf.fileSize + '</span>' +
+                    '<span>' + fileInf.status + '</span>' +
+                    '<span>' + fileInf.error + '</span>' +
+                    '</div>';
+            }
+            var elem = document.getElementById('filesPlace')
+            elem.innerHTML = content;
+            var height = Math.min(100, filesList.length * 25);
+            elem.style.minHeight = height+'px';
 
+        }
+       //№2
+       function redrawMessages() {
+          var content = '';
+           for (var i = 0; i < messagesList.length; i++) {
 
+                num = i + 1;
+                message = messagesList[i];
+            var messContent = ' <div class="message"'+
+                  'id="message'+num+'" '+
+                // v-bind:style="getStyle(message.SenderName,message.Status)"
+                 'onClick="setMessageReaded('+message.Id+')"'+//message.Id,message.Status
+                 ' > '+
+                '<div class="message-header">'+
+                    '<div class="p1 message-header1">'+
+                        message.Id+
+                        '<span class="p1 nam">'+message.SenderName+'</span>'+
+                        message.Status+
+                        '<span class="p1 dat"> '+message.CrDate+'</span>'+
+                    '</div>'+
+                    '<div class="p1 message-status">'+
+                        '<div class="dropdown">'+
+                            '<div class="dropbtn">'+
+                              getMessageStatusTxt(message)+
+                            '</div>'+
+                            //<div class="dropdown-content">
+                            //    <span>Cообщение получили:</span>
+                            //    <div v-for="(delivery,num) in message.DeliveryList">
+                            //        {{getDeliveryStatusTxt(delivery)}} {{delivery.User}}
+                            //    </div>
+                            //</div>
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+                  '<pre id="mess'+num +
+              'class="p1 message-text" >'+message.Message +
+          '</pre >'+
+                  '<div >' +
+                  '~files~'+
+                    //<div v-for="(file,num) in message.Files">+
+                    //    '<span>{{num+1}}</span>'+
+                    //    '<a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>'+
+                    //'</div>'+
+                '</div>'+
+                  '</div>';
+           var filesContent = '';
+              for (var fi = 0; fi < message.Files.length; fi++) {
+                  var file = message.Files[i];
+                  filesContent += '<div ><span>' + (fi + 1) + '</span>' +
+                      '<a href="\'http://localhost:63164/chartForm/Download?xxxx=\'' + fi + '>' + file + '</a>' +
+             '</div>';
+               }
+               messContent.replace(/~files~/gi, filesContent);
+               try {
+                   content += messContent;
+               }
+               catch{
+                   console.log(content.length);
+                   console.log(messContent);
+               }
+
+            }
+            var elem = document.getElementById('scroll')
+            elem.innerHTML = content;
+            var height = Math.min(300, messagesList.length * 25);
+            elem.style.minHeight = height+'px';
+        }
 
         $.connection.hub.disconnected(function () {
             if ($.connection.hub.lastError) {
@@ -605,7 +669,31 @@ flex-grow:1;
             return res;
 
         }
+        function setMessageReaded(id) {
 
+              var message= messagesList.find(function (message) { return message.Id == id;});
+                    if (message.Status < 2) {
+                       // this.checkConnection(function () {
+                            chat.server.setMessageReaded(id);
+                       /// });
+                    }
+                }
+        function broadcastMessage(message) {
+            messagesList.push(message);
+            redrawMessages();
+            scrollSmoothToBottom('scroll');
+        }
+        function changeMessageStatus(messageId, status) {
+                         var message= messagesList.find(function (message) { return message.Id == messageId;});
+                             message.Status = status;
+                             redrawMessages();
+
+                }
+        function filesUploaded(messageId, files) {
+               var message= messagesList.find(function (message) { return message.Id == messageId;});
+                message.Files = files;
+
+                }
     </script>
     <script type="text/javascript">
         var chatId = 444;
@@ -655,7 +743,6 @@ flex-grow:1;
                     this.hilightFinded('highlight');
                     this.curentFinded++;
                     this.hilightFinded('selectHighlighted');
-
                 },
                 prevFinded: function () {
 
@@ -695,7 +782,8 @@ flex-grow:1;
                         });
                 },
                 fetch: function (val) {
-                    this.messages = val;
+                    messagesList = val;
+                    redrawMessages();
                 },
                 getStyle: function (senderName, status) {
                     var id = '';
@@ -711,13 +799,13 @@ flex-grow:1;
                         return { 'background-color': 'grey' };
                     }
                 },
-                setMessageReaded: function (id, status) {
-                    if (status < 2) {
-                        this.checkConnection(function () {
-                            chat.server.setMessageReaded(id);
-                        });
-                    }
-                },
+                //setMessageReaded: function (id, status) {
+                //    if (status < 2) {
+                //        this.checkConnection(function () {
+                //            chat.server.setMessageReaded(id);
+                //        });
+                //    }
+                //},
                 sendMessage: function () {
                     var v = window.parent.innerHeight;
                     window.parent.postMessage(this.message, '*');
@@ -740,19 +828,19 @@ flex-grow:1;
                         }
                     }
                 },
-                broadcastMessage: function (message) {
-                    this.messages.push(message);
-                    scrollSmoothToBottom('scroll');
-                },
-                changeMessageStatus: function (messageId, status) {
-                    for (var i = 0; i < this.messages.length; i++) {
-                        var mess = this.messages[i];
-                        if (mess.Id === messageId) {
-                            mess.Status = status;
-                            break;
-                        }
-                    }
-                },
+                //broadcastMessage: function (message) {
+                //    this.messages.push(message);
+                //    scrollSmoothToBottom('scroll');
+                //},
+                //changeMessageStatus: function (messageId, status) {
+                //    for (var i = 0; i < this.messages.length; i++) {
+                //        var mess = this.messages[i];
+                //        if (mess.Id === messageId) {
+                //            mess.Status = status;
+                //            break;
+                //        }
+                //    }
+                //},
                 getMessageStatusTxt: function (message) {
 
                     return getMessageStatusTxt(message);
@@ -786,19 +874,18 @@ flex-grow:1;
             mounted: function () {
                 var sch = this.stateChanged;
                 $.connection.hub.stateChanged(function (vvv) {
-                    console.log('stateChanged.'+$.connection.hub.state);
+                    console.log('stateChanged.' + $.connection.hub.state);
                     sch(vvv);
-                    var bl="block"
-                    if ($.connection.hub.state == 1)
-                    {
-                        bl='none'
+                    var bl = "block"
+                    if ($.connection.hub.state == 1) {
+                        bl = 'none'
                     }
                     $('#loader').css('display', bl);
                 });
                 chat.client.getName = this.getName;
-                chat.client.broadcastMessage = this.broadcastMessage;
-                chat.client.changeMessageStatus = this.changeMessageStatus;
-                chat.client.filesUploaded = this.filesUploaded;
+                chat.client.broadcastMessage = broadcastMessage;
+                chat.client.changeMessageStatus = changeMessageStatus;
+                chat.client.filesUploaded = filesUploaded;
                 $.connection.hub.error = this.error;
                 this.fetchMessages();//начитываю сообщения
             }
