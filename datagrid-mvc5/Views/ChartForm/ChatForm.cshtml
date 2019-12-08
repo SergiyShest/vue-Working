@@ -289,39 +289,39 @@
             background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
         }
     </style>
-    <div class="wrap" id="chatForm">
-        {{connection.hub.state}}- -{{connected}}
-        <div>{{connectionState}}</div>
+    <div class="wrap" id="chat_Form">
+        @*{{connection.hub.state}}- -{{connected}}
+        <div>{{connectionState}}</div>*@
         <input type="button" value="reload" v-on:click="fetchMessages()" />
         <input type="button" value="stop" v-on:click="stop()" />
         <div style="display:block;">
-            <div style="float:right;">
-                <input type="text" v-model="searchString" placeholder="поиск..."
-                       v-on:keyup.enter="find()" />
-                <button v-on:click="find()" style="float:left;margin:1px;padding:0px" :disabled="searchString.length>0">
-                    <img src="~/Content/icons/search.png"
-                         class="imgButton">
+            @*<div style="float:right;">
+               <input type="text" v-model="searchString" placeholder="поиск..."
+               v-on:keyup.enter="find()" />
+        <button v-on:click="find()" style="float:left;margin:1px;padding:0px" :disabled="searchString.length>0">
+            <img src="~/Content/icons/search.png"
+                 class="imgButton">
+        </button>
+        <div style="display:flex;align-items: flex-start; " v-if="searchExecuted">
+            Cовпадений: {{searchResultLength}}
+            <div v-if="searchResultLength>0">
+                <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
+                    <img class="imgButton" src="~/Content/icons/down.png">
                 </button>
-                <div style="display:flex;align-items: flex-start; " v-if="searchExecuted">
-                    Cовпадений: {{searchResultLength}}
-                    <div v-if="searchResultLength>0">
-                        <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
-                            <img class="imgButton" src="~/Content/icons/down.png">
-                        </button>
-                        {{curentFinded+1}}
-                        <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
-                            <img class="imgButton" src="~/Content/icons/up.png">
-                        </button>
-                    </div>
-                </div>
+                {{curentFinded+1}}
+                <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
+                    <img class="imgButton" src="~/Content/icons/up.png">
+                </button>
             </div>
+        </div>
+            </div>*@
 
             <div>
                 это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
                 <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
                 @*<H2>это сообщение текстового блока</H2>
 
-                    <H2>это сообщение текстового блока only wery wery long onld</H2>*@
+            <H2>это сообщение текстового блока only wery wery long onld</H2>*@
             </div>
         </div>
         <div id="scroll" class="scrollArea">
@@ -360,8 +360,8 @@
                     </div>
                 </div>*@
         </div>
-        <textarea v-model="message" oninput="auto_grow(this)"></textarea>
-        <input type="button" v-on:click="sendMessage()" value="Send" :disabled="message.length==0" />
+        <textarea  oninput="auto_grow(this)" id="messageArea"  ></textarea>
+        <input type="button" onClick="sendMessage()"   />
 
         @*scrollable area above files*@
         <div style="background: rgb(161, 248, 86);
@@ -369,8 +369,7 @@
 height: min-content;
 min-height: 5px;
 flex-grow:1;
-
-        overflow: scroll;
+overflow: scroll;
         "
              id="filesPlace">
             @*<div ></div>
@@ -616,10 +615,10 @@ flex-grow:1;
               for (var fi = 0; fi < message.Files.length; fi++) {
                   var file = message.Files[i];
                   filesContent += '<div ><span>' + (fi + 1) + '</span>' +
-                      '<a href="\'http://localhost:63164/chartForm/Download?xxxx=\'' + fi + '>' + file + '</a>' +
+                      '<a href="http://localhost:63164/chartForm/Download?xxxx="' + fi + '>' + file + '</a>' +
              '</div>';
                }
-               messContent.replace(/~files~/gi, filesContent);
+            messContent = messContent.replace(/~files~/gi, filesContent);
                try {
                    content += messContent;
                }
@@ -628,7 +627,8 @@ flex-grow:1;
                    console.log(messContent);
                }
 
-            }
+           }
+           console.log(content);
             var elem = document.getElementById('scroll')
             elem.innerHTML = content;
             var height = Math.min(300, messagesList.length * 25);
@@ -646,6 +646,14 @@ flex-grow:1;
         $.connection.hub.error(function (error) {
             console.log('SignalR error: ' + error);
         });
+
+         $.connection.hub.stateChanged(function () {
+                    var bl = "block"
+                    if ($.connection.hub.state == 1) {
+                        bl = 'none'
+                    }
+                    $('#loader').css('display', bl);
+                });
         //плавная прокурутка при добавлении сообщения
         function scrollSmoothToBottom(id) {
             var div = document.getElementById(id);
@@ -696,6 +704,36 @@ flex-grow:1;
                 }
     </script>
     <script type="text/javascript">
+        function sendMessage() {
+        var messRef = $('#messageArea').val();
+               
+                    window.parent.postMessage(this.messRef, '*');
+                    var done = loadFile;
+                    if (messRef.length > 0) {
+                       // this.checkConnection(function () {
+                            chat.server.send(messRef).done(done);
+                       // });
+                    }
+                }
+
+                        //читаем сообщения
+             function   fetchMessages  () {
+                //var fetchRef = this.fetch;
+                    $.connection.hub.start()
+                        .done(function () {
+                        //console.log('Now connected, connection ID=' + $.connection.hub.id);
+                            chat.server.getMessages()
+                                .done(function (val) { fetch(val); });
+                        })
+                        .fail(function (e) {
+                          //console.error('Could not Connect!' + e);
+                            this.errors = e;
+                        });
+                }
+               function fetch  (val) {
+                    messagesList = val;
+                    redrawMessages();
+                }
         var chatId = 444;
         var chat = $.connection.chatHub;
         var vue = new Vue({
@@ -767,24 +805,24 @@ flex-grow:1;
                 stop: function () {
                     $.connection.hub.stop();
                 },
-                //читаем сообщения
-                fetchMessages: function () {
-                    var fetchRef = this.fetch;
-                    $.connection.hub.start()
-                        .done(function () {
-                            console.log('Now connected, connection ID=' + $.connection.hub.id);
-                            chat.server.getMessages()
-                                .done(function (val) { fetchRef(val); });
-                        })
-                        .fail(function (e) {
-                            console.error('Could not Connect!' + e);
-                            this.errors = e;
-                        });
-                },
-                fetch: function (val) {
-                    messagesList = val;
-                    redrawMessages();
-                },
+                ////читаем сообщения
+                //fetchMessages: function () {
+                //    var fetchRef = this.fetch;
+                //    $.connection.hub.start()
+                //        .done(function () {
+                //            console.log('Now connected, connection ID=' + $.connection.hub.id);
+                //            chat.server.getMessages()
+                //                .done(function (val) { fetchRef(val); });
+                //        })
+                //        .fail(function (e) {
+                //            console.error('Could not Connect!' + e);
+                //            this.errors = e;
+                //        });
+                //},
+                //fetch: function (val) {
+                //    messagesList = val;
+                //    redrawMessages();
+                //},
                 getStyle: function (senderName, status) {
                     var id = '';
                     if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
@@ -806,18 +844,18 @@ flex-grow:1;
                 //        });
                 //    }
                 //},
-                sendMessage: function () {
-                    var v = window.parent.innerHeight;
-                    window.parent.postMessage(this.message, '*');
-                    var messRef = this.message;
-                    var done = loadFile;
+                //sendMessage: function () {
+                //    var v = window.parent.innerHeight;
+                //    window.parent.postMessage(this.message, '*');
+                //    var messRef = this.message;
+                //    var done = loadFile;
 
-                    if (this.message.length > 0) {
-                        this.checkConnection(function () {
-                            chat.server.send(messRef).done(done);
-                        });
-                    }
-                },
+                //    if (this.message.length > 0) {
+                //        this.checkConnection(function () {
+                //            chat.server.send(messRef).done(done);
+                //        });
+                //    }
+                //},
 
                 filesUploaded: function (messageId, files) {
                     for (var i = 0; i < this.messages.length; i++) {
@@ -872,24 +910,18 @@ flex-grow:1;
                 }
             },
             mounted: function () {
-                var sch = this.stateChanged;
-                $.connection.hub.stateChanged(function (vvv) {
-                    console.log('stateChanged.' + $.connection.hub.state);
-                    sch(vvv);
-                    var bl = "block"
-                    if ($.connection.hub.state == 1) {
-                        bl = 'none'
-                    }
-                    $('#loader').css('display', bl);
-                });
+                
+               
+
+                $.connection.hub.error = this.error;
+                
+            }
+        });
                 chat.client.getName = this.getName;
                 chat.client.broadcastMessage = broadcastMessage;
                 chat.client.changeMessageStatus = changeMessageStatus;
-                chat.client.filesUploaded = filesUploaded;
-                $.connection.hub.error = this.error;
-                this.fetchMessages();//начитываю сообщения
-            }
-        });
+        chat.client.filesUploaded = filesUploaded;
+        fetchMessages();//начитываю сообщения
     </script>
 </body>
 </html>

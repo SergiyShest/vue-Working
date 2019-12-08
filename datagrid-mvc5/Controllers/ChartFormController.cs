@@ -58,7 +58,7 @@ namespace datagrid_mvc5.Controllers
         }
         public FileResult Download(string xxxx)
         {
-            byte[] fileBytes = System.IO.File.ReadAllBytes(@"c:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5\App_Data\attribcache140.bin");
+            byte[] fileBytes = System.IO.File.ReadAllBytes(@"c:\Users\titov\source\repos\SergiyShest\vue-Working\datagrid-mvc5\App_Data\TestCafeTests.zip");
             string fileName = "myfile.ext";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, xxxx + fileName);
         }
