@@ -291,11 +291,11 @@
     </style>
     <div class="wrap" id="chat_Form">
         @*{{connection.hub.state}}- -{{connected}}
-        <div>{{connectionState}}</div>*@
+        <div>{{connectionState}}</div>
         <input type="button" value="reload" v-on:click="fetchMessages()" />
-        <input type="button" value="stop" v-on:click="stop()" />
+        <input type="button" value="stop" v-on:click="stop()" />*@
         <div style="display:block;">
-            @*<div style="float:right;">
+        @*<div style="float:right;">
                <input type="text" v-model="searchString" placeholder="поиск..."
                v-on:keyup.enter="find()" />
         <button v-on:click="find()" style="float:left;margin:1px;padding:0px" :disabled="searchString.length>0">
@@ -316,14 +316,14 @@
         </div>
             </div>*@
 
-            <div>
-                это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
-                <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
-                @*<H2>это сообщение текстового блока</H2>
+        <div>
+            это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
+            <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
+            @*<H2>это сообщение текстового блока</H2>
 
             <H2>это сообщение текстового блока only wery wery long onld</H2>*@
-            </div>
         </div>
+    </div>
         <div id="scroll" class="scrollArea">
             @*<div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>*@
             @*<div class="message" v-for="(message,num) in messages" :v-key="message" v-bind:id="'message'+num"
@@ -363,7 +363,7 @@
         <textarea  oninput="auto_grow(this)" id="messageArea"  ></textarea>
         <input type="button" onClick="sendMessage()"   />
 
-        @*scrollable area above files*@
+        @*scrollable area  files place*@
         <div style="background: rgb(161, 248, 86);
         max-height: 200px;
 height: min-content;
@@ -571,12 +571,20 @@ overflow: scroll;
        function redrawMessages() {
           var content = '';
            for (var i = 0; i < messagesList.length; i++) {
-
                 num = i + 1;
                 message = messagesList[i];
+            var filesContent = '';
+              for (var fi = 0; fi < message.Files.length; fi++) {
+                  var file = message.Files[i];
+                  filesContent += '<div ><span>' + (fi + 1) + '</span>' +
+                      '<a href="http://localhost:63164/chartForm/Download?xxxx="' + fi + '>' + file + '</a>' +
+             '</div>';
+               }
+
+
             var messContent = ' <div class="message"'+
-                  'id="message'+num+'" '+
-                // v-bind:style="getStyle(message.SenderName,message.Status)"
+                  'id="message'+num+'"  style="'+getStyle(message)+'" '+
+                // '+getStyle(message)+'
                  'onClick="setMessageReaded('+message.Id+')"'+//message.Id,message.Status
                  ' > '+
                 '<div class="message-header">'+
@@ -604,35 +612,37 @@ overflow: scroll;
               'class="p1 message-text" >'+message.Message +
           '</pre >'+
                   '<div >' +
-                  '~files~'+
-                    //<div v-for="(file,num) in message.Files">+
-                    //    '<span>{{num+1}}</span>'+
-                    //    '<a v-bind:href="'http://localhost:63164/chartForm/Download?xxxx='+num">{{file}}</a>'+
-                    //'</div>'+
+                  filesContent+
+
                 '</div>'+
                   '</div>';
-           var filesContent = '';
-              for (var fi = 0; fi < message.Files.length; fi++) {
-                  var file = message.Files[i];
-                  filesContent += '<div ><span>' + (fi + 1) + '</span>' +
-                      '<a href="http://localhost:63164/chartForm/Download?xxxx="' + fi + '>' + file + '</a>' +
-             '</div>';
-               }
-            messContent = messContent.replace(/~files~/gi, filesContent);
-               try {
+
                    content += messContent;
-               }
-               catch{
-                   console.log(content.length);
-                   console.log(messContent);
-               }
 
            }
-           console.log(content);
+
             var elem = document.getElementById('scroll')
             elem.innerHTML = content;
             var height = Math.min(300, messagesList.length * 25);
-            elem.style.minHeight = height+'px';
+           elem.style.minHeight = height + 'px';
+
+            function getStyle(message) {
+         
+            
+                    var id = '';
+                    if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
+                    var cursor = 'pointer';
+                    if (id === message.SenderName) {
+                        cursor = 'auto';
+                    }
+
+                    if (message.Status < 2) {
+                        return "background-color:BurlyWood; cursor:"+cursor;
+                    } else {
+                        return "background-color: grey";
+                    }
+                }
+
         }
 
         $.connection.hub.disconnected(function () {
@@ -701,7 +711,9 @@ overflow: scroll;
                var message= messagesList.find(function (message) { return message.Id == messageId;});
                 message.Files = files;
 
-                }
+        }
+
+       
     </script>
     <script type="text/javascript">
         function sendMessage() {
