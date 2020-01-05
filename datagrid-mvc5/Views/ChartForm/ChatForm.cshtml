@@ -133,7 +133,6 @@
         .scrollArea {
             position: relative;
             overflow: auto; /* Добавляем полосы прокрутки */
-            height: 100%; /*Высота блока */
             padding: 5px; /* Поля вокруг текста */
             border: solid 5px black; /* Параметры рамки */
             flex-grow: 1;
@@ -291,39 +290,39 @@
     </style>
     <div class="wrap" id="chat_Form">
         @*{{connection.hub.state}}- -{{connected}}
-        <div>{{connectionState}}</div>
-        <input type="button" value="reload" v-on:click="fetchMessages()" />
-        <input type="button" value="stop" v-on:click="stop()" />*@
+            <div>{{connectionState}}</div>
+            <input type="button" value="reload" v-on:click="fetchMessages()" />
+            <input type="button" value="stop" v-on:click="stop()" />*@
         <div style="display:block;">
-        @*<div style="float:right;">
-               <input type="text" v-model="searchString" placeholder="поиск..."
-               v-on:keyup.enter="find()" />
-        <button v-on:click="find()" style="float:left;margin:1px;padding:0px" :disabled="searchString.length>0">
-            <img src="~/Content/icons/search.png"
-                 class="imgButton">
-        </button>
-        <div style="display:flex;align-items: flex-start; " v-if="searchExecuted">
-            Cовпадений: {{searchResultLength}}
-            <div v-if="searchResultLength>0">
-                <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
-                    <img class="imgButton" src="~/Content/icons/down.png">
+            <div style="float:right;">
+                <input type="text" id="searchStringContr" placeholder="поиск..." oninput="searchStringChanged(this)"
+                       v-on:keyup.enter="find()" />
+                <button onclick="find()" id="searchStrinBtn" style="float:left;margin:1px;padding:0px" disabled>
+                    <img src="~/Content/icons/search.png"
+                         class="imgButton">
                 </button>
-                {{curentFinded+1}}
-                <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
-                    <img class="imgButton" src="~/Content/icons/up.png">
-                </button>
+                <div style="display:flex;align-items: flex-start; " v-if="searchExecuted">
+                    Cовпадений: {{searchResultLength}}
+                    <div v-if="searchResultLength>0">
+                        <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
+                            <img class="imgButton" src="~/Content/icons/down.png">
+                        </button>
+                        {{curentFinded+1}}
+                        <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
+                            <img class="imgButton" src="~/Content/icons/up.png">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
+                <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
+                @*<H2>это сообщение текстового блока</H2>
+
+                    <H2>это сообщение текстового блока only wery wery long onld</H2>*@
             </div>
         </div>
-            </div>*@
-
-        <div>
-            это сообщение текстового блока это сообщение текстового блока это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блока
-            <H2>это сообщение текстового блока это сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блокаэто сообщение текстового блока</H2>
-            @*<H2>это сообщение текстового блока</H2>
-
-            <H2>это сообщение текстового блока only wery wery long onld</H2>*@
-        </div>
-    </div>
         <div id="scroll" class="scrollArea">
             @*<div v-if="messagesFiltred.length!=messages.length">Отфильтровано {{messagesFiltred.length}} сообщения из {{messages.length}}</div>*@
             @*<div class="message" v-for="(message,num) in messages" :v-key="message" v-bind:id="'message'+num"
@@ -360,8 +359,8 @@
                     </div>
                 </div>*@
         </div>
-        <textarea  oninput="auto_grow(this)" id="messageArea"  ></textarea>
-        <input type="button" onClick="sendMessage()" id="sendBtn" value="Send" disabled  />
+        <textarea oninput="auto_grow(this)" id="messageArea"></textarea>
+        <input type="button" onClick="sendMessage()" id="sendBtn" value="Send" disabled />
 
         @*scrollable area  files place*@
         <div style="background: rgb(161, 248, 86);
@@ -583,10 +582,9 @@ overflow: scroll;
 
 
             var messContent = ' <div class="message"'+
-                  'id="message'+num+'"  style="'+getStyle(message)+'" '+
-                // '+getStyle(message)+'
-                 'onClick="setMessageReaded('+message.Id+')"'+//message.Id,message.Status
-                 ' > '+
+                'id="message' + i + '"  style="' + getStyle(message) + '" ' +// '+getStyle(message)+'
+                'onClick="setMessageReaded('+message.Id+')" '+//message.Id,message.Status
+                '> '+
                 '<div class="message-header">'+
                     '<div class="p1 message-header1">'+
                         message.Id+
@@ -608,7 +606,7 @@ overflow: scroll;
                         '</div>'+
                     '</div>'+
                 '</div>'+
-                  '<pre id="mess'+num +
+                  '<pre id="mess'+i +'" '+
               'class="p1 message-text" >'+message.Message +
           '</pre >'+
                   '<div >' +
@@ -624,11 +622,11 @@ overflow: scroll;
             var elem = document.getElementById('scroll')
             elem.innerHTML = content;
             var height = Math.min(300, messagesList.length * 25);
-           elem.style.minHeight = height + 'px';
+            elem.style.minHeight = height + 'px';
 
             function getStyle(message) {
-         
-            
+
+
                     var id = '';
                     if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
                     var cursor = 'pointer';
@@ -717,225 +715,277 @@ overflow: scroll;
 
         }
 
-       
+
+        var searchResultLength = 0;
+        var searchResult= [];
+        var curentFinded= 0;
+        var searchExecuted= false;
+
+        function searchStringChanged(element) {
+            var val = element.value.trim()
+
+            $("#searchStrinBtn").prop("disabled", val.length == 0); 
+
+        }
+
+
+
+        function find  () {
+            searchExecuted = true;
+
+            var searchString = $("#searchStringContr").val();
+            searchResult.length = 0;
+            curentFinded = 0;
+            for (var i = 0; i < messagesList.length; i++) {
+                var elem = document.getElementById('mess' + i);
+                var sRes = highlightAndGetHighlighted(elem, searchString, 'highlight');
+                Array.prototype.push.apply(searchResult, sRes);
+            }
+            if (searchResult.length > 0) {
+                hilightFinded('selectHighlighted');
+            }
+            searchResultLength = searchResult.length
+        }
+        function nextFinded() {
+            if (curentFinded >= searchResult.length - 1) return;
+            hilightFinded('highlight');
+            curentFinded++;
+            hilightFinded('selectHighlighted');
+        }
+        function prevFinded() {
+
+            if (curentFinded == 0) return;
+            hilightFinded('highlight');
+            curentFinded--;
+            hilightFinded('selectHighlighted');
+        }
+        function hilightFinded(className) {
+
+            var selElem = searchResult[curentFinded];
+            selElem.className = className;
+            selElem.scrollIntoView();
+        }
+
+
     </script>
     <script type="text/javascript">
-        function sendMessage() {
-        var messRef = $('#messageArea').val();
-               
-                    window.parent.postMessage(this.messRef, '*');
-                    var done = loadFile;
-                    if (messRef.length > 0) {
-                       // this.checkConnection(function () {
-                            chat.server.send(messRef).done(done);
-                       // });
-                    }
-                }
 
-                        //читаем сообщения
-             function   fetchMessages  () {
-                //var fetchRef = this.fetch;
-                    $.connection.hub.start()
-                        .done(function () {
-                        //console.log('Now connected, connection ID=' + $.connection.hub.id);
-                            chat.server.getMessages()
-                                .done(function (val) { fetch(val); });
-                        })
-                        .fail(function (e) {
-                          //console.error('Could not Connect!' + e);
-                            this.errors = e;
-                        });
-                }
-               function fetch  (val) {
-                    messagesList = val;
-                    redrawMessages();
-                }
+
+
+        function sendMessage() {
+            var messRef = $('#messageArea').val();
+
+            window.parent.postMessage(this.messRef, '*');
+            var done = loadFile;
+            if (messRef.length > 0) {
+                // this.checkConnection(function () {
+                chat.server.send(messRef).done(done);
+                // });
+            }
+        }
+
+        //читаем сообщения
+        function fetchMessages() {
+            //var fetchRef = this.fetch;
+            $.connection.hub.start()
+                .done(function () {
+                    //console.log('Now connected, connection ID=' + $.connection.hub.id);
+                    chat.server.getMessages()
+                        .done(function (val) { fetch(val); });
+                })
+                .fail(function (e) {
+                    //console.error('Could not Connect!' + e);
+                    this.errors = e;
+                });
+        }
+        function fetch(val) {
+            messagesList = val;
+            redrawMessages();
+        }
         var chatId = 444;
         var chat = $.connection.chatHub;
-        var vue = new Vue({
-            el: "#chatForm",
-            data: {
-                connection: $.connection,
-                connectionSt: $.connection.hub.state,
-                connectionState: '', connectionSt: 0,
-                errors: 'Ok',
-                messages: [],
+        //var vue = new Vue({
+        //    el: "#chatForm",
+        //    data: {
+        //        connection: $.connection,
+        //        connectionSt: $.connection.hub.state,
+        //        connectionState: '', connectionSt: 0,
+        //        errors: 'Ok',
+        //        messages: [],
 
-                searchString: '',
-                searchResultLength: 0,
-                searchResult: [],
-                curentFinded: 0,
-                searchExecuted: false,
-                message: '',
-            },
 
-            computed: {
-                connected: function () {
-                    if (this.connectionSt == 1) {
-                        return 'none';
-                    }
-                    return 'block';
-                }
-            },
-            methods: {
-                find: function () {
-                    this.searchExecuted = true;
-                    this.searchResult.length = 0;
-                    this.curentFinded = 0;
-                    for (var i = 0; i < this.messages.length; i++) {
-                        var elem = document.getElementById('mess' + i);
-                        var sRes = highlightAndGetHighlighted(elem, this.searchString, 'highlight');
-                        Array.prototype.push.apply(this.searchResult, sRes);
-                    }
-                    if (this.searchResult.length > 0) {
-                        this.hilightFinded('selectHighlighted');
-                    }
-                    this.searchResultLength = this.searchResult.length
-                },
-                nextFinded: function () {
-                    if (this.curentFinded >= this.searchResult.length - 1) return;
-                    this.hilightFinded('highlight');
-                    this.curentFinded++;
-                    this.hilightFinded('selectHighlighted');
-                },
-                prevFinded: function () {
 
-                    if (this.curentFinded == 0) return;
-                    this.hilightFinded('highlight');
-                    this.curentFinded--;
-                    this.hilightFinded('selectHighlighted');
-                },
-                hilightFinded: function (className) {
 
-                    var selElem = this.searchResult[this.curentFinded];
-                    selElem.className = className;
-                    selElem.scrollIntoView();
-                },
-                checkConnection: function (collBack) {
-                    if (this.connection.connectionState !== 4) {
-                        $.connection.hub.start().done(function () { collBack(); });
-                    } else {
-                        collBack();
-                    }
-                },
-                stop: function () {
-                    $.connection.hub.stop();
-                },
-                ////читаем сообщения
-                //fetchMessages: function () {
-                //    var fetchRef = this.fetch;
-                //    $.connection.hub.start()
-                //        .done(function () {
-                //            console.log('Now connected, connection ID=' + $.connection.hub.id);
-                //            chat.server.getMessages()
-                //                .done(function (val) { fetchRef(val); });
-                //        })
-                //        .fail(function (e) {
-                //            console.error('Could not Connect!' + e);
-                //            this.errors = e;
-                //        });
-                //},
-                //fetch: function (val) {
-                //    messagesList = val;
-                //    redrawMessages();
-                //},
-                getStyle: function (senderName, status) {
-                    var id = '';
-                    if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
-                    var cursor = 'pointer';
-                    if (id === senderName) {
-                        cursor = 'auto';
-                    }
+        //        message: '',
+        //    },
 
-                    if (status < 2) {
-                        return { 'background-color': 'red', cursor: cursor };
-                    } else {
-                        return { 'background-color': 'grey' };
-                    }
-                },
-                //setMessageReaded: function (id, status) {
-                //    if (status < 2) {
-                //        this.checkConnection(function () {
-                //            chat.server.setMessageReaded(id);
-                //        });
-                //    }
-                //},
-                //sendMessage: function () {
-                //    var v = window.parent.innerHeight;
-                //    window.parent.postMessage(this.message, '*');
-                //    var messRef = this.message;
-                //    var done = loadFile;
+        //    computed: {
+        //        connected: function () {
+        //            if (this.connectionSt == 1) {
+        //                return 'none';
+        //            }
+        //            return 'block';
+        //        }
+        //    },
+        //    methods: {
+        //        //find: function () {
+        //        //    this.searchExecuted = true;
+        //        //    this.searchResult.length = 0;
+        //        //    this.curentFinded = 0;
+        //        //    for (var i = 0; i < this.messages.length; i++) {
+        //        //        var elem = document.getElementById('mess' + i);
+        //        //        var sRes = highlightAndGetHighlighted(elem, this.searchString, 'highlight');
+        //        //        Array.prototype.push.apply(this.searchResult, sRes);
+        //        //    }
+        //        //    if (this.searchResult.length > 0) {
+        //        //        this.hilightFinded('selectHighlighted');
+        //        //    }
+        //        //    this.searchResultLength = this.searchResult.length
+        //        //},
+        //        //nextFinded: function () {
+        //        //    if (this.curentFinded >= this.searchResult.length - 1) return;
+        //        //    this.hilightFinded('highlight');
+        //        //    this.curentFinded++;
+        //        //    this.hilightFinded('selectHighlighted');
+        //        //},
+        //        //prevFinded: function () {
 
-                //    if (this.message.length > 0) {
-                //        this.checkConnection(function () {
-                //            chat.server.send(messRef).done(done);
-                //        });
-                //    }
-                //},
+        //        //    if (this.curentFinded == 0) return;
+        //        //    this.hilightFinded('highlight');
+        //        //    this.curentFinded--;
+        //        //    this.hilightFinded('selectHighlighted');
+        //        //},
+        //        //hilightFinded: function (className) {
 
-                filesUploaded: function (messageId, files) {
-                    for (var i = 0; i < this.messages.length; i++) {
-                        var mess = this.messages[i];
-                        if (mess.Id === messageId) {
-                            mess.Files = files;
-                            break;
-                        }
-                    }
-                },
-                //broadcastMessage: function (message) {
-                //    this.messages.push(message);
-                //    scrollSmoothToBottom('scroll');
-                //},
-                //changeMessageStatus: function (messageId, status) {
-                //    for (var i = 0; i < this.messages.length; i++) {
-                //        var mess = this.messages[i];
-                //        if (mess.Id === messageId) {
-                //            mess.Status = status;
-                //            break;
-                //        }
-                //    }
-                //},
-                getMessageStatusTxt: function (message) {
+        //        //    var selElem = this.searchResult[this.curentFinded];
+        //        //    selElem.className = className;
+        //        //    selElem.scrollIntoView();
+        //        //},
+        //        checkConnection: function (collBack) {
+        //            if (this.connection.connectionState !== 4) {
+        //                $.connection.hub.start().done(function () { collBack(); });
+        //            } else {
+        //                collBack();
+        //            }
+        //        },
+        //        stop: function () {
+        //            $.connection.hub.stop();
+        //        },
+        //        ////читаем сообщения
+        //        //fetchMessages: function () {
+        //        //    var fetchRef = this.fetch;
+        //        //    $.connection.hub.start()
+        //        //        .done(function () {
+        //        //            console.log('Now connected, connection ID=' + $.connection.hub.id);
+        //        //            chat.server.getMessages()
+        //        //                .done(function (val) { fetchRef(val); });
+        //        //        })
+        //        //        .fail(function (e) {
+        //        //            console.error('Could not Connect!' + e);
+        //        //            this.errors = e;
+        //        //        });
+        //        //},
+        //        //fetch: function (val) {
+        //        //    messagesList = val;
+        //        //    redrawMessages();
+        //        //},
+        //        getStyle: function (senderName, status) {
+        //            var id = '';
+        //            if ($.connection.hub.id) { id = $.connection.hub.id.substr(0, 5); }
+        //            var cursor = 'pointer';
+        //            if (id === senderName) {
+        //                cursor = 'auto';
+        //            }
 
-                    return getMessageStatusTxt(message);
+        //            if (status < 2) {
+        //                return { 'background-color': 'red', cursor: cursor };
+        //            } else {
+        //                return { 'background-color': 'grey' };
+        //            }
+        //        },
+        //        //setMessageReaded: function (id, status) {
+        //        //    if (status < 2) {
+        //        //        this.checkConnection(function () {
+        //        //            chat.server.setMessageReaded(id);
+        //        //        });
+        //        //    }
+        //        //},
+        //        //sendMessage: function () {
+        //        //    var v = window.parent.innerHeight;
+        //        //    window.parent.postMessage(this.message, '*');
+        //        //    var messRef = this.message;
+        //        //    var done = loadFile;
 
-                },
-                getDeliveryStatusTxt: function (delivery) {
-                    var res = 'жопа Ч';
-                    switch (delivery.Status) {
-                        case 0: res = 'Доставлено'; break;
-                        case 1: res = 'Прочитано'; break;
-                    }
-                    return res;
+        //        //    if (this.message.length > 0) {
+        //        //        this.checkConnection(function () {
+        //        //            chat.server.send(messRef).done(done);
+        //        //        });
+        //        //    }
+        //        //},
 
-                },
-                error: function (error) {
-                    console.log('SignalR error: ' + error);
-                },
-                stateChanged: function (state) {
-                    console.log(state);
-                    var arr = [];
-                    for (var key in $.connection.connectionState) {
-                        arr[$.connection.connectionState[key]] = key;
-                    }
-                    this.connectionSt = $.connection.hub.state;
-                    this.connectionState = arr[$.connection.hub.state];
-                },
-                getName: function () {
-                    return 'name';
-                }
-            },
-            mounted: function () {
-                
-               
+        //        filesUploaded: function (messageId, files) {
+        //            for (var i = 0; i < this.messages.length; i++) {
+        //                var mess = this.messages[i];
+        //                if (mess.Id === messageId) {
+        //                    mess.Files = files;
+        //                    break;
+        //                }
+        //            }
+        //        },
+        //        //broadcastMessage: function (message) {
+        //        //    this.messages.push(message);
+        //        //    scrollSmoothToBottom('scroll');
+        //        //},
+        //        //changeMessageStatus: function (messageId, status) {
+        //        //    for (var i = 0; i < this.messages.length; i++) {
+        //        //        var mess = this.messages[i];
+        //        //        if (mess.Id === messageId) {
+        //        //            mess.Status = status;
+        //        //            break;
+        //        //        }
+        //        //    }
+        //        //},
+        //        getMessageStatusTxt: function (message) {
 
-                $.connection.hub.error = this.error;
-                
-            }
-        });
-                chat.client.getName = this.getName;
-                chat.client.broadcastMessage = broadcastMessage;
-                chat.client.changeMessageStatus = changeMessageStatus;
+        //            return getMessageStatusTxt(message);
+
+        //        },
+        //        getDeliveryStatusTxt: function (delivery) {
+        //            var res = 'жопа Ч';
+        //            switch (delivery.Status) {
+        //                case 0: res = 'Доставлено'; break;
+        //                case 1: res = 'Прочитано'; break;
+        //            }
+        //            return res;
+
+        //        },
+        //        error: function (error) {
+        //            console.log('SignalR error: ' + error);
+        //        },
+        //        stateChanged: function (state) {
+        //            console.log(state);
+        //            var arr = [];
+        //            for (var key in $.connection.connectionState) {
+        //                arr[$.connection.connectionState[key]] = key;
+        //            }
+        //            this.connectionSt = $.connection.hub.state;
+        //            this.connectionState = arr[$.connection.hub.state];
+        //        },
+        //        getName: function () {
+        //            return 'name';
+        //        }
+        //    },
+        //    mounted: function () {
+
+
+
+        //        $.connection.hub.error = this.error;
+
+        //    }
+        //});
+        chat.client.getName = this.getName;
+        chat.client.broadcastMessage = broadcastMessage;
+        chat.client.changeMessageStatus = changeMessageStatus;
         chat.client.filesUploaded = filesUploaded;
         fetchMessages();//начитываю сообщения
     </script>
