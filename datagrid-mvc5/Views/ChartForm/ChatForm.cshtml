@@ -301,14 +301,14 @@
                     <img src="~/Content/icons/search.png"
                          class="imgButton">
                 </button>
-                <div style="display:flex;align-items: flex-start; " v-if="searchExecuted">
-                    Cовпадений: {{searchResultLength}}
+                <div style="display:none;align-items: flex-start; flex-direction" id="searchReslt"  >
+                    <div id="searchResultLength" ></div>
                     <div v-if="searchResultLength>0">
-                        <button v-on:click="nextFinded()" style="margin:1px;padding:0px">
+                        <button onclick="nextFinded()" style="margin:1px;padding:0px">
                             <img class="imgButton" src="~/Content/icons/down.png">
                         </button>
-                        {{curentFinded+1}}
-                        <button v-on:click="prevFinded()" style="margin:1px;padding:0px">
+                        <div id="currentFinded"></div>
+                        <button  onclick="prevFinded()" style="margin:1px;padding:0px">
                             <img class="imgButton" src="~/Content/icons/up.png">
                         </button>
                     </div>
@@ -673,8 +673,9 @@ overflow: scroll;
         function auto_grow(element) {
 
           var  val = element.value.trim()
-            console.log('--------------------------'+val.length)
+
             document.getElementById("sendBtn").disabled = (val == "");
+
             element.style.height = "5px";
             element.style.height = element.scrollHeight + "px";
         }
@@ -719,7 +720,7 @@ overflow: scroll;
         var searchResultLength = 0;
         var searchResult= [];
         var curentFinded= 0;
-        var searchExecuted= false;
+        //var searchExecuted= false;
 
         function searchStringChanged(element) {
             var val = element.value.trim()
@@ -730,8 +731,9 @@ overflow: scroll;
 
 
 
-        function find  () {
-            searchExecuted = true;
+        function find() {
+            
+      
 
             var searchString = $("#searchStringContr").val();
             searchResult.length = 0;
@@ -741,10 +743,13 @@ overflow: scroll;
                 var sRes = highlightAndGetHighlighted(elem, searchString, 'highlight');
                 Array.prototype.push.apply(searchResult, sRes);
             }
+      
+            $("#searchReslt").css("display", "flex");
+            document.getElementById("searchResultLength").innerHTML = "Cовпадений:" + searchResult.length;
+        
             if (searchResult.length > 0) {
                 hilightFinded('selectHighlighted');
             }
-            searchResultLength = searchResult.length
         }
         function nextFinded() {
             if (curentFinded >= searchResult.length - 1) return;
