@@ -296,22 +296,22 @@
         <div style="display:block;">
             <div style="float:right;">
                 <input type="text" id="searchStringContr" placeholder="поиск..." oninput="searchStringChanged(this)"
-                       v-on:keyup.enter="find()" />
+                       onkeyup="findIfEtner(event)" />
                 <button onclick="find()" id="searchStrinBtn" style="float:left;margin:1px;padding:0px" disabled>
                     <img src="~/Content/icons/search.png"
                          class="imgButton">
                 </button>
-                <div style="display:none;align-items: flex-start; flex-direction" id="searchReslt"  >
+                <div style="display:none;align-items: flex-start;" id="searchReslt"  >
                     <div id="searchResultLength" ></div>
-                    <div v-if="searchResultLength>0">
-                        <button onclick="nextFinded()" style="margin:1px;padding:0px">
+                    @*<div v-if="searchResultLength>0">*@
+                        <button onclick="nextFinded()" style="margin:1px;padding:0px;display:flex">
                             <img class="imgButton" src="~/Content/icons/down.png">
                         </button>
-                        <div id="currentFinded"></div>
-                        <button  onclick="prevFinded()" style="margin:1px;padding:0px">
+                        <div id="currentFindedDiv" style="margin:1px;padding:0px;display:flex" ></div>
+                        <button  onclick="prevFinded()" style="margin:1px;padding:0px;display:flex">
                             <img class="imgButton" src="~/Content/icons/up.png">
                         </button>
-                    </div>
+                    @*</div>*@
                 </div>
             </div>
 
@@ -506,6 +506,7 @@ overflow: scroll;
             filesList = arrayRemove(filesList, fileInf);
             redrawFileList();
         }
+
         function loadFile(messageId) {
             for (var i = 0; i < filesList.length; i++) {
                 var ff = filesList[i];
@@ -514,7 +515,6 @@ overflow: scroll;
                 uploadFile(ff, messageId, fileProgress);
             }
         }
-
 
         function fileProgress(fileInf, state, respText, messageId) {
             //  console.log(fileInf.file.name + '  ' + state + '  ' + new Date().getSeconds() + ':' + new Date().getMilliseconds());
@@ -655,7 +655,7 @@ overflow: scroll;
             console.log('SignalR error: ' + error);
         });
 
-         $.connection.hub.stateChanged(function () {
+        $.connection.hub.stateChanged(function () {
                     var bl = "block"
                     if ($.connection.hub.state == 1) {
                         bl = 'none'
@@ -690,6 +690,7 @@ overflow: scroll;
             return res;
 
         }
+
         function setMessageReaded(id) {
 
               var message= messagesList.find(function (message) { return message.Id == id;});
@@ -699,11 +700,13 @@ overflow: scroll;
                        /// });
                     }
                 }
+
         function broadcastMessage(message) {
             messagesList.push(message);
             redrawMessages();
             scrollSmoothToBottom('scroll');
         }
+
         function changeMessageStatus(messageId, status) {
                          var message= messagesList.find(function (message) { return message.Id == messageId;});
                              message.Status = status;
@@ -719,7 +722,7 @@ overflow: scroll;
 
         var searchResultLength = 0;
         var searchResult= [];
-        var curentFinded= 0;
+        var currentFinded= 0;
         //var searchExecuted= false;
 
         function searchStringChanged(element) {
@@ -737,7 +740,7 @@ overflow: scroll;
 
             var searchString = $("#searchStringContr").val();
             searchResult.length = 0;
-            curentFinded = 0;
+            currentFinded = 0;
             for (var i = 0; i < messagesList.length; i++) {
                 var elem = document.getElementById('mess' + i);
                 var sRes = highlightAndGetHighlighted(elem, searchString, 'highlight');
@@ -749,28 +752,33 @@ overflow: scroll;
         
             if (searchResult.length > 0) {
                 hilightFinded('selectHighlighted');
+                document.getElementById("currentFindedDiv").innerHTML = currentFinded + 1;
             }
         }
         function nextFinded() {
-            if (curentFinded >= searchResult.length - 1) return;
+            if (currentFinded >= searchResult.length - 1) return;
             hilightFinded('highlight');
-            curentFinded++;
+            currentFinded++;
+            document.getElementById("currentFindedDiv").innerHTML = currentFinded + 1;
             hilightFinded('selectHighlighted');
         }
         function prevFinded() {
 
-            if (curentFinded == 0) return;
+            if (currentFinded == 0) return;
             hilightFinded('highlight');
-            curentFinded--;
+            currentFinded--;
+            document.getElementById("currentFindedDiv").innerHTML = currentFinded + 1;
             hilightFinded('selectHighlighted');
         }
         function hilightFinded(className) {
 
-            var selElem = searchResult[curentFinded];
+            var selElem = searchResult[currentFinded];
             selElem.className = className;
             selElem.scrollIntoView();
         }
-
+        function findIfEtner(event) {
+            if (event.key == "Enter") find();
+        }
 
     </script>
     <script type="text/javascript">
@@ -836,7 +844,7 @@ overflow: scroll;
         //        //find: function () {
         //        //    this.searchExecuted = true;
         //        //    this.searchResult.length = 0;
-        //        //    this.curentFinded = 0;
+        //        //    this.currentFinded = 0;
         //        //    for (var i = 0; i < this.messages.length; i++) {
         //        //        var elem = document.getElementById('mess' + i);
         //        //        var sRes = highlightAndGetHighlighted(elem, this.searchString, 'highlight');
@@ -848,21 +856,21 @@ overflow: scroll;
         //        //    this.searchResultLength = this.searchResult.length
         //        //},
         //        //nextFinded: function () {
-        //        //    if (this.curentFinded >= this.searchResult.length - 1) return;
+        //        //    if (this.currentFinded >= this.searchResult.length - 1) return;
         //        //    this.hilightFinded('highlight');
-        //        //    this.curentFinded++;
+        //        //    this.currentFinded++;
         //        //    this.hilightFinded('selectHighlighted');
         //        //},
         //        //prevFinded: function () {
 
-        //        //    if (this.curentFinded == 0) return;
+        //        //    if (this.currentFinded == 0) return;
         //        //    this.hilightFinded('highlight');
-        //        //    this.curentFinded--;
+        //        //    this.currentFinded--;
         //        //    this.hilightFinded('selectHighlighted');
         //        //},
         //        //hilightFinded: function (className) {
 
-        //        //    var selElem = this.searchResult[this.curentFinded];
+        //        //    var selElem = this.searchResult[this.currentFinded];
         //        //    selElem.className = className;
         //        //    selElem.scrollIntoView();
         //        //},
