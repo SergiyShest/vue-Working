@@ -10,6 +10,17 @@ using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumTests
 {
+
+    public static class SBHelper
+    {
+        public static string ToString(Action<StringBuilder> action)
+        {
+            var sb = new StringBuilder();
+            action(sb);
+            return sb.ToString();
+        }
+    }
+
     [TestFixture]
     public class UntitledTestCase
     {
