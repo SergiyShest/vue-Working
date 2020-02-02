@@ -15,10 +15,11 @@
     .flex {
         display: flex;
         flex-direction: row;
+        align-items: stretch;
     }
     .gutter.gutter-horizontal {
         cursor: ew-resize;
-background-color: gray;
+        background-color: gold;
     }
     /*.split {    .gutter {
         background-color: gray;
@@ -37,11 +38,7 @@ background-color: gray;
         box-shadow: inset 0 1px 2px #e4e4e4;
         background-color: #fff;
     }
-    .main {
-        display: flex;
-        flex-direction: row;
-    }
- 
+
 
  
     .gutter.gutter-horizontal {
@@ -54,7 +51,7 @@ background-color: gray;
         background-image: url('../grips/horizontal.png');
     }
 
-        .split.split-horizontal,
+        .split.slit-horizontal,
         .gutter.gutter-horizontal {
             height: 100%;
             float: left;
@@ -62,8 +59,8 @@ background-color: gray;
 
      
 </style>
-<div class="flex"  >
-    <div class="split content"  id="app">
+<div class="flex" style="min-width: 899px;background-color:gray " >
+    <div class="split content" style="min-height: 799px;flex:4" id="app">
         <table border="1">
             <tr>
                 <td>Customer</td>
@@ -127,15 +124,16 @@ background-color: gray;
         </table>
 
     </div>
-    <div class="split content"  id="two">
-      
-        <iframe src="http://localhost:63164/ChartForm" name="topFrame" ></iframe>
+
+    <iframe id="two" style="min-height: 999px ;  flex-grow: 2;flex-basis: 400px;"   src="http://localhost:63164/ChartForm" ></iframe>
             
 
-    </div>
+   
 </div>
 <script>
-
+    window.onload = function() {
+        alert('Страница загружена');
+}
     var abortController = new AbortController();
     var validationCounter = 0;
 

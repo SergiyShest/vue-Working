@@ -6,3 +6,4 @@
 /datagrid-mvc5/Views/Orders/*.bak
 
 *.bak
+/datagrid-mvc5/Properties/PublishProfiles

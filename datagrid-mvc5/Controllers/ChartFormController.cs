@@ -39,7 +39,7 @@ namespace datagrid_mvc5.Controllers
 
             foreach (string file in base.Request.Files)
             {
-          var fileS=      Request.Form["file"];
+          var fileS =      Request.Form["file"];
           var messageId =      Request.Form["messageId"];
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -54,7 +54,6 @@ namespace datagrid_mvc5.Controllers
                     }
                 }
             }
-           // return RedirectToAction("upload");
         }
         public FileResult Download(string xxxx)
         {
